@@ -1,5 +1,5 @@
 """
-Django settings for hos project.
+Django settings for hos2 project.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/1.6/topics/settings/
@@ -17,7 +17,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ')fqw-$o83^4u$^#_1t0(q4+5=rxn2v)u5$bn4ke!h%20=p#91r'
+SECRET_KEY = '0w-_45z8rw!3o54!ei&%zt!f-xu7a8-)u$au1o25j3ui+%^-x&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -47,9 +47,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'hos.urls'
+ROOT_URLCONF = 'hos2.urls'
 
-WSGI_APPLICATION = 'hos.wsgi.application'
+WSGI_APPLICATION = 'hos2.wsgi.application'
 
 
 # Database
@@ -57,8 +57,11 @@ WSGI_APPLICATION = 'hos.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'USER': 'postgres',
+		'NAME': 'django',
+		'PASSWORD': 'password',
+		'PORT': '5432',
     }
 }
 

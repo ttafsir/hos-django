@@ -36,6 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'entries',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -59,11 +60,39 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'USER': 'postgres',
-		'NAME': 'django',
-		'PASSWORD': 'password',
+		'NAME': 'hos1',
+		'PASSWORD': 'HO$1',
+		'HOST': 'hos-database.noip.me',
 		'PORT': '5432',
     }
 }
+
+'''
+{
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'USER': 'postgres',
+		'NAME': 'hos1',
+		'PASSWORD': '',
+		'HOST': 'localhost',
+		'PORT': '5432',
+    }
+}
+
+{
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'USER': 'postgres',
+		'NAME': 'django',
+		'PASSWORD': '',
+		'HOST': 'localhost',
+		'PORT': '5432',
+    }
+}
+
+'''
+
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/

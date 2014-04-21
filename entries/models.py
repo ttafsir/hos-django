@@ -28,6 +28,7 @@ class EffortInstance(models.Model):
 	
 class ServiceType(models.Model):
     service_type_id = models.IntegerField(primary_key=True)
+    #service_type_test_id = models.IntegerField(blank=True, null=True)
     service_name = models.CharField(max_length=100, blank=True)
     service_description = models.CharField(max_length=300, blank=True)
 	

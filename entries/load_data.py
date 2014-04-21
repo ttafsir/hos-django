@@ -21,14 +21,17 @@ import csv
 
 dataReader = csv.reader(open(csv_filepathname), delimiter=',', quotechar='"')
  
+ServiceType = ServiceType()
+
 for row in dataReader:
 
 	print 'hi'
 	
+	
 	if row[0] != 'id': # Ignore the header row, import everything else
 		
-		ServiceType = ServiceType()
-		#ServiceType.service_type_id = row[0]
+		#ServiceType = ServiceType()
+		ServiceType.service_type_id = row[0]
 		ServiceType.service_name = row[1]
 		ServiceType.service_description = row[6]
 		ServiceType.save()
@@ -42,6 +45,8 @@ for row in dataReader:
 	'''
 	
 	print 'bye'
+	
+
 	
 	
 	

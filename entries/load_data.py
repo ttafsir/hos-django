@@ -1,13 +1,14 @@
 # Full path and name to your csv file
 
 #csv_filepathname="/Users/thomasgertin1/hos-django/entries/20140415_HAC_utf8.csv"
-csv_filepathname="./20140415_HAC_utf8.csv"
+csv_filepathname="./data/20140415_HAC_utf8.csv"
 
 # Full path to your django project directory
 
 #your_djangoproject_home="/Users/thomasgertin1/hos-django/"
 # two directories up. Chained!
-your_djangoproject_home="../../hos-django/"
+#your_djangoproject_home="../../hos-django/"
+your_djangoproject_home="../"
  
 import sys,os
 sys.path.append(your_djangoproject_home)

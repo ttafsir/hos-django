@@ -6,7 +6,7 @@ class ServiceProvider(models.Model):
 
 class Location(models.Model):
     #location_id = models.IntegerField(primary_key=True)
-    #location_id = models.AutoField(primary_key=True,db_column='location_id')
+    location_id = models.AutoField(primary_key=True,db_column='location_id')
     latitude = models.FloatField(blank=True, null=True)
     longitude = models.FloatField(blank=True, null=True)
     #geom = models.TextField(blank=True) # This field type is a guess.
@@ -37,7 +37,8 @@ class ServiceType(models.Model):
     service_description = models.CharField(max_length=300, blank=True)
 	
 class EffortInstanceServices(models.Model):
-    effort_instance_service_id = models.IntegerField(primary_key=True)
+    #effort_instance_service_id = models.IntegerField(primary_key=True)
+    effort_instance_service_id = models.AutoField(primary_key=True)
     effort_instance = models.ForeignKey(EffortInstance, blank=True, null=True)
     effort_service_type = models.ForeignKey('ServiceType', blank=True, null=True)
     effort_service_description = models.CharField(max_length=300, blank=True)

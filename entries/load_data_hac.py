@@ -83,7 +83,7 @@ for row in dataReader:
 		if(row[15] and row[15] is not '' and row[15] is not ' '):
 			latVal = re.sub(r"\D-", "", row[15]).strip()
 			print "latVal is "+latVal
-			loc.longitude = float(latVal)
+			loc.latitude = float(latVal)
 
 		print 'About to convert this long string to float: '+row[16]
 		if(row[16] and row[16] is not '' and row[16] is not ' '):
@@ -91,4 +91,7 @@ for row in dataReader:
 			print "longval is "+longVal
 			loc.longitude = float(longVal)
 		
-		loc.save()
+		
+		LocationObj, created = Location.objects.get_or_create(latitude = loc.latitude, longitude = loc.longitude )
+		
+		

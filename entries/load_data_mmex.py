@@ -18,13 +18,19 @@ import csv
 import re
 import random
 
+#loads the classify_service_types dictionary, used to classify the service types
+from service_type_dict import classify_service_types
+
+print classify_service_types
+
+
 dataReader = csv.reader(open(csv_filepathname), delimiter=',', quotechar='"')
  
 #The objects can't have the same name as the class, and a new object needs to be created each time a row is looped through
 
 for row in dataReader:
 
-	print 'hi'
+	#print 'hi'
 		
 	if row[0] != 'id': # Ignore the header row, import everything else
 		
@@ -46,13 +52,18 @@ for row in dataReader:
 		
 		
 		
+		#ServiceProviderObj = ServiceProvider()
 		
+		#cool way to make Service Providers unique, if obj does not exist then it creates it.
+		#https://docs.djangoproject.com/en/1.6/ref/models/querysets/#get-or-create
+		ServiceProviderObj, created = ServiceProvider.objects.get_or_create(provider_name = row[2])
 		
-		ServiceProviderObj = ServiceProvider()
+		#ServiceProviderObj.provider_name = row[2]
 		
-		ServiceProviderObj.provider_name = row[2]
+		#ServiceProviderObj.save()
 		
-		ServiceProviderObj.save()
+		EffortInstanceObj.service_provider = ServiceProvider.objects.get(provider_name=row[2])
+		EffortInstanceObj.save()
 		
 		
 		loc = Location()
@@ -66,32 +77,28 @@ for row in dataReader:
 		loc.save()
 		
 		
-		#ObjDict = {}
-		
 		#looking at specialities column
 		if row[3]:
 			#print row[3]
 			
-			EffortInstanceServicesObj = EffortInstanceServices()
 			
 			ServiceTypeSplit = re.split(r',', row[3].strip())
-			print ServiceTypeSplit
+			#print ServiceTypeSplit
 			for x in range(0,len(ServiceTypeSplit)):
 				
 				
-				#ObjDict[EffortInstanceCount] = EffortInstanceServices(effort_instance_service_id = EffortInstanceCount, effort_instance = EffortInstance)
-				#EffortInstanceServicesObj.effort_instance_service_id = EffortInstanceCount
+				EffortInstanceServicesObj = EffortInstanceServices()
+				EffortInstanceServicesObj.effort_instance = EffortInstance.objects.get(effort_instance_id=row[0])
 				
-				EffortInstanceServicesObj.effort_instance = EffortInstanceObj
+				EffortInstanceServicesObj.effort_service_description = ServiceTypeSplit[x].strip()
 				
-				EffortInstanceServicesObj.effort_service_description = ServiceTypeSplit[x]
 				
-				#ObjDict[EffortInstanceCount].save()	
-			EffortInstanceServicesObj.save()
+				#classify EffortInstanceServicesObj.effort_service_description based on a dictionary
+				EffortInstanceServicesObj.effort_service_type = ServiceType.objects.get(service_name=classify_service_types[EffortInstanceServicesObj.effort_service_description])
+				
+				EffortInstanceServicesObj.save()	
 			
-		EffortInstanceObj.save()
 		
-	
-	print 'bye'
+
 	
 

@@ -1,7 +1,7 @@
 # Full path and name to your csv file
 
 #csv_filepathname="/Users/thomasgertin1/hos-django/entries/20140415_HAC_utf8.csv"
-csv_filepathname="./data/20140419_mmex_utf8.csv"
+#csv_filepathname="./data/20140419_mmex_utf8.csv"
 
 # Full path to your django project directory
 
@@ -25,7 +25,7 @@ import re
 
 import random
 
-dataReader = csv.reader(open(csv_filepathname), delimiter=',', quotechar='"')
+#dataReader = csv.reader(open(csv_filepathname), delimiter=',', quotechar='"')
  
 ServiceType = ServiceType()
 
@@ -59,7 +59,8 @@ services = ['Cardiovascular',
 'Maternity Health',
 'Nutrition',
 'Re-education',
-'EyeCare']
+'EyeCare',
+'Not Classified']
 
 count = 1
 

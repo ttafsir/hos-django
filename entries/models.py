@@ -5,7 +5,6 @@ class ServiceProvider(models.Model):
 	provider_name = models.CharField(max_length = 500)
 
 class Location(models.Model):
-    #location_id = models.IntegerField(primary_key=True)
     location_id = models.AutoField(primary_key=True,db_column='location_id')
     latitude = models.FloatField(blank=True, null=True)
     longitude = models.FloatField(blank=True, null=True)
@@ -13,7 +12,6 @@ class Location(models.Model):
     #address_information = models.CharField(max_length=300, blank=True)
         
 class EffortInstance(models.Model):
-	'''
 	TRAVELING_TEAM = 'TT'
 	CLINIC = 'CL'
 	HOSPITAL = 'HL'
@@ -22,17 +20,16 @@ class EffortInstance(models.Model):
 		(CLINIC, 'Clinic'),
 		(HOSPITAL, 'Hospital'),
 	)
-	'''
+	
 	#effort_instance =  models.AutoField(primary_key=True)
 	effort_instance_id =  models.IntegerField(primary_key=True)
-	#service_provider = models.ForeignKey('ServiceProvider')
-	#provider_type = models.CharField(max_length=2, choices=PROVIDER_TYPE_OPTIONS, default=CLINIC)
-	date_start = models.DateTimeField(auto_now=False)
-	#date_end = models.DateTimeField(auto_now=False)
+	service_provider = models.ForeignKey(ServiceProvider, blank=True, null=True)
+	provider_type = models.CharField(max_length=2, choices=PROVIDER_TYPE_OPTIONS, default=CLINIC)
+	date_start = models.DateTimeField(auto_now=False, null=True)
+	date_end = models.DateTimeField(auto_now=False, null=True)
 	
 class ServiceType(models.Model):
     service_type_id = models.IntegerField(primary_key=True)
-    #service_type_test_id = models.IntegerField(blank=True, null=True)
     service_name = models.CharField(max_length=100, blank=True)
     service_description = models.CharField(max_length=300, blank=True)
 	

@@ -24,6 +24,7 @@ class EffortInstance(models.Model):
 	#effort_instance =  models.AutoField(primary_key=True)
 	effort_instance_id =  models.IntegerField(primary_key=True)
 	service_provider = models.ForeignKey(ServiceProvider, blank=True, null=True)
+	location = models.ForeignKey(Location, blank=True, null=True)
 	provider_type = models.CharField(max_length=2, choices=PROVIDER_TYPE_OPTIONS, default=CLINIC)
 	date_start = models.DateTimeField(auto_now=False, null=True)
 	date_end = models.DateTimeField(auto_now=False, null=True)

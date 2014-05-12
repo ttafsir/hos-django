@@ -61,22 +61,7 @@ for row in dataReader:
 		ServiceProviderObj, created = ServiceProvider.objects.get_or_create(provider_name = row[1])
 		
 		EffortInstanceObj.service_provider = ServiceProvider.objects.get(provider_name=row[1])
-		EffortInstanceObj.save()
 		
-		
-		for x in range(0,len(hacServiceCols)):
-			if hacServiceCols[x] == "1":
-				EffortInstanceServicesObj = EffortInstanceServices()
-				EffortInstanceServicesObj.effort_instance = EffortInstance.objects.get(effort_instance_id=row[0])
-				
-				EffortInstanceServicesObj.effort_service_description = upfirstletter(hacHeaders[x]);
-				
-				#classify EffortInstanceServicesObj.effort_service_description based on a dictionary
-				EffortInstanceServicesObj.effort_service_type = ServiceType.objects.get(service_name=classify_service_types[EffortInstanceServicesObj.effort_service_description])
-				
-				EffortInstanceServicesObj.save()
-
-
 		loc = Location()
 
 		print 'About to convert this lat string to float: '+row[15]
@@ -94,4 +79,22 @@ for row in dataReader:
 		
 		LocationObj, created = Location.objects.get_or_create(latitude = loc.latitude, longitude = loc.longitude )
 		
+		EffortInstanceObj(location = LocationObj);
+		EffortInstanceObj.save()
+		
+		
+		for x in range(0,len(hacServiceCols)):
+			if hacServiceCols[x] == "1":
+				EffortInstanceServicesObj = EffortInstanceServices()
+				EffortInstanceServicesObj.effort_instance = EffortInstance.objects.get(effort_instance_id=row[0])
+				
+				EffortInstanceServicesObj.effort_service_description = upfirstletter(hacHeaders[x]);
+				
+				#classify EffortInstanceServicesObj.effort_service_description based on a dictionary
+				EffortInstanceServicesObj.effort_service_type = ServiceType.objects.get(service_name=classify_service_types[EffortInstanceServicesObj.effort_service_description])
+				
+				EffortInstanceServicesObj.save()
+
+
+
 		

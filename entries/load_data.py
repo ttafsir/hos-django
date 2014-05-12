@@ -53,6 +53,7 @@ for row in dataReader:
 	
 
 '''
+# http://mitchfournier.com/2011/10/11/how-to-import-a-csv-or-tsv-file-into-a-django-model/
 if row[0] != 'ZIPCODE': # Ignore the header row, import everything else
 zipcode = ZipCode()
 zipcode.zipcode = row[0]

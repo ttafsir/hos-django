@@ -70,9 +70,13 @@ for row in dataReader:
 		
 		#loc.location_id = row[0]
 		
-		loc.latitude = random.randint(0,10)
+		#loc.latitude = random.randint(0,10)
 		
-		loc.longitude = random.randint(0,10)
+		#loc.longitude = random.randint(0,10)
+		
+		loc.latitude = str(random.randint(0,10))
+		
+		loc.longitude = str(random.randint(0,10))
 		
 		loc.save()
 		

@@ -28,7 +28,7 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
-
+# added django.contrib.gis for GeoDjango
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
@@ -36,6 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
     'entries',
 )
 
@@ -58,6 +59,19 @@ WSGI_APPLICATION = 'hos2.wsgi.application'
 
 DATABASES = {
     'default': {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'USER': 'postgres',
+		'NAME': 'hos1',
+		'PASSWORD': 'HO$1',
+		'HOST': 'hos-database.noip.me',
+		'PORT': '5432',
+    }
+}
+#GeoDjango version above
+
+'''
+{
+    'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'USER': 'postgres',
 		'NAME': 'hos1',
@@ -66,7 +80,7 @@ DATABASES = {
 		'PORT': '5432',
     }
 }
-
+'''
 '''
 {
     'default': {

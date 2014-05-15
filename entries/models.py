@@ -22,6 +22,17 @@ class Location(models.Model):
 			lString = 'POINT(%s %s)' % (self.longitude.strip(), self.latitude.strip())
 			self.point = fromstr(lString)
 		super(Location, self).save()
+		
+class haiti_adm1_minustah(models.Model):
+    id_adm1 = models.FloatField()
+    adm1 = models.CharField(max_length=45)
+    shape_leng = models.FloatField()
+    shape_area = models.FloatField()
+    geom = models.MultiPolygonField(srid=4326)
+    objects = models.GeoManager()
+    
+    def __unicode__(self):
+        return self.adm1
 	        
 class EffortInstance(models.Model):
 	TRAVELING_TEAM = 'TT'

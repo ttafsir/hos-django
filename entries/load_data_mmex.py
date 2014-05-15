@@ -51,7 +51,6 @@ for row in dataReader:
 			EffortInstanceObj.date_start = split[2] + '-' + split[0] + '-' + split[1]
 		
 		
-		
 		#ServiceProviderObj = ServiceProvider()
 		
 		#cool way to make Service Providers unique, if obj does not exist then it creates it.
@@ -63,9 +62,8 @@ for row in dataReader:
 		#ServiceProviderObj.save()
 		
 		EffortInstanceObj.service_provider = ServiceProvider.objects.get(provider_name=row[2])
-		EffortInstanceObj.save()
 		
-		
+
 		loc = Location()
 		
 		#loc.location_id = row[0]
@@ -80,6 +78,10 @@ for row in dataReader:
 		
 		loc.save()
 		
+	
+		#need a way first in seeing if a location exists close by
+		#EffortInstanceObj.location = loc.objects.get
+		EffortInstanceObj.save()
 		
 		#looking at specialities column
 		if row[3]:

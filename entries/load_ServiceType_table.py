@@ -46,7 +46,7 @@ services = ['Cardiovascular',
 'Pediatrics',
 'Pharmacy',
 'Physical therapy',
-'Program free Obstetric care',   
+'Free obstetric care program',   
 'Psychology Service',
 'Surgery',
 'Vaccination (PEV)',
@@ -74,4 +74,4 @@ for x in range(0,len(services)):
 
 	ServiceType.save()
 
-print 'bye'
+

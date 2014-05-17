@@ -65,6 +65,7 @@ for row in dataReader:
 		
 		loc = Location()
 
+		
 		print 'About to convert this lat string to float: '+row[15]
 		if(row[15] and row[15] is not '' and row[15] is not ' '):
 			latVal = re.sub(r"\D-", "", row[15]).strip()
@@ -77,25 +78,30 @@ for row in dataReader:
 			print "longval is "+longVal
 			loc.longitude = longVal
 			
+		loc.save()
+		
+			#LocationObj, created = Location.objects.get_or_create(location_id=row[0],latitude = loc.latitude, longitude = loc.longitude)
 			
-			LocationObj, created = Location.objects.get_or_create(location_id=row[0],latitude = loc.latitude, longitude = loc.longitude)
+			#EffortInstanceObj.location = LocationObj;
 			
-			EffortInstanceObj.location = LocationObj;
 		EffortInstanceObj.save()
 		
 		
 		for x in hacServiceCols:
 			print "now going through column "+str(x) +" which is "+str(hacHeaders[x])
-			#if hacServiceCols[x] != "0":
-			#	print "service "+str(x) +" is not equal to 1"
-			EffortInstanceServicesObj = EffortInstanceServices()
-			EffortInstanceServicesObj.effort_instance = EffortInstance.objects.get(effort_instance_id=row[0])
-			
-			EffortInstanceServicesObj.effort_service_description = upfirstletter(hacHeaders[x].replace("_", " "));
-			
-			#classify EffortInstanceServicesObj.effort_service_description based on a dictionary
-			if ServiceType.objects.filter(service_name=classify_service_types[EffortInstanceServicesObj.effort_service_description]).count() == 1:
-				serviceType = ServiceType.objects.get(service_name=classify_service_types[EffortInstanceServicesObj.effort_service_description])
-				EffortInstanceServicesObj.effort_service_type = serviceType
-			
-			EffortInstanceServicesObj.save()
+			#makes sure column has that service type (1 would be the value)
+			if row[x] == '1':
+			#print row[x]
+				#if hacServiceCols[x] != "0":
+				#	print "service "+str(x) +" is not equal to 1"
+				EffortInstanceServicesObj = EffortInstanceServices()
+				EffortInstanceServicesObj.effort_instance = EffortInstance.objects.get(effort_instance_id=row[0])
+		
+				EffortInstanceServicesObj.effort_service_description = upfirstletter(hacHeaders[x].replace("_", " "));
+		
+				#classify EffortInstanceServicesObj.effort_service_description based on a dictionary
+				if ServiceType.objects.filter(service_name=classify_service_types[EffortInstanceServicesObj.effort_service_description]).count() == 1:
+					serviceType = ServiceType.objects.get(service_name=classify_service_types[EffortInstanceServicesObj.effort_service_description])
+					EffortInstanceServicesObj.effort_service_type = serviceType
+		
+				EffortInstanceServicesObj.save()

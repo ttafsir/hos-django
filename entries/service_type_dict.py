@@ -74,6 +74,7 @@ classify_service_types = {'Cardiovascular': 'Cardiovascular',
 	'Audiology' : 'Not Classified',
 	'Dermatology': 'Not Classified',
 	'Biomed engineer/equip repair':'Not Classified',
+	'Other':'Not Classified',
 	'Physician Assistant' : 'Not Classified'}
     
     

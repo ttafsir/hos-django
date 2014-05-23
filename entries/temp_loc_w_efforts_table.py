@@ -1,6 +1,6 @@
 # Full path and name to your csv file
 
-csv_filepathname="./data/20140419_mmex_utf8.csv"
+#csv_filepathname="./data/20140419_mmex_utf8.csv"
 
 # Full path to your django project directory
 
@@ -11,20 +11,59 @@ sys.path.append(your_djangoproject_home)
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'hos2.settings'
  
-from entries.models import ServiceProvider,Location,EffortInstance,ServiceType,EffortInstanceServices
+from entries.models import ServiceProvider,Location,EffortInstance,ServiceType,EffortInstanceServices,Location_w_efforts
  
-import csv
+#import csv
 #module used for regular expressions
 import re
 import random
 
+#loc = Location._meta.get_all_field_names()
+
+#loc = Location._meta.get_field('latitude')
+
+#print loc
+
+
+#print loc[1]
+
+#for row in loc:
+	#print loc.getattr(latitude)
+	#print loc[1]
+	
+for l in Location.objects.all():
+    print l.location_id
+    print 'printing location id'
+    
+    #make sure tables are synced up!
+    print EffortInstance.objects.get(location=l.location_id).date_start
+    
+    Location_w_effortsObj = Location_w_efforts()
+    
+    Location_w_effortsObj.date_start = EffortInstance.objects.get(location=l.location_id).date_start
+    
+    Location_w_effortsObj.latitude = l.latitude
+    Location_w_effortsObj.longitude = l.longitude
+    
+    provider_num = EffortInstance.objects.get(location=l.location_id).service_provider
+    
+    #ServiceProvider.provider
+    #print obj, but need number
+    
+    print provider_num.provider
+    
+    Location_w_effortsObj.provider_name = ServiceProvider.objects.get(provider=provider_num.provider).provider_name
+    
+    Location_w_effortsObj.save()
+	
+
 #loads the classify_service_types dictionary, used to classify the service types
-from service_type_dict import classify_service_types
+#from service_type_dict import classify_service_types
 
-print classify_service_types
+#print classify_service_types
 
-
-dataReader = csv.reader(open(csv_filepathname), delimiter=',', quotechar='"')
+'''
+#dataReader = csv.reader(open(csv_filepathname), delimiter=',', quotechar='"')
  
 #The objects can't have the same name as the class, and a new object needs to be created each time a row is looped through
 
@@ -78,33 +117,6 @@ for row in dataReader:
 		
 		loc.save()
 		
-		
-		'''
-		Insert new code here to match admin boundaries: The location_information column is in column 11 (row [10]). This contains a list
-		of admin boundaries where the facility is located at. The list contains entries with single quotes delimited with commas, and the list is 
-		enveloped with brackets. The last entry on the list is Haiti. The second to last entry is an admin 1 boundary. The third to last entry
-		is the admin 1 boundary.
-		'''
-		
-		if row[10]:
-			
-			split_loc = re.split(r',', row[10].strip())
-			
-			if len(split_loc) > 2:
-			
-				print split_loc[len(split_loc) - 2]
-			
-				print split_loc[len(split_loc) - 3]
-			
-				#EffortInstanceObj.date_start = split[2] + '-' + split[0] + '-' + split[1]
-			
-				#EffortInstanceObj.adm_3 = '9999-12-31'
-				
-				#if finds 3rd admin then match
-				
-				#else print 
-		
-		
 	
 		#need a way first in seeing if a location exists close by
 		#EffortInstanceObj.location = loc.objects.get
@@ -131,7 +143,7 @@ for row in dataReader:
 				
 				EffortInstanceServicesObj.save()	
 			
-		
+'''	
 
 	
 

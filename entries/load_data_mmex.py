@@ -11,7 +11,7 @@ sys.path.append(your_djangoproject_home)
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'hos2.settings'
  
-from entries.models import ServiceProvider,Location,EffortInstance,ServiceType,EffortInstanceServices
+from entries.models import ServiceProvider,Location,EffortInstance,ServiceType,EffortInstanceServices,haiti_adm1_minustah,haiti_adm3_minustah
  
 import csv
 #module used for regular expressions
@@ -20,6 +20,12 @@ import random
 
 #loads the classify_service_types dictionary, used to classify the service types
 from service_type_dict import classify_service_types
+
+#loads the classify_adm1_names dictionary, used to classify the admin 1 boundaries
+from adm1_name_dict import classify_adm1_names
+
+#loads the classify_adm3_names dictionary, used to classify the admin 3 boundaries
+from adm3_name_dict import classify_adm3_names
 
 print classify_service_types
 
@@ -88,22 +94,43 @@ for row in dataReader:
 		
 		if row[10]:
 			
-			split_loc = re.split(r',', row[10].strip())
+			split_loc = row[10].replace("[", "")
+			
+			split_loc = split_loc.replace("]", "")
+			
+			split_loc = split_loc.replace("'", "")
+			
+			split_loc = split_loc.replace(" ", "")
+			
+			split_loc = re.split(r',', split_loc.strip())
 			
 			if len(split_loc) > 2:
 			
-				print split_loc[len(split_loc) - 2]
-			
-				print split_loc[len(split_loc) - 3]
-			
-				#EffortInstanceObj.date_start = split[2] + '-' + split[0] + '-' + split[1]
-			
-				#EffortInstanceObj.adm_3 = '9999-12-31'
+				UpperAdmin1 = split_loc[len(split_loc) - 2].upper()
 				
-				#if finds 3rd admin then match
+				print UpperAdmin1
 				
-				#else print 
-		
+				UpperAdmin2 = split_loc[len(split_loc) - 3].upper()
+			
+				print UpperAdmin2
+				
+				
+				try:
+				
+					EffortInstanceObj.adm_1 = haiti_adm1_minustah.objects.get(adm1=classify_adm1_names[UpperAdmin1])
+					
+				except:
+				
+					print "guess no match"
+				
+				try:
+					#https://docs.djangoproject.com/en/1.6/ref/models/querysets/#django.db.models.query.QuerySet
+					#should retrieve the object where adm3 and adm1 match, this is needed because some admin 3 names are the same yet in different admin 1 areas
+					EffortInstanceObj.adm_3 = haiti_adm3_minustah.objects.get(adm3=classify_adm3_names[UpperAdmin2],adm1=classify_adm1_names[UpperAdmin1])
+					
+				except:
+				
+					print "guess no match"
 		
 	
 		#need a way first in seeing if a location exists close by

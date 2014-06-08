@@ -3,6 +3,8 @@ from django.contrib.gis.gdal import DataSource
 
 your_djangoproject_home="../"
 
+# https://docs.djangoproject.com/en/1.5/ref/contrib/gis/tutorial/
+
 import sys,os
 sys.path.append(your_djangoproject_home)
 
@@ -68,12 +70,12 @@ haiti_adm4_minustah_mapping = {
 }
 
 
-
+#http://stackoverflow.com/questions/9271464/what-does-the-file-wildcard-mean-do
 #haiti_adm1_minustah_shp = os.path.abspath(os.path.join(os.path.dirname(__file__), './haiti_geospatial_data/haiti_adm1_minustah.shp'))
-haiti_adm1_minustah_shp = '/Users/thomasgertin1/hos-django/haiti_geospatial_data/haiti_adm1_minustah.shp'
-haiti_adm2_minustah_shp = '/Users/thomasgertin1/hos-django/haiti_geospatial_data/haiti_adm2_minustah.shp'
-haiti_adm3_minustah_shp = '/Users/thomasgertin1/hos-django/haiti_geospatial_data/haiti_adm3_minustah.shp'
-haiti_adm4_minustah_shp = '/Users/thomasgertin1/hos-django/haiti_geospatial_data/haiti_adm4_minustah.shp'
+haiti_adm1_minustah_shp = os.path.abspath(os.path.join(os.path.dirname(__file__), '../haiti_geospatial_data/haiti_adm1_minustah.shp'))
+haiti_adm2_minustah_shp = os.path.abspath(os.path.join(os.path.dirname(__file__), '../haiti_geospatial_data/haiti_adm2_minustah.shp'))
+haiti_adm3_minustah_shp = os.path.abspath(os.path.join(os.path.dirname(__file__), '../haiti_geospatial_data/haiti_adm3_minustah.shp'))
+haiti_adm4_minustah_shp = os.path.abspath(os.path.join(os.path.dirname(__file__), '../haiti_geospatial_data/haiti_adm4_minustah.shp'))
 
 
 def run(verbose=True):

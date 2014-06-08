@@ -103,6 +103,8 @@ class EffortInstance(models.Model):
 	effort_instance_id =  models.IntegerField(primary_key=True)
 	service_provider = models.ForeignKey(ServiceProvider, blank=True, null=True)
 	location = models.ForeignKey(Location, blank=True, null=True)
+	adm_1 = models.ForeignKey(haiti_adm1_minustah, blank=True, null=True)
+	adm_2 = models.ForeignKey(haiti_adm2_minustah, blank=True, null=True)
 	adm_3 = models.ForeignKey(haiti_adm3_minustah, blank=True, null=True)
 	provider_type = models.CharField(max_length=2, choices=PROVIDER_TYPE_OPTIONS, default=CLINIC)
 	date_start = models.DateTimeField(auto_now=False, null=True)

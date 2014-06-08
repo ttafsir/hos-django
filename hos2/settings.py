@@ -62,14 +62,26 @@ DATABASES = {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'USER': 'postgres',
 		'NAME': 'hos1',
+		'PASSWORD': '',
+		'HOST': 'localhost',
+		'PORT': '5432',
+    }
+}
+
+#GeoDjango version above
+
+'''
+{
+    'default': {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'USER': 'postgres',
+		'NAME': 'hos1',
 		'PASSWORD': 'HO$1',
 		'HOST': 'hos-database.noip.me',
 		'PORT': '5432',
     }
 }
-#GeoDjango version above
 
-'''
 {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -84,7 +96,7 @@ DATABASES = {
 '''
 {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'USER': 'postgres',
 		'NAME': 'hos1',
 		'PASSWORD': '',

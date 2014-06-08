@@ -11,7 +11,7 @@ sys.path.append(your_djangoproject_home)
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'hos2.settings'
  
-from entries.models import ServiceProvider,Location,EffortInstance,ServiceType,EffortInstanceServices
+from entries.models import ServiceProvider,Location,EffortInstance,ServiceType,EffortInstanceServices,haiti_adm1_minustah,haiti_adm2_minustah,haiti_adm3_minustah
  
 import csv
 #module used for regular expressions
@@ -21,29 +21,47 @@ import random
 #loads the classify_service_types dictionary, used to classify the service types
 from service_type_dict import classify_service_types
 
-print classify_service_types
+#loads the classify_adm1_names dictionary, used to classify the admin 1 boundaries
+from adm1_name_dict import classify_adm1_names
 
+#loads the classify_adm2_names dictionary, used to classify the admin 2 boundaries
+from adm2_name_dict import classify_adm2_names
+
+#loads the classify_adm2_names dictionary, used to classify the admin 2 boundaries
+from adm3_name_dict import classify_adm3_names
 
 dataReader = csv.reader(open(csv_filepathname), delimiter=',', quotechar='"')
  
 #The objects can't have the same name as the class, and a new object needs to be created each time a row is looped through
 
-for row in dataReader:
+'''
+I need two functions, one that fills all the tables with the right info for each effort instance. The other one
+will just fill in the location information and have the ability to call the first function multiple time even for each row
+'''
 
-	#print 'hi'
-		
+def FillTables(locationOrder,adm2Bool,adm3Bool):
+
 	if row[0] != 'id': # Ignore the header row, import everything else
 	
 		#checks to see if sector category is health
 		if re.search('Health',row[12]):
 		
+			print 'row: id:'
+			print row[0]
 			
 			EffortInstanceObj = EffortInstance()
 		
 			EffortInstanceObj.effort_instance_id = row[0]
+			
+			if locationOrder == 2:
+			
+				EffortInstanceObj.effort_instance_id = row[0] + '02'
+			
+			if locationOrder == 3:
+			
+				EffortInstanceObj.effort_instance_id = row[0] + '03'
 		
 
-			 
 			split = re.split(r'\/', row[9].strip())
 		
 			print split[2] + '-' + split[0] + '-' + split[1]
@@ -62,7 +80,6 @@ for row in dataReader:
 			#https://docs.djangoproject.com/en/1.6/ref/models/querysets/#get-or-create
 			ServiceProviderObj, created = ServiceProvider.objects.get_or_create(provider_name = row[1])
 		
-
 		
 			EffortInstanceObj.service_provider = ServiceProvider.objects.get(provider_name=row[1])
 		
@@ -76,35 +93,104 @@ for row in dataReader:
 		
 			loc.save()
 		
+			'''
+			Insert new code here to match admin boundaries: The location_information column is in column 21 (row [20]). This contains a list
+			of admin boundaries where the facility is located at. The list contains entries delimited with '>'. The first entry on the list is Haiti. 
+			The second entry is an admin 2 boundary. The third entry is ?.
+			
+			There can be more than one place listed in the location column. If this is the case then we need to create a new effort instance
+			for each location in Haiti.
+			'''
+		
+			if row[20]:
+			
+				split_each_location = re.split(r'\|Haiti>', row[20].strip())
+				
+	
+				if len(split_each_location) > 1:
+					split_loc = re.split(r'>', split_each_location[locationOrder].strip())
+			
+					if len(split_loc) > 1:
+
+						UpperAdmin1 = split_loc[0].upper()
+					
+						UpperAdmin1 = re.split(r'\|', UpperAdmin1)
+						
+						print 'length of split_loc:'
+						
+						print len(split_loc)
+		
+						print 'UpperAdmin1:'
+						
+						print UpperAdmin1[0]
+					
+						EffortInstanceObj.adm_1 = haiti_adm1_minustah.objects.get(adm1=classify_adm1_names[UpperAdmin1[0]])
+					
+						if len(split_loc) > 1:
+					
+							UpperAdmin2 = split_loc[1].upper()
+						
+							UpperAdmin2 = re.split(r'\|', UpperAdmin2)
+							
+							print 'UpperAdmin2:'
+						
+							print UpperAdmin2[0]
+						
+							try:
+			
+								EffortInstanceObj.adm_2 = haiti_adm2_minustah.objects.get(adm2=classify_adm2_names[UpperAdmin2[0]])
+				
+							except:
+			
+								print "guess no match"
+							
+							
+							if len(split_loc) > 2:
+					
+								UpperAdmin3 = split_loc[2].upper()
+						
+								UpperAdmin3 = re.split(r'\|', UpperAdmin3)
+								
+								print 'UpperAdmin3:'
+						
+								print UpperAdmin3[0]
+	
+						
+								try:
+			
+									EffortInstanceObj.adm_3 = haiti_adm3_minustah.objects.get(adm3=classify_adm3_names[UpperAdmin3[0]])
+				
+								except:
+			
+									print "guess no match"
+								
+
 	
 			#need a way first in seeing if a location exists close by
 			#EffortInstanceObj.location = loc.objects.get
 			EffortInstanceObj.save()
+			
+			
+			
+			if len(split_each_location) > 1:
+				print 'location 1:'
+				print split_each_location[1]
+				
+			if len(split_each_location) > 2 and adm2Bool == False:
+				print 'location 2:'
+				print split_each_location[2]
+				FillTables(2,True,False)
+				
+			if len(split_each_location) > 3 and adm3Bool == False and adm2Bool == True:
+				print 'location 3:'
+				print split_each_location[3]
+				FillTables(3,True,True)
 		
-		
-			'''
-			#looking at specialities column
-			if row[3]:
-				#print row[3]
-			
-			
-				ServiceTypeSplit = re.split(r',', row[3].strip())
-				#print ServiceTypeSplit
-				for x in range(0,len(ServiceTypeSplit)):
-				
-				
-					EffortInstanceServicesObj = EffortInstanceServices()
-					EffortInstanceServicesObj.effort_instance = EffortInstance.objects.get(effort_instance_id=row[0])
-				
-					EffortInstanceServicesObj.effort_service_description = ServiceTypeSplit[x].strip()
-				
-				
-					#classifies EffortInstanceServicesObj.effort_service_description based on a dictionary
-					EffortInstanceServicesObj.effort_service_type = ServiceType.objects.get(service_name=classify_service_types[EffortInstanceServicesObj.effort_service_description])
-				
-					EffortInstanceServicesObj.save()	
-			
-			'''
 
+for row in dataReader:
+
+	FillTables(1,False,False)
+		
+	
 	
 

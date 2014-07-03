@@ -8,6 +8,7 @@ In order to identify duplicates from the combined dataset.
 Step 1:
 
 - Thread 1: Finish tying each dataset to a location. For the datasets that don't have lat-lon, match them to the appropriate admin zone
+	-completed on 8 June by Tom
 
 - Thread 2: Research the best way to find compare and find similar strings. We want something more advanced than a 'like' function
 is there something like a python library that does this? nltk (natural language toolkit)
@@ -20,14 +21,13 @@ maybe times as well?
 
 Other, to-do list:
 
--e-mail Matt remote DB connection
+-finish writing temporary table to display most important information in QGIS
 
--write down source of geospatial shapefiles
+-start looking into WebGIS
 
-I think it is from here:
-http://www.gvsu.edu/haitiwater/links-to-gis-data-for-haiti-9.htm
+-Think about adding description to effort instances table
 
--not everyline is importing from Haiti Aid Map!
+
 			
 			
 

@@ -29,7 +29,6 @@ from adm3_name_dict import classify_adm3_names
 
 print classify_service_types
 
-
 dataReader = csv.reader(open(csv_filepathname), delimiter=',', quotechar='"')
  
 #The objects can't have the same name as the class, and a new object needs to be created each time a row is looped through
@@ -143,7 +142,7 @@ for row in dataReader:
 			
 			
 			ServiceTypeSplit = re.split(r',', row[3].strip())
-			#print ServiceTypeSplit
+			print ServiceTypeSplit
 			for x in range(0,len(ServiceTypeSplit)):
 				
 				
@@ -152,6 +151,7 @@ for row in dataReader:
 				
 				EffortInstanceServicesObj.effort_service_description = ServiceTypeSplit[x].strip()
 				
+				print EffortInstanceServicesObj.effort_service_description
 				
 				#classify EffortInstanceServicesObj.effort_service_description based on a dictionary
 				EffortInstanceServicesObj.effort_service_type = ServiceType.objects.get(service_name=classify_service_types[EffortInstanceServicesObj.effort_service_description])

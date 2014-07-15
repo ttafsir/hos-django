@@ -45,7 +45,7 @@ for row in dataReader:
 		
 		if row[1] == 'Long-term':
 			EffortInstanceObj.date_start = '9999-12-31'
-			print 'hey'
+			#print 'hey'
 		else:
 			#need to parse and re-enter the date format as year-month-day for django to like it'
 			 
@@ -68,20 +68,16 @@ for row in dataReader:
 		
 		EffortInstanceObj.service_provider = ServiceProvider.objects.get(provider_name=row[2])
 		
-
-		loc = Location()
+		#mmex does not have any lat lon coords, so don't add a location point
+		#Also, don't use random lat lon. It will break spatial queries
 		
-		#loc.location_id = row[0]
+		#loc = Location()
 		
-		#loc.latitude = random.randint(0,10)
+		#loc.latitude = str(random.randint(0,10))
 		
-		#loc.longitude = random.randint(0,10)
+		#loc.longitude = str(random.randint(0,10))
 		
-		loc.latitude = str(random.randint(0,10))
-		
-		loc.longitude = str(random.randint(0,10))
-		
-		loc.save()
+		#loc.save()
 		
 		
 		'''

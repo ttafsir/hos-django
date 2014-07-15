@@ -27,6 +27,8 @@ Other, to-do list:
 
 -Think about adding description to effort instances table
 
+-Start thinking about moving to a different branching Git model(dev and production versions)
+
 
 			
 			

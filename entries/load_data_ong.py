@@ -113,7 +113,7 @@ for row in dataReader:
 		
 		
 		for x in ongServiceCols:
-			print "now going through column "+str(x) +" which is "+str(ongHeaders[x])
+			#print "now going through column "+str(x) +" which is "+str(ongHeaders[x])
 			#makes sure column has that service type (1 would be the value)
 			if row[x] == '1':
 			#print row[x]

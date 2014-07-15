@@ -131,7 +131,8 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+#changing to false because got a warning of received a naive datetime while time zone support is active.
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)

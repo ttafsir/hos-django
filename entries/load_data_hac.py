@@ -46,14 +46,15 @@ for row in dataReader:
 		EffortInstanceObj.effort_instance_id = row[0]
 		if row[33] == 'Hopital' or row[33] == 'CSL' or row[33] == 'CAL':
 			#EffortInstanceObj.date_start = '9999-12-31'
-			print 'long-term recorded'
+			#print 'long-term recorded'
 			
 		if row[33] == 'Hopital':
 			EffortInstanceObj.provider_type = 'HL'
-			print 'hospital recorded'
+			#print 'hospital recorded'
+			
 		elif row[33] == 'CSL' or row[33] == 'CAL':
 			EffortInstanceObj.provider_type = 'CL'
-			print 'clinic recorded'
+			#print 'clinic recorded'
 		
 		#ServiceProviderObj = ServiceProvider()
 		
@@ -66,13 +67,13 @@ for row in dataReader:
 		loc = Location()
 
 		
-		print 'About to convert this lat string to float: '+row[15]
+		#print 'About to convert this lat string to float: '+row[15]
 		if(row[15] and row[15] is not '' and row[15] is not ' '):
 			latVal = re.sub(r"\D-", "", row[15]).strip()
 			print "latVal is "+latVal
 			loc.latitude = latVal
 
-		print 'About to convert this long string to float: '+row[16]
+		#print 'About to convert this long string to float: '+row[16]
 		if(row[16] and row[16] is not '' and row[16] is not ' '):
 			longVal = re.sub(r"\D-", "", row[16]).strip()
 			print "longval is "+longVal
@@ -90,7 +91,7 @@ for row in dataReader:
 		
 		
 		for x in hacServiceCols:
-			print "now going through column "+str(x) +" which is "+str(hacHeaders[x])
+			#print "now going through column "+str(x) +" which is "+str(hacHeaders[x])
 			#makes sure column has that service type (1 would be the value)
 			if row[x] == '1':
 			#print row[x]

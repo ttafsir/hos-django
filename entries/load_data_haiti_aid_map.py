@@ -83,15 +83,14 @@ def FillTables(locationOrder,adm2Bool,adm3Bool):
 		
 			EffortInstanceObj.service_provider = ServiceProvider.objects.get(provider_name=row[1])
 		
-
-			loc = Location()
+			#HaitiAipMap does not have any lat lon coords, so don't add a location point
+			#loc = Location()
 		
+			#loc.latitude = str(random.randint(0,10))
 		
-			loc.latitude = str(random.randint(0,10))
+			#loc.longitude = str(random.randint(0,10))
 		
-			loc.longitude = str(random.randint(0,10))
-		
-			loc.save()
+			#loc.save()
 		
 			'''
 			Insert new code here to match admin boundaries: The location_information column is in column 21 (row [20]). This contains a list

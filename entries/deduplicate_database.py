@@ -11,11 +11,10 @@ sys.path.append(your_djangoproject_home)
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'hos2.settings'
  
-from entries.models import ServiceProvider,Location,EffortInstance,ServiceType,EffortInstanceServices, Deduplication_results, Spatial_cluster_results, Similar_strings
+from entries.models import ServiceProvider,Location,EffortInstance,ServiceType,EffortInstanceServices, Spatial_cluster_results, Similar_strings
  
 #insert code to clear Deduplication tables
 Similar_strings.objects.all().delete()
-Deduplication_results.objects.all().delete()
 Spatial_cluster_results.objects.all().delete()
 
 queryset = Location.objects.all()
@@ -91,33 +90,6 @@ for a in queryset2:
 	
 	qs2 = Spatial_cluster_results.objects.filter(point__dwithin=(pnt2,D(m=10)))
 	
-	#start to fill in Deduplication_results table
-	Deduplication_resultsObj = Deduplication_results()
-		
-	Deduplication_resultsObj.date_start = EffortInstance.objects.get(location=a.location_id).date_start
-	
-	Deduplication_resultsObj.date_end = EffortInstance.objects.get(location=a.location_id).date_end
-	
-	Deduplication_resultsObj.effort_instance_id = EffortInstance.objects.get(location=a.location_id).effort_instance_id
-
-	Deduplication_resultsObj.latitude = a.latitude
-	Deduplication_resultsObj.longitude = a.longitude
-	
-	Deduplication_resultsObj.location_id = a.location_id
-
-	provider_num = EffortInstance.objects.get(location=a.location_id).service_provider
-	
-	Deduplication_resultsObj.service_provider = EffortInstance.objects.get(location=a.location_id).service_provider
-
-	#print provider_num.provider
-
-	Deduplication_resultsObj.provider_name = ServiceProvider.objects.get(provider=provider_num.provider).provider_name
-	
-	Deduplication_resultsObj.nearby_points = qs2.count()
-
-	Deduplication_resultsObj.save()
-	
-	
 	print('a location id: ')
 	print(a.location_id)
 	
@@ -150,11 +122,13 @@ for a in queryset2:
 		
 			Similar_stringsObj = Similar_strings()
 		
-			Similar_stringsObj.effort_instance_id = Deduplication_results.objects.get(location=a.location_id)
+			#Similar_stringsObj.effort_instance_id = Deduplication_results.objects.get(location=a.location_id)
+			Similar_stringsObj.effort_instance_id = Spatial_cluster_results.objects.get(location=a.location_id)
 		
 			Similar_stringsObj.related_string_id = EffortInstance.objects.get(location=b.location_id).effort_instance_id
 			Similar_stringsObj.similarity_score = difflib.SequenceMatcher(None, a_point_name, b_point_name).ratio()
 
 			Similar_stringsObj.save()
-		
+			
+			
 			

@@ -14,7 +14,8 @@ class Location(models.Model):
 	longitude = models.CharField(max_length=15, blank=True, null=True) 
 
 	#overriding the default manager with a GeoManager instance. 
-	point = models.PointField(dim=3, geography=True, blank=True, null=True)
+	#Changing geography to equal False, and dim(dimension to 2) This will use a geom type and be compatible with the admin polygons
+	point = models.PointField(dim=2, geography=False, blank=True, null=True)
 	objects = models.GeoManager()
 
 	def save(self):
@@ -201,6 +202,47 @@ class Spatial_cluster_results(models.Model):
 			lString = 'POINT(%s %s)' % (self.longitude.strip(), self.latitude.strip())
 			self.point = fromstr(lString)
 		super(Spatial_cluster_results, self).save()
+		
+#table to store the admin3 point in polygon processing
+class Admin_cluster_results(models.Model):
+	TRAVELING_TEAM = 'TT'
+	CLINIC = 'CL'
+	HOSPITAL = 'HL'
+	PROVIDER_TYPE_OPTIONS = (
+		(TRAVELING_TEAM, 'Traveling Team'),
+		(CLINIC, 'Clinic'),
+		(HOSPITAL, 'Hospital'),
+	)
+	
+	effort_instance_id = models.IntegerField(primary_key=False, blank=True, null=True)
+	service_provider = models.ForeignKey(ServiceProvider, blank=True, null=True)
+	location = models.ForeignKey(Location, blank=True, null=True)
+	adm_3 = models.ForeignKey(haiti_adm3_minustah, blank=True, null=True)
+	provider_type = models.CharField(max_length=2, choices=PROVIDER_TYPE_OPTIONS, default=CLINIC)
+	date_start = models.DateTimeField(auto_now=False, null=True)
+	date_end = models.DateTimeField(auto_now=False, null=True)
+	
+	provider_name = models.CharField(max_length = 500)
+	
+	nearby_points = models.IntegerField(primary_key=False, blank=True, null=True)
+	
+	point_checked = models.NullBooleanField(primary_key=False, blank=True)
+	
+	#location_id = models.AutoField(primary_key=True,db_column='location_id')
+	#latitude and longitude need to be changed to string types for GeoDjango
+	latitude = models.CharField(max_length=15, blank=True, null=True)
+	longitude = models.CharField(max_length=15, blank=True, null=True) 
+
+	#overriding the default manager with a GeoManager instance. 
+	point = models.PointField(dim=3, geography=True, blank=True, null=True)
+	objects = models.GeoManager()
+	
+	
+	def save(self):
+		if self.latitude != None and len(self.latitude) > 0:
+			lString = 'POINT(%s %s)' % (self.longitude.strip(), self.latitude.strip())
+			self.point = fromstr(lString)
+		super(Admin_cluster_results, self).save()
 		
 class Similar_strings(models.Model):
 	Similar_strings_id = models.AutoField(primary_key=True)

@@ -7,7 +7,7 @@ This project consists of a GeoDjango implementation modeling health facilities i
 and the services they provide.
 
 The file structure shown follows the typical Django file structure. Keep in mind GeoDjango
-functionality is enabled. Also this project connects to a PostGIS database.
+functionality is enabled. Also, this project connects to a PostGIS database.
 
 Description of folders:
 
@@ -23,7 +23,7 @@ hos2 folder:
 that other databases can be connected to by uncommenting the appropriate code block. This 
 makes it easy to switch from a local database to a shared database
 
-entries folder: The entries folder contains a data folder
+- entries folder: The entries folder contains a data folder
 that contains the CSVs that will be imported, all of the relevant python scripts to load data into PostGIS, 
 and the templates folder that contains the templates for the views
 

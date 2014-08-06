@@ -1,0 +1,465 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1265\cocoasubrtf210
+{\fonttbl\f0\froman\fcharset0 TimesNewRomanPSMT;\f1\fnil\fcharset0 Menlo-Regular;\f2\fswiss\fcharset0 ArialMT;
+\f3\fnil\fcharset0 Consolas;\f4\froman\fcharset0 Times-Roman;\f5\fnil\fcharset0 Menlo-Bold;
+\f6\fnil\fcharset0 Menlo-Italic;\f7\fmodern\fcharset0 Courier;\f8\fnil\fcharset0 SourceSansPro-Regular;
+\f9\fmodern\fcharset0 CourierNewPSMT;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue255;\red180\green36\blue25;\red47\green180\blue29;
+\red128\green0\blue0;\red34\green34\blue34;\red51\green51\blue51;\red26\green26\blue26;\red64\green11\blue217;
+\red60\green95\blue255;}
+{\info
+{\author Thomas Gertin}}\vieww20260\viewh16920\viewkind1\viewscale140
+\deftab720
+\pard\pardeftab720\ri0
+
+\f0\fs24 \cf0 HOS Amazon AWS set up notes\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
+
+\f1 \cf0 How to log into your instance. First you need to change the permissions on your private key:\
+\
+Tom-Gertins-MacBook-Pro:Hope_One_Source thomasgertin1$ chmod 400 hos.pem\
+\
+Then you can log into your instance:\
+\
+\pard\pardeftab720\ri0
+\cf0 Tom-Gertins-MacBook-Pro:Hope_One_Source thomasgertin1$ ssh -i hos.pem {\field{\*\fldinst{HYPERLINK "mailto:ec2-user@ec2-54-204-61-176.compute-1.amazonaws.com"}}{\fldrslt \cf2 \ul \ulc2 ec2-user@ec2-54-204-61-176.compute-1.amazonaws.com}}\
+\
+useful sites:\
+\
+\pard\pardeftab720\ri0
+{\field{\*\fldinst{HYPERLINK "http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/managing-users.html"}}{\fldrslt 
+\f0 \cf2 \ul \ulc2 http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/managing-users.html}}
+\f0 \
+\
+\pard\pardeftab720\ri0
+{\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/quest"}}{\fldrslt \cf2 \ul \ulc2 http://stackoverflow.com/questions/8339912/allowing-users-to-ssh-to-an-ec2-ubuntu-instance}}\
+\
+How to change Password Authentication (later decided not to enable and go with keys instead):\
+\
+\pard\pardeftab720\ri0
+
+\f1\fs22 \cf0 [ec2-user@domU-12-31-39-14-08-48 ~]$ cd /etc\
+\
+\pard\pardeftab720\ri0
+
+\f2\fs20 \cf0 I edited /etc/ssh/sshd_config and set\'a0
+\f3 PasswordAuthentication
+\f2 \'a0to\'a0
+\f3 yes
+\f2 .\
+\
+\pard\pardeftab720\ri0
+
+\f1\fs22 \cf0 ubuntu@domU-12-31-39-07-8C-8C:/etc/ssh$ sudo vim sshd_config
+\f4\fs20 \
+
+\f1\fs22 \
+\pard\pardeftab720\ri0
+
+\f0\fs24 \cf0 How to add a user, then log in as one:\
+\pard\pardeftab720\ri0
+
+\f1\fs22 \cf0 \
+[ec2-user@domU-12-31-39-14-08-48 init.d]$ useradd tgertin\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
+\cf0 [ec2-user@domU-12-31-39-14-08-48 init.d]$ sudo passwd tgertin\
+Changing password for user tgertin.\
+\pard\pardeftab720\ri0
+\cf0 New password:\
+\
+[ec2-user@domU-12-31-39-14-08-48 ~]$ sudo /etc/init.d/sshd reload\
+\
+tom-gertins-mbp:Hope_One_Source thomasgertin1$ ssh {\field{\*\fldinst{HYPERLINK "mailto:tgertin@ec2-54-204-61-176.compute-1.amazonaws.com"}}{\fldrslt \cf2 \ul \ulc2 tgertin@ec2-54-204-61-176.compute-1.amazonaws.com}}\
+\
+I created Postgresql RDS on Amazon AWS!\
+\
+PostGIS Amazon RDS settings:\
+\
+DB name: hos3\
+\
+user: hosadmin\
+\
+password: H0$1password\
+\
+ex. of code needed in settings.py:\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
+
+\fs26 \cf3 'ENGINE'\cf0 : \cf3 'django.contrib.gis.db.backends.postgis'\cf0 ,\
+        \cf3 'USER'\cf0 : \cf3 'hosadmin'\cf0 ,\
+                \cf3 'NAME'\cf0 : \cf3 'hos3'\cf0 ,\
+                \cf3 'PASSWORD'\cf0 : \cf3 'H0$1password'\cf0 ,\
+                \cf3 'HOST'\cf0 : \cf3 'awspostgresql.c00fcyyjglve.us-east-1.rds.amazonaws.com'\cf0 ,\
+\pard\pardeftab720\ri0
+\cf0                 \cf3 'PORT'\cf0 : \cf3 '5432'\cf0 ,
+\fs22 \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
+\cf0 -in security groups I needed to enable the IP addresses of my local machine and my AWS instance to connect to the RDB DB\
+\
+-I also needed to enable the PostGIS Extension. I did this through PGAdmin3 right-clicking on the extensions of hos3 DB and adding postgis\
+\pard\pardeftab720\ri0
+\cf0 \
+I am using Packer to automatically create an Amazon Machine Image (AMI) that has all the dependencies needed by hos-django!\
+\pard\pardeftab720\ri0
+{\field{\*\fldinst{HYPERLINK "http://pretengineer.com/post/packer-vagrant-infra/"}}{\fldrslt 
+\f0\fs24 \cf2 \ul \ulc2 http://pretengineer.com/post/packer-vagrant-infra/}}
+\f0\fs24 \
+\
+\pard\pardeftab720\ri0
+{\field{\*\fldinst{HYPERLINK "http://www.packer.io/intro/"}}{\fldrslt \cf2 \ul \ulc2 http://www.packer.io/intro/}}\
+\
+Going through packer intro:\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
+
+\f1\fs22 \cf0 tom-gertins-mbp:~ thomasgertin1$ packer build -var 'aws_access_key=[ENTER ACCESS KEY HERE] -var 'aws_secret_key=[ENTER PRIVATE KEY HERE]\'92 /Users/thomasgertin1/hos-django/packer/example.json\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
+
+\f5\b \cf4 amazon-ebs output will be in this color.
+\f1\b0 \cf0 \
+\
+
+\f5\b \cf4 ==> amazon-ebs: Creating temporary keypair: packer 539e1169-d35b-12a9-9d0e-452b6b84c29a
+\f1\b0 \cf0 \
+
+\f5\b \cf4 ==> amazon-ebs: Creating temporary security group for this instance...
+\f1\b0 \cf0 \
+
+\f5\b \cf4 ==> amazon-ebs: Authorizing SSH access on the temporary security group...
+\f1\b0 \cf0 \
+
+\f5\b \cf4 ==> amazon-ebs: Launching a source AWS instance...
+\f1\b0 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
+\cf4     amazon-ebs: Instance ID: i-497fb062\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
+
+\f5\b \cf4 ==> amazon-ebs: Waiting for instance (i-497fb062) to become ready...
+\f1\b0 \cf0 \
+
+\f5\b \cf4 ==> amazon-ebs: Waiting for SSH to become available...
+\f1\b0 \cf0 \
+
+\f5\b \cf4 ==> amazon-ebs: Connected to SSH!
+\f1\b0 \cf0 \
+
+\f5\b \cf4 ==> amazon-ebs: Stopping the source instance...
+\f1\b0 \cf0 \
+
+\f5\b \cf4 ==> amazon-ebs: Waiting for the instance to stop...
+\f1\b0 \cf0 \
+
+\f5\b \cf4 ==> amazon-ebs: Creating the AMI: packer-example 1402868073
+\f1\b0 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
+\cf4     amazon-ebs: AMI: ami-70867918\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
+
+\f5\b \cf4 ==> amazon-ebs: Waiting for AMI to become ready...
+\f1\b0 \cf0 \
+
+\f5\b \cf4 ==> amazon-ebs: Terminating the source AWS instance...
+\f1\b0 \cf0 \
+
+\f5\b \cf4 ==> amazon-ebs: Deleting temporary security group...
+\f1\b0 \cf0 \
+
+\f5\b \cf4 ==> amazon-ebs: Deleting temporary keypair...
+\f1\b0 \cf0 \
+
+\f5\b \cf4 Build 'amazon-ebs' finished.
+\f1\b0 \cf0 \
+\
+==> Builds finished. The artifacts of successful builds are:\
+--> amazon-ebs: AMIs were created:\
+\
+\pard\pardeftab720\ri0
+\cf0 us-east-1: ami-70867918\
+\
+Lessons learned while installing dependencies on server and building packer template:\
+\
+-I originally use the Amazon Linux image (CentOS based). It started giving me more trouble. I changed it to Ubuntu instead.\
+\
+\pard\pardeftab720\ri0
+
+\fs26 \cf0 ({\field{\*\fldinst{HYPERLINK "http://joelmccune.com/2014/01/06/installing-geodjango-on-ubuntu-12-04/"}}{\fldrslt \cf2 \ul \ulc2 http://joelmccune.com/2014/01/06/installing-geodjango-on-ubuntu-12-04/}})
+\fs22 \
+\
+\
+\
+\
+
+\fs26 \
+\
+ubuntu@domU-12-31-39-16-1C-8A:~$ sudo add-apt-repository ppa:ubuntugis/ppa\
+\
+ubuntu@domU-12-31-39-16-1C-8A:~$ sudo apt-get install python-gdal python-mapnik2 python-pyproj postgresql-9.3 postgis pgadmin3\
+\
+\pard\pardeftab720\ri0
+
+\fs30 \cf0 ubuntu@domU-12-31-39-07-6A-D7:~$ sudo apt-get install python-dev\
+ubuntu@domU-12-31-39-07-6A-D7:~$ sudo apt-get install libpq-dev\
+\
+ubuntu@domU-12-31-39-07-6A-D7:~$ sudo apt-get install git\
+\pard\pardeftab720\ri0
+
+\fs26 \cf0 \
+\pard\pardeftab720\ri0
+
+\fs30 \cf0 ubuntu@domU-12-31-39-07-6A-D7:~$ sudo apt-get install python-virtualenv\
+\pard\pardeftab720\ri0
+\cf0 \strike \strikec0 \
+*\strike0\striked0 can not use source in Ubuntu ({\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/questions/13702425/source-command-not-found-in-sh-shell"}}{\fldrslt \cf2 \ul \ulc2 http://stackoverflow.com/questions/13702425/source-command-not-found-in-sh-shell}}) use \'91.\'92 instead\
+\
+ubuntu@domU-12-31-39-07-6A-D7:~$
+\f0\fs24  
+\f1\fs30 mkvirtualenv py27env\
+\
+ubuntu@domU-12-31-39-07-6A-D7:~$ virtualenv -p /usr/bin/python2.7 py27env\
+\
+ubuntu@domU-12-31-39-07-6A-D7:~$ . py27env/bin/activate\
+\
+(hos-django)ubuntu@domU-12-31-39-07-6A-D7:~$ pip install django\
+\
+(hos-django)ubuntu@domU-12-31-39-07-6A-D7:~$ pip install psycopg2\
+\
+(note: in the AWS dashboard, make sure the instance ip address is part of the DB security group!)\
+\
+Example of packer command to run packer template:\
+\
+\pard\pardeftab720\ri0
+
+\fs26 \cf0 packer build -var 'aws_access_key=<insert key>' -var 'aws_secret_key=<insert key>' /Users/thomasgertin1/hos-django/packer/hos_ubuntu.json
+\fs30 \
+\
+I need to create keys for everybody.\
+\pard\pardeftab720\ri0
+
+\f6\i\fs26 \cf0 \
+\pard\pardeftab720\ri0
+
+\f1\i0 \cf0 I want to use mkpasswd command:\
+\pard\pardeftab720\ri0
+{\field{\*\fldinst{HYPERLINK "http://www.linuxcommand.org/man_pages/mkpasswd1.html"}}{\fldrslt \cf2 \ul \ulc2 http://www.linuxcommand.org/man_pages/mkpasswd1.html}}\
+\
+so I need to install whois\
+\
+\pard\pardeftab720\ri0
+
+\fs22 \cf0 ubuntu@domU-12-31-39-07-6A-D7:~$ sudo apt-get install whois\
+\
+Then create a newuser (in one line) like (http://nixcraft.com/showthread.php/15246-Ubuntu-Linux-set-passwd-from-stdin-shell-script):\
+\
+ubuntu@domU-12-31-39-07-6A-D7:~$ sudo useradd prometeo -p `mkpasswd someword`
+\fs26 \
+\pard\pardeftab720\ri0
+
+\f3\fs20 \cf0 \
+How to enable password authorization:\
+\pard\tx916\tx1832\tx2748\tx3664\tx4580\tx5496\tx6412\tx7328\tx8244\tx9160\tx10076\tx10992\tx11908\tx12824\tx13740\tx14656\pardeftab720\ri0\sl267
+\cf0 sudo sed -i \cf5 's/PermitEmptyPasswords no/PermitEmptyPasswords yes/'\cf0  /etc/ssh/sshd_config\
+\pard\pardeftab720\ri0
+\cf0 \
+from ({\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/questions/23369917/cleaner-way-to-write-multiple-sed-commands"}}{\fldrslt \cf2 \ul \ulc2 http://stackoverflow.com/questions/23369917/cleaner-way-to-write-multiple-sed-commands}})\
+\
+followed by:\
+\
+\pard\tx916\tx1832\tx2748\tx3664\tx4580\tx5496\tx6412\tx7328\tx8244\tx9160\tx10076\tx10992\tx11908\tx12824\tx13740\tx14656\pardeftab720\ri0\sl218
+
+\fs22 \cf6 sudo service ssh restart\cf7 \
+\pard\pardeftab720\ri0
+
+\fs20 \cf0 \
+({\field{\*\fldinst{HYPERLINK "http://askubuntu.com/questions/435615/disable-password-authentication-in-ssh"}}{\fldrslt \cf2 \ul \ulc2 http://askubuntu.com/questions/435615/disable-password-authentication-in-ssh}})\
+\
+\
+\pard\pardeftab720\ri0
+
+\f0\fs24 \cf0 Consider potentially adding user keys later (not now though):\
+\
+-create a new user (w with root privileges)  {\field{\*\fldinst{HYPERLINK "https://help.ubuntu.com/community/RootSudo"}}{\fldrslt \cf2 \ul \ulc2 https://help.ubuntu.com/community/RootSudo}}\
+\pard\tx916\tx1832\tx2748\tx3664\tx4580\tx5496\tx6412\tx7328\tx8244\tx9160\tx10076\tx10992\tx11908\tx12824\tx13740\tx14656\pardeftab720\ri0\sl240\sa120
+
+\f7\fs19 \cf7 sudo adduser <username> sudo\
+\pard\pardeftab720\ri0
+
+\f0\fs24 \cf0 \
+\pard\pardeftab720\ri0
+{\field{\*\fldinst{HYPERLINK "http://askubuntu.com/questions/168280/how-do-i-grant-sudo-privile"}}{\fldrslt 
+\f8\fs25 \cf2 \ul \ulc2 http://askubuntu.com/questions/168280/how-do-i-grant-sudo-privileges-to-an-existing-user}}
+\f8\fs25 \cf8 \
+\
+\pard\pardeftab720\ri0
+
+\f1\fs22 \cf0 ubuntu@domU-12-31-39-0A-38-AA:/home/jkeesh$ sudo usermod -a -G sudo jkeesh
+\f8\fs25 \cf8 \
+\
+make it so that the user doesn\'92t need to enter their password after using the sudo command.
+\f4\fs20 \cf0 \
+\pard\pardeftab720\ri0
+{\field{\*\fldinst{HYPERLINK "http://brianflove.com/2013/06/18/add-new-sudo-user-to-ec2-ubuntu/"}}{\fldrslt 
+\f0\fs24 \cf2 \ul \ulc2 http://brianflove.com/2013/06/18/add-new-sudo-user-to-ec2-ubuntu/}}
+\f0\fs24 \
+\
+\
+-Try these directions on how to add keypair ({\field{\*\fldinst{HYPERLINK "http://thekeesh.c"}}{\fldrslt \cf2 \ul \ulc2 http://thekeesh.com/2011/05/setting-up-user-accounts-password-authentication-and-ssh-keys-on-a-new-ec2-instance/}})\
+\
+-and these on how to generate keypair(\cf2 \ul \ulc2 https://help.github.com/articles/generating-ssh-keys\cf0 \ulnone )\
+\
+How to copy a public key to Ubuntu server ({\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/questions/11388014/using-scp-to-copy-a-file-to-amazon-e"}}{\fldrslt \cf2 \ul \ulc2 http://stackoverflow.com/questions/11388014/using-scp-to-copy-a-file-to-amazon-ec2-instance}})\
+\
+Ex.\
+\
+\pard\tx916\tx1832\tx2748\tx3664\tx4580\tx5496\tx6412\tx7328\tx8244\tx9160\tx10076\tx10992\tx11908\tx12824\tx13740\tx14656\pardeftab720\ri0\sl267
+
+\f3\fs20 \cf0 scp -i /path/to/your/.pemkey -r /copy/from/path user@server:/copy/to/path\
+\pard\pardeftab720\ri0
+
+\f0\fs24 \cf0 \
+\
+\pard\pardeftab720\ri0
+
+\f1\fs22 \cf0 Tom-Gertins-MacBook-Pro:Hope_One_Source thomasgertin1$ scp -i hos.pem -r tgertin.pub {\field{\*\fldinst{HYPERLINK "mailto:ubuntu@ec2-54-91-26-90.compute-1.amazonaws.com:~/"}}{\fldrslt \cf2 \ul \ulc2 ubuntu@ec2-54-91-26-90.compute-1.amazonaws.com:~/}}\
+\
+\pard\pardeftab720\ri0
+
+\f0\fs24 \cf0 ({\field{\*\fldinst{HYPERLINK "https://aws.amazon.com/articles/"}}{\fldrslt \cf2 \ul \ulc2 https://aws.amazon.com/articles/1233/}})\
+\
+\
+\pard\tx916\tx1832\tx2748\tx3664\tx4580\tx5496\tx6412\tx7328\tx8244\tx9160\tx10076\tx10992\tx11908\tx12824\tx13740\tx14656\pardeftab720\ri0\sl180\sa240
+
+\f9 \cf0 # cd ~user \
+# mkdir .ssh \
+# chmod 700 .ssh \
+# chown user:user .ssh \
+# cat /tmp/user.pub >> .ssh/authorized_keys \
+# chmod 600 .ssh/authorized_keys \
+# chown user:user .ssh/authorized_keys\
+\pard\pardeftab720\ri0
+
+\f0 \cf0 \
+Finally works:\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
+
+\f1\fs22 \cf0 Tom-Gertins-MacBook-Pro:Hope_One_Source thomasgertin1$ ssh -i testuser3 {\field{\*\fldinst{HYPERLINK "mailto:testuser3@ec2-54-91-26-90.compute-1.amazonaws.com"}}{\fldrslt \cf2 \ul \ulc2 testuser3@ec2-54-91-26-90.compute-1.amazonaws.com}}\
+\
+Welcome to Ubuntu 14.04 LTS (GNU/Linux 3.13.0-24-generic x86_64)\
+\
+ * Documentation:  https://help.ubuntu.com/\
+\
+  System information as of Tue Jul  1 02:24:55 UTC 2014\
+\
+  System load:  0.0               Processes:           70\
+  Usage of /:   17.0% of 7.75GB   Users logged in:     0\
+  Memory usage: 9%                IP address for eth0: 10.211.59.88\
+  Swap usage:   0%\
+\
+  Graph this data and manage this system at:\
+    https://landscape.canonical.com/\
+\
+  Get cloud support with Ubuntu Advantage Cloud Guest:\
+    http://www.ubuntu.com/business/services/cloud\
+\
+0 packages can be updated.\
+0 updates are security updates.\
+\
+\
+Last login: Tue Jul  1 02:24:55 2014 from c-68-55-23-202.hsd1.dc.comcast.net\
+\pard\pardeftab720\ri0
+\cf0 $\
+\
+\pard\pardeftab720\ri0
+
+\f0\fs24 \cf0 Then I have to type in bash to get to the bash\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
+
+\f1\fs22 \cf0 \
+$ bash\
+\pard\pardeftab720\ri0
+\cf0 testuser3@domU-12-31-39-0A-38-AA:~/.ssh$\
+\pard\pardeftab720\ri0
+
+\f0\fs24 \cf0 \
+\
+What I did to create the guest user keys:\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
+
+\f1\fs22 \cf0 Tom-Gertins-MacBook-Pro:Hope_One_Source thomasgertin1$ ssh-keygen -f guest\
+Generating public/private rsa key pair.\
+Enter passphrase (empty for no passphrase): \
+Enter same passphrase again: \
+Your identification has been saved in guest.\
+Your public key has been saved in guest.pub.\
+The key fingerprint is:\
+11:9d:e9:d4:1a:6d:05:0c:88:c6:d6:62:b5:65:82:92 thomasgertin1@Tom-Gertins-MacBook-Pro.local\
+The key's randomart image is:\
++--[ RSA 2048]----+\
+|     o =+o+B.o.  |\
+|    E O o** =    |\
+|     = .oo +     |\
+|         .o      |\
+|        S        |\
+|                 |\
+|                 |\
+|                 |\
+|                 |\
++-----------------+\
+Tom-Gertins-MacBook-Pro:Hope_One_Source thomasgertin1$ scp -i hos.pem -r guest.pub ubuntu@ec2-54-224-178-141.compute-1.amazonaws.com:~/\
+guest.pub                                                            100%  425     0.4KB/s   00:00    \
+Tom-Gertins-MacBook-Pro:Hope_One_Source thomasgertin1$ ssh -i hos.pem ubuntu@ec2-54-224-178-141.compute-1.amazonaws.com\
+\pard\pardeftab720\ri0
+
+\f0\fs24 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
+
+\f1\fs22 \cf0 ubuntu@ip-10-139-23-160:/home$ cd ~/\
+ubuntu@ip-10-139-23-160:~$ ls\
+guest.pub  
+\f5\b \cf9 py27env
+\f1\b0 \cf0 \
+\pard\pardeftab720\ri0
+\cf0 ubuntu@ip-10-139-23-160:~$ sudo mv guest.pub /home/guest\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
+\cf0 ubuntu@ip-10-139-23-160:~$ cd /home/guest\
+ubuntu@ip-10-139-23-160:/home/guest$ ls\
+\pard\pardeftab720\ri0
+\cf0 guest.pub\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
+\cf0 ubuntu@ip-10-139-23-160:/home/guest$ su guest\
+Password: \
+guest@ip-10-139-23-160:~$ ls\
+guest.pub\
+guest@ip-10-139-23-160:~$ cat guest.pub >> .ssh/authorized_keys\
+\pard\pardeftab720\ri0
+\cf0 guest@ip-10-139-23-160:~$ exit\
+\
+Tom-Gertins-MacBook-Pro:Hope_One_Source thomasgertin1$ ssh -i guest {\field{\*\fldinst{HYPERLINK "mailto:guest@ec2-54-224-178-141.compute-1.amazonaws.com"}}{\fldrslt \cf2 \ul \ulc2 guest@ec2-54-224-178-141.compute-1.amazonaws.com}}\
+\
+\pard\pardeftab720\ri0
+
+\f0\fs24 \cf0 \
+\pard\pardeftab720\ri0
+
+\f1\fs22 \cf0 All the necessary components should be installed. You should then need to do a git clone for the hos-django repo:\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
+\cf0 [ec2-user@domU-12-31-39-14-08-48 ~]$ git clone https://github.com/d3netxer/hos-django\
+Cloning into 'hos-django'...\
+Username for 'https://github.com': d3netxer\
+Password for 'https://d3netxer@github.com': \
+remote: Counting objects: 253, done.\
+remote: Compressing objects: 100% (138/138), done.\
+remote: Total 253 (delta 112), reused 253 (delta 112)\
+Receiving objects: 100% (253/253), 12.50 MiB | 8.55 MiB/s, done.\
+Resolving deltas: 100% (112/112), done.\
+[ec2-user@domU-12-31-39-14-08-48 ~]$ cd hos-django\
+[ec2-user@domU-12-31-39-14-08-48 hos-django]$ ls\
+\pard\pardeftab720\ri0
+\cf10 entries\cf0   \cf10 haiti_geospatial_data\cf0   \cf10 hos2\cf0   manage.py  \cf10 notes\cf0   README.md}

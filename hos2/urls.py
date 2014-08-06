@@ -9,6 +9,6 @@ urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'hos2.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
-
+    url(r'^entries/', include('entries.urls')),
     url(r'^admin/', include(admin.site.urls)),
 )

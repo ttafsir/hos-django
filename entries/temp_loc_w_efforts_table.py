@@ -24,6 +24,8 @@ for l in Location.objects.all():
     
     Location_w_effortsObj.date_start = EffortInstance.objects.get(location=l.location_id).date_start
     
+    Location_w_effortsObj.date_end = EffortInstance.objects.get(location=l.location_id).date_end
+    
     Location_w_effortsObj.latitude = l.latitude
     Location_w_effortsObj.longitude = l.longitude
     

@@ -1,0 +1,9 @@
+{% if latest_EffortInstance_list %}
+    <ul>
+    {% for p in latest_EffortInstance_list %}
+        <li><a href="/entries/{{ p.effort_instance_id }}/">{{ p.provider_type }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No Effort Instances are available.</p>
+{% endif %}

@@ -84,6 +84,8 @@ def FillTables(locationOrder,adm2Bool,adm3Bool):
 			EffortInstanceObj.service_provider = ServiceProvider.objects.get(provider_name=row[1])
 		
 			#HaitiAipMap does not have any lat lon coords, so don't add a location point
+			#Also, don't use random lat lon. It will break spatial queries
+			
 			#loc = Location()
 		
 			#loc.latitude = str(random.randint(0,10))

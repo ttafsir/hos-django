@@ -19,6 +19,21 @@ Step 2:
 maybe times as well?
 
 
+Next Goals:
+
+- Documentation
+- Testing
+- manually get rid of duplicates (procedure for database versions)
+- Integration with main Drupal site
+- create dev and production github repos and AWS instances (filename names?)
+
+Sidegoal:
+
+- make web-map
+- getting people to connect to AWS instances
+
+
+
 Other, to-do list:
 
 -finish writing temporary table to display most important information in QGIS
@@ -28,6 +43,8 @@ Other, to-do list:
 -Think about adding description to effort instances table
 
 -Start thinking about moving to a different branching Git model(dev and production versions)
+
+-update Database diagram
 
 
 			

@@ -46,7 +46,7 @@ for row in dataReader:
 		EffortInstanceObj.effort_instance_id = row[0]
 		if row[33] == 'Hopital' or row[33] == 'CSL' or row[33] == 'CAL':
 			#EffortInstanceObj.date_start = '9999-12-31'
-			#print 'long-term recorded'
+			print 'long-term recorded'
 			
 		if row[33] == 'Hopital':
 			EffortInstanceObj.provider_type = 'HL'
@@ -65,7 +65,6 @@ for row in dataReader:
 		EffortInstanceObj.service_provider = ServiceProvider.objects.get(provider_name=row[1])
 		
 		loc = Location()
-
 		
 		#print 'About to convert this lat string to float: '+row[15]
 		if(row[15] and row[15] is not '' and row[15] is not ' '):

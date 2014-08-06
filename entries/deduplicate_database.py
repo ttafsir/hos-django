@@ -130,7 +130,6 @@ def SimilarityQuery (inputquery, querytype):
 					Similar_stringsObj.similarity_score = difflib.SequenceMatcher(None, a_point_name, b_point_name).ratio()
 
 					Similar_stringsObj.save()
-s
 
 queryset = Location.objects.all()
 
@@ -236,7 +235,6 @@ for c in myset:
 		SimilarityQuery(point_qs, 'admin_query')
 		
 			
-
 SimilarityQuery(queryset2, 'proximity_query')
 			
 			

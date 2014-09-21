@@ -97,16 +97,25 @@ def SimilarityQuery (inputquery, querytype):
 
 					print("difflib ratio: ")
 					print(difflib.SequenceMatcher(None, a_point_name, b_point_name).ratio())
+					
+					if difflib.SequenceMatcher(None, a_point_name, b_point_name).ratio() > .5:
+					
+						#The following three lines are supposed to only display IDs that come from different datasets
+						id_one = Spatial_cluster_results.objects.get(location=a.location_id).effort_instance_id
+						id_two = EffortInstance.objects.get(location=b.location_id).effort_instance_id
+						if not str(id_one)[0] == str(id_two)[0]:
 
-					Similar_stringsObj = Similar_strings()
+							Similar_stringsObj = Similar_strings()
 
-					if querytype == 'proximity_query':
-						Similar_stringsObj.effort_instance_id = Spatial_cluster_results.objects.get(location=a.location_id)
+							#if querytype == 'proximity_query':
+							#Similar_stringsObj.effort_instance_id = Spatial_cluster_results.objects.get(location=a.location_id)
+							Similar_stringsObj.string_id = Spatial_cluster_results.objects.get(location=a.location_id).effort_instance_id
 
-					Similar_stringsObj.related_string_id = EffortInstance.objects.get(location=b.location_id).effort_instance_id
-					Similar_stringsObj.similarity_score = difflib.SequenceMatcher(None, a_point_name, b_point_name).ratio()
-
-					Similar_stringsObj.save()
+							Similar_stringsObj.related_string_id = EffortInstance.objects.get(location=b.location_id).effort_instance_id
+							Similar_stringsObj.similarity_score = difflib.SequenceMatcher(None, a_point_name, b_point_name).ratio()
+							Similar_stringsObj.provider_name = a_point_name
+							Similar_stringsObj.related_provider_name = b_point_name
+							Similar_stringsObj.save()
 			
 			if querytype == 'admin_query':
 				if Admin_cluster_results.objects.get(location=b.location_id).point_checked == False:
@@ -120,16 +129,25 @@ def SimilarityQuery (inputquery, querytype):
 
 					print("difflib ratio: ")
 					print(difflib.SequenceMatcher(None, a_point_name, b_point_name).ratio())
+					
+					if difflib.SequenceMatcher(None, a_point_name, b_point_name).ratio() > .1:
 
-					Similar_stringsObj = Similar_strings()
+						#The following three lines are supposed to only display IDs that come from different datasets
+						id_one = Spatial_cluster_results.objects.get(location=a.location_id).effort_instance_id
+						id_two = EffortInstance.objects.get(location=b.location_id).effort_instance_id
+						if not str(id_one)[0] == str(id_two)[0]:
 
-					if querytype == 'proximity_query':
-						Similar_stringsObj.effort_instance_id = Spatial_cluster_results.objects.get(location=a.location_id)
+							Similar_stringsObj = Similar_strings()
 
-					Similar_stringsObj.related_string_id = EffortInstance.objects.get(location=b.location_id).effort_instance_id
-					Similar_stringsObj.similarity_score = difflib.SequenceMatcher(None, a_point_name, b_point_name).ratio()
+							#if querytype == 'proximity_query':
+							#Similar_stringsObj.effort_instance_id = Spatial_cluster_results.objects.get(location=a.location_id)
+							Similar_stringsObj.string_id = Spatial_cluster_results.objects.get(location=a.location_id).effort_instance_id
 
-					Similar_stringsObj.save()
+							Similar_stringsObj.related_string_id = EffortInstance.objects.get(location=b.location_id).effort_instance_id
+							Similar_stringsObj.similarity_score = difflib.SequenceMatcher(None, a_point_name, b_point_name).ratio()
+							Similar_stringsObj.provider_name = a_point_name
+							Similar_stringsObj.related_provider_name = b_point_name
+							Similar_stringsObj.save()
 
 queryset = Location.objects.all()
 
@@ -153,7 +171,7 @@ for p in queryset:
 	#qs = Location.objects.filter(point__dwithin=(pnt,D(m=10)))
 	
 	#alternative query that does the same thing
-	qs = Location.objects.filter(point__distance_lt=(pnt,D(m=10)))
+	qs = Location.objects.filter(point__distance_lt=(pnt,D(km=20)))
 	
 	#print(qs.count())
 	
@@ -199,7 +217,6 @@ print(total_point_sum)
 queryset2 = Spatial_cluster_results.objects.all()
 
 
-
 #finding all of the admin3 boundaries
 EffortInstance_queryset = EffortInstance.objects.all()
 
@@ -230,9 +247,9 @@ for c in myset:
 	#print(point_qs)
 	print(len(point_qs))
 	
-	if len(point_qs) > 1:
-	
-		SimilarityQuery(point_qs, 'admin_query')
+	#initially turning off the admin SimilarityQuery
+	#if len(point_qs) > 1:
+		#SimilarityQuery(point_qs, 'admin_query')
 		
 			
 SimilarityQuery(queryset2, 'proximity_query')

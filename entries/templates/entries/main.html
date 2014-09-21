@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Haiti Health Facilities{% endblock title %}
+{% block page_title %}Haiti Health Facilities{% endblock page_title %}
+
+{% block extra_css %}
+ <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+ <!--[if lte IE 8]>
+     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.css" />
+ <![endif]-->
+ <style>
+    #map { 
+        height: 400px;
+        width: 6b00px;
+     }
+ </style>
+{% endblock extra_css %}
+
+{% block content %}
+<div id="location"></div>
+<div id="facilities">Finding facilities...</div>
+<div id="map"></div>
+
+{% endblock content %}
+
+{% block extra_js %}
+
+<script>var url = "{% url 'entries.views.find_facilities' %}";</script>
+
+<script src="{% static 'entries/js/jquery.js' %}" ></script>
+<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+
+<script src="{% static 'entries/js/map.js' %}" ></script>
+{% endblock extra_js %}

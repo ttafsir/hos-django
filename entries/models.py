@@ -8,20 +8,20 @@ class ServiceProvider(models.Model):
 	provider_name = models.CharField(max_length = 500)
 
 class Location(models.Model):
-	location_id = models.AutoField(primary_key=True,db_column='location_id')
+	#location_id = models.AutoField(primary_key=True,db_column='location_id')
 	#latitude and longitude need to be changed to string types for GeoDjango
 	latitude = models.CharField(max_length=15, blank=True, null=True)
 	longitude = models.CharField(max_length=15, blank=True, null=True) 
 
 	#overriding the default manager with a GeoManager instance. 
 	#Changing geography to equal False, and dim(dimension to 2) This will use a geom type and be compatible with the admin polygons
-	point = models.PointField(dim=2, geography=False, blank=True, null=True)
+	geom = models.PointField(dim=2, geography=False, blank=True, null=True)
 	objects = models.GeoManager()
 
 	def save(self):
 		if self.latitude != None and len(self.latitude) > 0:
 			lString = 'POINT(%s %s)' % (self.longitude.strip(), self.latitude.strip())
-			self.point = fromstr(lString)
+			self.geom = fromstr(lString)
 		super(Location, self).save()
 		
 class haiti_adm1_minustah(models.Model):
@@ -246,6 +246,9 @@ class Admin_cluster_results(models.Model):
 		
 class Similar_strings(models.Model):
 	Similar_strings_id = models.AutoField(primary_key=True)
-	effort_instance_id = models.ForeignKey(Spatial_cluster_results, blank=True, null=True)
+	#effort_instance_id = models.ForeignKey(Spatial_cluster_results, blank=True, null=True)
+	string_id = models.IntegerField(primary_key=False, blank=True, null=True)
+	provider_name = models.CharField(max_length = 500)
 	related_string_id = models.IntegerField(primary_key=False, blank=True, null=True)
+	related_provider_name = models.CharField(max_length = 500)
 	similarity_score = models.DecimalField(max_digits=15, decimal_places=13)

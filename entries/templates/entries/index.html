@@ -1,7 +1,10 @@
+{% load staticfiles %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'entries/style.css' %}" />
 {% if latest_EffortInstance_list %}
     <ul>
     {% for p in latest_EffortInstance_list %}
-        <li><a href="/entries/{{ p.effort_instance_id }}/">{{ p.provider_type }}</a></li>
+        <li><a href="{% url 'entries:detail' p.effort_instance_id %}">{{ p.service_provider.provider_name }}</a></li>
     {% endfor %}
     </ul>
 {% else %}

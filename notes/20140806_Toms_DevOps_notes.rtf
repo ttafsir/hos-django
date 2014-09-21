@@ -7,7 +7,7 @@
 \red128\green0\blue0;\red34\green34\blue34;\red51\green51\blue51;\red26\green26\blue26;\red64\green11\blue217;
 \red60\green95\blue255;}
 {\info
-{\author Thomas Gertin}}\vieww20260\viewh16920\viewkind1\viewscale140
+{\author Thomas Gertin}}\vieww21460\viewh18120\viewkind1\viewscale140
 \deftab720
 \pard\pardeftab720\ri0
 
@@ -308,7 +308,7 @@ make it so that the user doesn\'92t need to enter their password after using the
 \
 -and these on how to generate keypair(\cf2 \ul \ulc2 https://help.github.com/articles/generating-ssh-keys\cf0 \ulnone )\
 \
-How to copy a public key to Ubuntu server ({\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/questions/11388014/using-scp-to-copy-a-file-to-amazon-e"}}{\fldrslt \cf2 \ul \ulc2 http://stackoverflow.com/questions/11388014/using-scp-to-copy-a-file-to-amazon-ec2-instance}})\
+How to copy a public key to Ubuntu server ({\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/questions/11388014/using-scp-to-copy-a-file-to-amazon-e"}}{\fldrslt \cf2 \ul http://stackoverflow.com/questions/11388014/using-scp-to-copy-a-file-to-amazon-ec2-instance}})\
 \
 Ex.\
 \
@@ -321,11 +321,11 @@ Ex.\
 \
 \pard\pardeftab720\ri0
 
-\f1\fs22 \cf0 Tom-Gertins-MacBook-Pro:Hope_One_Source thomasgertin1$ scp -i hos.pem -r tgertin.pub {\field{\*\fldinst{HYPERLINK "mailto:ubuntu@ec2-54-91-26-90.compute-1.amazonaws.com:~/"}}{\fldrslt \cf2 \ul \ulc2 ubuntu@ec2-54-91-26-90.compute-1.amazonaws.com:~/}}\
+\f1\fs22 \cf0 Tom-Gertins-MacBook-Pro:Hope_One_Source thomasgertin1$ scp -i hos.pem -r tgertin.pub {\field{\*\fldinst{HYPERLINK "mailto:ubuntu@ec2-54-91-26-90.compute-1.amazonaws.com:~/"}}{\fldrslt \cf2 \ul ubuntu@ec2-54-91-26-90.compute-1.amazonaws.com:~/}}\
 \
 \pard\pardeftab720\ri0
 
-\f0\fs24 \cf0 ({\field{\*\fldinst{HYPERLINK "https://aws.amazon.com/articles/"}}{\fldrslt \cf2 \ul \ulc2 https://aws.amazon.com/articles/1233/}})\
+\f0\fs24 \cf0 ({\field{\*\fldinst{HYPERLINK "https://aws.amazon.com/articles/"}}{\fldrslt \cf2 \ul https://aws.amazon.com/articles/1233/}})\
 \
 \
 \pard\tx916\tx1832\tx2748\tx3664\tx4580\tx5496\tx6412\tx7328\tx8244\tx9160\tx10076\tx10992\tx11908\tx12824\tx13740\tx14656\pardeftab720\ri0\sl180\sa240
@@ -344,7 +344,7 @@ Finally works:\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
 
-\f1\fs22 \cf0 Tom-Gertins-MacBook-Pro:Hope_One_Source thomasgertin1$ ssh -i testuser3 {\field{\*\fldinst{HYPERLINK "mailto:testuser3@ec2-54-91-26-90.compute-1.amazonaws.com"}}{\fldrslt \cf2 \ul \ulc2 testuser3@ec2-54-91-26-90.compute-1.amazonaws.com}}\
+\f1\fs22 \cf0 Tom-Gertins-MacBook-Pro:Hope_One_Source thomasgertin1$ ssh -i testuser3 {\field{\*\fldinst{HYPERLINK "mailto:testuser3@ec2-54-91-26-90.compute-1.amazonaws.com"}}{\fldrslt \cf2 \ul testuser3@ec2-54-91-26-90.compute-1.amazonaws.com}}\
 \
 Welcome to Ubuntu 14.04 LTS (GNU/Linux 3.13.0-24-generic x86_64)\
 \
@@ -440,7 +440,7 @@ guest@ip-10-139-23-160:~$ cat guest.pub >> .ssh/authorized_keys\
 \pard\pardeftab720\ri0
 \cf0 guest@ip-10-139-23-160:~$ exit\
 \
-Tom-Gertins-MacBook-Pro:Hope_One_Source thomasgertin1$ ssh -i guest {\field{\*\fldinst{HYPERLINK "mailto:guest@ec2-54-224-178-141.compute-1.amazonaws.com"}}{\fldrslt \cf2 \ul \ulc2 guest@ec2-54-224-178-141.compute-1.amazonaws.com}}\
+Tom-Gertins-MacBook-Pro:Hope_One_Source thomasgertin1$ ssh -i guest {\field{\*\fldinst{HYPERLINK "mailto:guest@ec2-54-224-178-141.compute-1.amazonaws.com"}}{\fldrslt \cf2 \ul guest@ec2-54-224-178-141.compute-1.amazonaws.com}}\
 \
 \pard\pardeftab720\ri0
 
@@ -462,4 +462,10 @@ Resolving deltas: 100% (112/112), done.\
 [ec2-user@domU-12-31-39-14-08-48 ~]$ cd hos-django\
 [ec2-user@domU-12-31-39-14-08-48 hos-django]$ ls\
 \pard\pardeftab720\ri0
-\cf10 entries\cf0   \cf10 haiti_geospatial_data\cf0   \cf10 hos2\cf0   manage.py  \cf10 notes\cf0   README.md}
+\cf10 entries\cf0   \cf10 haiti_geospatial_data\cf0   \cf10 hos2\cf0   manage.py  \cf10 notes\cf0   README.md\
+\
+After running Packer and creating a new instance with the new AMI you need to log in as ubuntu:\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\fs26 \cf0 \CocoaLigature0 Tom-Gertins-MacBook-Pro:keys thomasgertin1$ ssh -i tiles3.pem ubuntu@ec2-54-87-131-252.compute-1.amazonaws.com}

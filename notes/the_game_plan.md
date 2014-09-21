@@ -11,21 +11,24 @@ Step 1:
 	-completed on 8 June by Tom
 
 - Thread 2: Research the best way to find compare and find similar strings. We want something more advanced than a 'like' function
-is there something like a python library that does this? nltk (natural language toolkit)
+is there something like a python library that does this? nltk (natural language toolkit) 
+	-we ended up using the python difflib for this
 
 Step 2:
 
 - Thread 1: create a psuedo-code version of the de-duplicator. It should look similarities from organization names as well as locations,
-maybe times as well?
+maybe times as well? complete
 
 
 Next Goals:
 
-- Documentation
-- Testing
-- manually get rid of duplicates (procedure for database versions)
+- Documentation: progress made
+- Testing: assign to Kat and Tafsir
+- manually get rid of duplicates (procedure for database versions): maybe dumpdata/loaddata Django commands?
+	-http://stackoverflow.com/questions/21049330/how-to-backup-a-django-db
+- create dev and production github repos: created a master and develop branch
 - Integration with main Drupal site
-- create dev and production github repos and AWS instances (filename names?)
+
 
 Sidegoal:
 
@@ -43,8 +46,9 @@ Other, to-do list:
 -Think about adding description to effort instances table
 
 -Start thinking about moving to a different branching Git model(dev and production versions)
+	-check out: http://nvie.com/posts/a-successful-git-branching-model/
 
--update Database diagram
+-update Database diagram: check
 
 
 			

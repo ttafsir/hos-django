@@ -1,0 +1,11 @@
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+
+<form action="{% url 'entries:vote' effortinstance.effort_instance_id %}" method="post">
+{% csrf_token %}
+{% for service in effortinstance.effortinstanceservices_set.all %}
+    <input type="radio" name="service" id="service{{ forloop.counter }}" value="{{ service.effort_instance_service_id }}" />
+    <label for="service{{ forloop.counter }}">{{ service.effort_service_description }}</label><br />
+{% endfor %}
+<input type="submit" value="Vote" />
+</form>

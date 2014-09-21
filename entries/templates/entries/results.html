@@ -1,0 +1,12 @@
+<h1>{{ entry.effort_instance_id }}</h1>
+
+<ul>
+{% for service in entry.effortinstanceservices_set.all %}
+    <li>{{ service.effortinstanceservices_text }} -- {{ service.votes }} vote{{ service.votes|pluralize }}</li>
+{% endfor %}
+</ul>
+
+<a href="{% url 'polls:detail' poll.id %}">Vote again?</a>
+
+
+

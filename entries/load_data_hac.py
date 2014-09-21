@@ -9,7 +9,7 @@ sys.path.append(your_djangoproject_home)
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'hos2.settings'
  
-from entries.models import ServiceProvider,Location,EffortInstance,ServiceType,EffortInstanceServices
+from entries.models import ServiceProvider,Location,EffortInstance,ServiceType,EffortInstanceServices, haiti_adm3_minustah
  
 import csv
 #module used for regular expressions
@@ -80,7 +80,8 @@ for row in dataReader:
 			
 		loc.save()
 		
-		EffortInstanceObj.location = Location.objects.get(location_id=loc.location_id)
+		#EffortInstanceObj.location = Location.objects.get(location_id=loc.location_id)
+		EffortInstanceObj.location = Location.objects.get(id=loc.id)
 		
 			#LocationObj, created = Location.objects.get_or_create(location_id=row[0],latitude = loc.latitude, longitude = loc.longitude)
 			
@@ -88,6 +89,19 @@ for row in dataReader:
 			
 		EffortInstanceObj.save()
 		
+		#The code below is finding what admin 3 zone the point is in and is adding the admin 3 zone in the effort instance table
+		#if loc.point:
+		if loc.geom:
+			#qs = haiti_adm3_minustah.objects.filter(geom__contains=loc.point)
+			qs = haiti_adm3_minustah.objects.filter(geom__contains=loc.geom)
+			print qs
+			
+			if len(qs):
+				print qs[0].adm3
+				#EffortInstanceObj.adm_3 = qs[0]
+				EffortInstanceObj.adm_3 = haiti_adm3_minustah.objects.get(id=qs[0].id)
+				
+		EffortInstanceObj.save()
 		
 		for x in hacServiceCols:
 			#print "now going through column "+str(x) +" which is "+str(hacHeaders[x])

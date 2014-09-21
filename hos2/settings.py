@@ -73,11 +73,11 @@ DATABASES = {
 '''
 {
     'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'USER': 'postgres',
-		'NAME': 'hos1',
-		'PASSWORD': 'HO$1',
-		'HOST': 'hos-database.noip.me',
+		'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'USER': 'hosadmin',
+		'NAME': 'hos4',
+		'PASSWORD': 'hosadmin',
+		'HOST': 'hos4.c00fcyyjglve.us-east-1.rds.amazonaws.com',
 		'PORT': '5432',
     }
 }

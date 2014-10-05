@@ -4,7 +4,7 @@
 <p>
 
 <!--for some reason you can't have the parenthesis after effortinstance.effortinstanceservices_set.all in django templates-->
-{% for service in effortinstance.effortinstanceservices_set.all %}
+{% for service in effortinstance.effortinstanceservice_set.all %}
     <!--<input type="radio" name="service" id="service{{ forloop.counter }}" value="{{ service.effort_instance_service_id }}" />-->
-    <label for="service{{ forloop.counter }}">{{ service.effort_service_description }}</label><br />
+    <label for="service{{ forloop.counter }}">{{ service.effort_service_type.service_name }}</label><br />
 {% endfor %}

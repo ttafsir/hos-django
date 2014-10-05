@@ -80,76 +80,67 @@
                 //alert(json);
                 //var result = JSON.stringify(json);
                 //alert(result);
+                $('.matching_name').hide()
+                
                 console.log('no alerts?');
                 
                 nearby_facilities_json = json['nearby_facilities']
                 
-                matching_facility = json['matching_facilities'];
+                matching_facilities = json['matching_facilities'];
                 
+                console.log(typeof matching_facilities)
                 
-                if (typeof matching_facilities != undefined) {
-    				// variable is undefined
+                if (typeof matching_facilities != 'undefined') {
+    				// variable is defined
+    				console.log("should be defined")
     				$('.matching_name').show();
-				}
-                
-                var matching_facility_string = JSON.stringify(matching_facility);
-                //alert(matching_facility_string);
-                
-                /*
-                //this works to some degree
-				var items = [];
-				  $.each(json.matching_facilities.features[0].properties, function (key, val) {
-						items.push('<li id="' + key + '">' + key + ': ' + val + '</li>');
-				});
-				*/
+    				var matching_facility_string = JSON.stringify(matching_facilities);
+                	//alert(matching_facility_string);
 				
-				var items = [];
-				  
-				  /*
-				  $.each(json.matching_facilities[i], function (i,val) {
-				  		console.log('hi');
-				  		console.log(val);
+					/*
+					//this worked to some degree
+					var items = [];
 					  $.each(json.matching_facilities.features[0].properties, function (key, val) {
-							//items.push('<li id="' + key + '">' + key + ': ' + val + '</li>');
-							console.log(val);
-					});
-				});
-				*/
-				
-				var key, count = 0;
-				for(key in json.matching_facilities.features) {
-				  if(json.matching_facilities.features.hasOwnProperty(key)) {
-					count++;
-				  }
-				}
-				console.log('count is: ');
-				console.log(count);
-
-				for(var i = 0; i < count; i++){
-					console.log(json.matching_facilities.features[i].properties);
-					items.push('<p>');
-					$.each(json.matching_facilities.features[i].properties, function (key, val) {
 							items.push('<li id="' + key + '">' + key + ': ' + val + '</li>');
 					});
+					*/
+				
+					var items = [];
+				
+					var key, count = 0;
+					for(key in json.matching_facilities.features) {
+					  if(json.matching_facilities.features.hasOwnProperty(key)) {
+						count++;
+					  }
+					}
+					console.log('count is: ');
+					console.log(count);
+
+					for(var i = 0; i < count; i++){
+						console.log(json.matching_facilities.features[i].properties);
+						items.push('<p>');
+						$.each(json.matching_facilities.features[i].properties, function (key, val) {
+								items.push('<li id="' + key + '">' + key + ': ' + val + '</li>');
+						});
 					
-					create_point(matching_facility.features[i].properties.latitude, matching_facility.features[i].properties.longitude);
+						create_point(matching_facilities.features[i].properties.latitude, matching_facilities.features[i].properties.longitude);
+					};
+					//this call is good, looked at: http://stackoverflow.com/questions/13462580/iterating-geojson-object-with-javascript
+					//console.log(json.matching_facilities.features[0])
 				
-				};
-        
-        
-				//this call is good, looked at: http://stackoverflow.com/questions/13462580/iterating-geojson-object-with-javascript
-				//console.log(json.matching_facilities.features[0])
+					$( "<ul/>", {
+						"class": "my-new-list",
+						html: items.join( "" )
+					  }).appendTo( "body" );
 				
-				$( "<ul/>", {
-					"class": "my-new-list",
-					html: items.join( "" )
-				  }).appendTo( "body" );
-                
-                $('.ajaxProgress').hide();
-                $('.success').show();
-                
-                $("#output").html(json.type);
-                console.log('success' + json);
+					$('.ajaxProgress').hide();
+					$('.success').show();
+				
+					$("#output").html(json.type);
+					console.log('success' + json);
+				
+				}
+
                 
                 /*
                 var json2_string = '{"type": "Point","coordinates": [-105.01621,39.57422]}';
@@ -161,12 +152,12 @@
 				//adds the nearby facilities to the map
 				map.data.addGeoJson(nearby_facilities_json);
                 
-                // not working for some reason
+                //not working for some reason
                 //map.data.overrideStyle(map.data.getFeatureById('match'), {icon: "{% static "entries/img/purple_MarkerA.png" %}"});
                 
                 //just create a new marker with same lat lon
-                console.log(matching_facility.features[0].properties.latitude)
-                console.log(matching_facility.features[0].properties.longitude)
+                //console.log(matching_facilities.features[0].properties.latitude)
+                //console.log(matching_facilities.features[0].properties.longitude)
                 
                 function create_point(lat,lon) {
                 	var matching_facility_marker = new google.maps.LatLng(lat,lon);

@@ -9,6 +9,8 @@ from django.contrib.gis.measure import Distance, D
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import simplejson
 from django.core import serializers
+import time
+import datetime
 
 from entries.models import *
 
@@ -54,7 +56,9 @@ def post_request(request):
 	print('org name: ')
 	print(organization)
 	
-	health_facilities_within_100_meters = Location_w_efforts.objects.filter(geom__distance_lt=(input_point, D(m=8000)))
+	health_facilities_within_100_meters = Location_w_efforts.objects.filter(geom__distance_lt=(input_point, D(m=1000)))
+	print('health_facilities_within_100_meters len')
+	print(len(health_facilities_within_100_meters))
 	
 	#Need to do something about Location_w_efforts table...
 	#Need to do updates to HOS DB
@@ -67,12 +71,13 @@ def post_request(request):
 		print(selected_choice)
 		print(len(selected_choice))
 		if len(selected_choice)<1:
-			print("no matching org name, but a similar result")
+			print("testing for a similar result")
 			similar_name_list = []
 			for i in Location_w_efforts.objects.all():
 				#print(difflib.SequenceMatcher(None, organization, i.provider_name).ratio())
 				if difflib.SequenceMatcher(None, organization, i.provider_name).ratio() > .95:
 					similar_name_list.append(i.provider_name)
+
 	except:
 		print("exception")
 	else:
@@ -80,38 +85,40 @@ def post_request(request):
 		matching_facilities_list = simplejson.loads(matching_facilities)
 	
 	#tests to see if there are existing organization close by
-	if health_facilities_within_100_meters > 0:
+	if len(health_facilities_within_100_meters) > 0:
 		nearby_facilities = GeoJSONSerializer().serialize(health_facilities_within_100_meters, use_natural_keys=True) 
 		#print(nearby_facilities)
 		nearby_facilities_list = simplejson.loads( nearby_facilities )
 	else:
 		nearby_facilities_list= ""
 		
-	print('json_data_input_list up next')
-		
 	json_data_input_list= {}
 	
+	print('selected choice: ')
+	print(selected_choice)
+	if not selected_choice:
+		print('selected choice is empty ')
 	if selected_choice:
 		json_data_input_list['matching_facilities'] = matching_facilities_list
-		print('matching fac')
+		print('matching name')
 	
+	print('nearby fac: ')
+	print(nearby_facilities_list)
+	if not nearby_facilities_list:
+		print('nearby_facilities_list is empty ')
 	if nearby_facilities_list:
-		print('matching fac 3')
 		json_data_input_list['nearby_facilities'] = nearby_facilities_list
-		print('matching fac 5')
+		print('nearby facility')
 		
 	try:
 		if len(similar_name_list) > 0:
-			print('matching fac 4')
+			print('no matching name, but similar name or names')
 			similar_name_list = simplejson.loads(similar_name_list)
 			json_data_input_list['similar_names'] = similar_name_list
 	except NameError:
   		print("well, it WASN'T defined after all!")
 	else:
-	  	print("sure, it was defined.")
-	
-	
-	print("ready to dump")
+	  	print("next step...")
 	
 	json_data = simplejson.dumps(json_data_input_list)
 	
@@ -120,12 +127,13 @@ def post_request(request):
 	#helpful link: http://kiaran.net/post/54943617485/serialize-multiple-lists-of-django-models-to-json
 	#json_data = simplejson.dumps( {'nearby_facilities':nearby_facilities_list, 'matching_facilities':matching_facilities_list})
 	
-	if json_data:
+	if selected_choice or nearby_facilities_list:
 		print('returning')
 		return HttpResponse(json_data,content_type='application/json')
 	# if no nearby entry or entry with matching or similar name, then create a new entry
 	else:
-    	
+		
+		print('time to create a new org')
 		#before I used AJAX...
 		#return HttpResponseRedirect('/entries/test_form/')
 	
@@ -137,7 +145,6 @@ def post_request(request):
 		for e in ServiceType.objects.all():
 			if (request.POST.get(e.service_name)):
 				service_list.append(e.service_name)
-
    
 		'''
 		We want to append 55 to imported HOS site data
@@ -153,21 +160,30 @@ def post_request(request):
 		to_the_right = str(highest_55)[2:]
 		increment_one = int(to_the_right) + 1
 		new_id = left_two + str(increment_one)
+		
+		#http://stackoverflow.com/questions/13890935/timestamp-python
+		ts = time.time()
+		utc_datetime = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 	
 		EffortInstanceObj = EffortInstance()
 		EffortInstanceObj.effort_instance_id = new_id
+		
+		EffortInstanceObj.updated_on = utc_datetime
+		EffortInstanceObj.updated_by = 'HOS registration'
 	
 		#Create ServiceProvider
 		ServiceProviderObj, created = ServiceProvider.objects.get_or_create(provider_name=organization)
 		EffortInstanceObj.service_provider = ServiceProvider.objects.get(provider_name=organization)
 	
 		#insert default date for effortInstance
-
+		
+		EffortInstanceObj.save()
+		
 		#Create Location
 		loc = Location()
 		loc.latitude = lat_str
 		loc.longitude = lon_str
-		loc.save()
+		loc.save(EffortInstanceObj.effort_instance_id)
 		EffortInstanceObj.location = Location.objects.get(id=loc.id)
 		EffortInstanceObj.save()
 	
@@ -185,15 +201,18 @@ def post_request(request):
 	
 		#Create Services
 		for x in service_list:
-				EffortInstanceServicesObj = EffortInstanceServices()
-				EffortInstanceServicesObj.effort_instance = EffortInstance.objects.get(effort_instance_id=new_id)
+				EffortInstanceServiceObj = EffortInstanceService()
+				EffortInstanceServiceObj.effort_instance = EffortInstance.objects.get(effort_instance_id=new_id)
 	
-				EffortInstanceServicesObj.effort_service_description = x
+				EffortInstanceServiceObj.effort_service_description = x
 				
-				EffortInstanceServicesObj.effort_service_type = ServiceType.objects.get(service_name=x)
+				EffortInstanceServiceObj.effort_service_type = ServiceType.objects.get(service_name=x)
 	
-				EffortInstanceServicesObj.save()
+				EffortInstanceServiceObj.save()
 	
+	
+		print('saved new org')
+		return HttpResponse('saved new org')
 	
 		#just consider a simple password for drupal to pass with each post for authentication
 		#next step would be https
@@ -258,13 +277,17 @@ def shared_servicetype(request):
 		
 		try:
 			selected_effort_instance = EffortInstance.objects.get(effort_instance_id=effort_instance_id)
-			#related_effort_instances = EffortInstance.objects.filter(__in=selected_effort_instance.effortinstanceservices_set.all)
+			#related_effort_instances = EffortInstance.objects.filter(__in=selected_effort_instance.EffortInstanceService_set.all)
 			
 			#http://thebuild.com/blog/2010/12/22/getting-the-id-of-related-objects-in-django/
 			#https://docs.djangoproject.com/en/1.6/topics/db/aggregation/
 			#The .values is grabbing the unique service names for the selected effort instance
-			all_services_qs = selected_effort_instance.effortinstanceservices_set.all().values('effort_service_type__service_name')
-			
+			print("step 1")
+			print(selected_effort_instance)
+			#all_services_qs = selected_effort_instance.EffortInstanceService_set.all().values('effort_service_type__service_name')
+			#for some reason I had to lowercase the table name
+			all_services_qs = selected_effort_instance.effortinstanceservice_set.all().values('effort_service_type__service_name')
+			print("step 2")
 			#Python also includes a data type for sets. A set is an unordered collection with no duplicate elements.
 			all_services = set([entry['effort_service_type__service_name'] for entry in all_services_qs])
 			
@@ -272,7 +295,7 @@ def shared_servicetype(request):
 			print(all_services)
 			
 			#The query chain below didn't work because you can't chain a _set.all() after a filter. You can I think after a get
-			#ServiceType.objects.filter(service_name__in=['Pharmacy','Malaria']).effortinstanceservices_set.all().values('effort_instance_id')
+			#ServiceType.objects.filter(service_name__in=['Pharmacy','Malaria']).EffortInstanceService_set.all().values('effort_instance_id')
 			
 			'''
 			Tests that worked:
@@ -286,9 +309,9 @@ def shared_servicetype(request):
 			#http://stackoverflow.com/questions/853184/django-orm-selecting-related-set
 			sel_service_types = ServiceType.objects.filter(service_name__in=all_services)
 			
-			#You want distinct because many EffortInstanceServices objects will link to the same EffortInstance object, so you
+			#You want distinct because many EffortInstanceService objects will link to the same EffortInstance object, so you
 			#don't want duplicates of EffortInstance objects selected
-			sel_ids = EffortInstanceServices.objects.filter(effort_service_type__in=sel_service_types).values('effort_instance_id').distinct()
+			sel_ids = EffortInstanceService.objects.filter(effort_service_type__in=sel_service_types).values('effort_instance_id').distinct()
 			
 			print("Effort Instances that share at least one service type:")
 			print(sel_ids)

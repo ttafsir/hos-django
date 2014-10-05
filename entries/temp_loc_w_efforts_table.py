@@ -13,27 +13,27 @@ from entries.models import ServiceProvider,Location,EffortInstance,ServiceType,E
 for l in Location.objects.all():
     
     print 'printing location id'
-    print l.location_id
+    print l.id
     
     
     #make sure tables are synced up!
     print 'printing date start'
-    print EffortInstance.objects.get(location=l.location_id).date_start
+    print EffortInstance.objects.get(location=l.id).date_start
     
     Location_w_effortsObj = Location_w_efforts()
     
-    Location_w_effortsObj.date_start = EffortInstance.objects.get(location=l.location_id).date_start
+    Location_w_effortsObj.date_start = EffortInstance.objects.get(location=l.id).date_start
     
-    Location_w_effortsObj.date_end = EffortInstance.objects.get(location=l.location_id).date_end
+    Location_w_effortsObj.date_end = EffortInstance.objects.get(location=l.id).date_end
     
     Location_w_effortsObj.latitude = l.latitude
     Location_w_effortsObj.longitude = l.longitude
     
-    Location_w_effortsObj.location_id = l.location_id
+    Location_w_effortsObj.id = l.id
     
-    provider_num = EffortInstance.objects.get(location=l.location_id).service_provider
+    provider_num = EffortInstance.objects.get(location=l.id).service_provider
     
-    Location_w_effortsObj.service_provider = EffortInstance.objects.get(location=l.location_id).service_provider
+    Location_w_effortsObj.service_provider = EffortInstance.objects.get(location=l.id).service_provider
     
     #ServiceProvider.provider
     #print obj, but need number

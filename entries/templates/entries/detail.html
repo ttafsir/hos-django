@@ -1,11 +1,10 @@
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
+<label>Services provided by Effort Instance: </label>
+<p>
 
-<form action="{% url 'entries:vote' effortinstance.effort_instance_id %}" method="post">
-{% csrf_token %}
+<!--for some reason you can't have the parenthesis after effortinstance.effortinstanceservices_set.all in django templates-->
 {% for service in effortinstance.effortinstanceservices_set.all %}
-    <input type="radio" name="service" id="service{{ forloop.counter }}" value="{{ service.effort_instance_service_id }}" />
+    <!--<input type="radio" name="service" id="service{{ forloop.counter }}" value="{{ service.effort_instance_service_id }}" />-->
     <label for="service{{ forloop.counter }}">{{ service.effort_service_description }}</label><br />
 {% endfor %}
-<input type="submit" value="Vote" />
-</form>

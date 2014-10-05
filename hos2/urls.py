@@ -14,6 +14,7 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
     url(r'^$',TemplateView.as_view(template_name='entries/main.html'),name='main'),
     url(r'^find/$', 'entries.views.find_facilities', name='find-facilities'),
-    url(r'^entries/', include('entries.urls', namespace="entries")),
+    url(r'^all/$', 'entries.views.all_facilities', name='all-facilities'),
+    url(r'^entries/', include('entries.urls', namespace='entries',app_name='entries')),
     url(r'^admin/', include(admin.site.urls)),
 )

@@ -1,28 +1,27 @@
 from django.conf.urls import patterns, include, url
 from django.views.generic.base import TemplateView
+from django.views.generic import DetailView
 from djgeojson.views import GeoJSONLayerView
-from .models import Location
+from .models import Location,EffortInstance
 
 from entries import views
 
-'''
-urlpatterns = patterns('',
-    url(r'^$', GeoJSONLayerView.as_view(model=Unit), name='units-json')
-    url(r'^nearby/$',TemplateView.as_view(template_name='units/nearby.html'),name='near-me'),
-    url(r'^nearby/find/$', 'units.views.find_rocks', name='find-rocks'),    
-)
-'''
-
-
 
 urlpatterns = patterns('',
-    #url(r'^$', views.IndexView.as_view(), name='index'),
-    # ex: /polls/5/
+    # ex: /entries/   It returns the Location table as a GeoJSON layer view
     url(r'^$', GeoJSONLayerView.as_view(model=Location), name='location-json'),
-    url(r'^(?P<pk>\d+)/$', views.DetailView.as_view(), name='detail'),
-    # ex: /polls/5/results/
-    url(r'^(?P<entries_id>\d+)/results/$', views.results, name='results'),
-    # ex: /polls/5/vote/
-    #url(r'^(?P<entries_id>\d+)/vote/$', views.vote, name='vote'),
-    url(r'^find/$', 'entries.views.find_facilities', name='find-facilities'),
+    url(r'^test_form/',TemplateView.as_view(template_name='entries/test_form.html'),name='test-form'),
+    # ex: /entries/11795/results/   This returns the services that are provided by the specified Effort Instance
+    url(r'^(?P<pk>\d+)/results/$', DetailView.as_view(model=EffortInstance,template_name='entries/detail.html'), name='results'),
+    url(r'^shared_servicetype/$', 'entries.views.shared_servicetype', name='shared-servicetype'),
+    # A post_request is called internally by the test_form to create a new organization
+    url(r'^post_request/$', views.post_request, name='post-request'),
 )
+
+'''
+There was an issue with the reverse call working for post-request
+I tried with the url and with the name; it ended up working with the namespace
+django shell:
+In [30]: reverse('entries:post-request')
+Out[30]: '/entries/post_request/'
+'''

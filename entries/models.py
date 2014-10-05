@@ -103,7 +103,7 @@ class EffortInstance(models.Model):
 	#effort_instance =  models.AutoField(primary_key=True)
 	effort_instance_id =  models.IntegerField(primary_key=True)
 	service_provider = models.ForeignKey(ServiceProvider, blank=True, null=True)
-	location = models.ForeignKey(Location, blank=True, null=True)
+	location = models.ForeignKey(Location,blank=True, null=True)
 	adm_1 = models.ForeignKey(haiti_adm1_minustah, blank=True, null=True)
 	adm_2 = models.ForeignKey(haiti_adm2_minustah, blank=True, null=True)
 	adm_3 = models.ForeignKey(haiti_adm3_minustah, blank=True, null=True)
@@ -136,9 +136,9 @@ class Location_w_efforts(models.Model):
 	
 	#effort_instance =  models.AutoField(primary_key=True)
 	#effort_instance_id =  models.IntegerField(primary_key=True)
-	service_provider = models.ForeignKey(ServiceProvider, blank=True, null=True)
-	location = models.ForeignKey(Location, blank=True, null=True)
-	adm_3 = models.ForeignKey(haiti_adm3_minustah, blank=True, null=True)
+	service_provider = models.ForeignKey(ServiceProvider, related_name='+',blank=True, null=True)
+	location = models.ForeignKey(Location,related_name='+', blank=True, null=True)
+	adm_3 = models.ForeignKey(haiti_adm3_minustah,related_name='+', blank=True, null=True)
 	provider_type = models.CharField(max_length=2, choices=PROVIDER_TYPE_OPTIONS, default=CLINIC)
 	date_start = models.DateTimeField(auto_now=False, null=True)
 	date_end = models.DateTimeField(auto_now=False, null=True)
@@ -152,14 +152,14 @@ class Location_w_efforts(models.Model):
 	longitude = models.CharField(max_length=15, blank=True, null=True) 
 
 	#overriding the default manager with a GeoManager instance. 
-	point = models.PointField(dim=3, geography=True, blank=True, null=True)
+	geom = models.PointField(dim=3, geography=True, blank=True, null=True)
 	objects = models.GeoManager()
 	
 	
 	def save(self):
 		if self.latitude != None and len(self.latitude) > 0:
 			lString = 'POINT(%s %s)' % (self.longitude.strip(), self.latitude.strip())
-			self.point = fromstr(lString)
+			self.geom = fromstr(lString)
 		super(Location_w_efforts, self).save()
 		
 #table to store the spatial clusters results

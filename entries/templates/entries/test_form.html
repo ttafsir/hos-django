@@ -1,0 +1,243 @@
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+{% load staticfiles %}
+
+<html>
+  <head>
+  
+  <style>
+      #map_canvas {
+        width: 500px;
+        height: 400px;
+      }
+    </style>
+    <!-- <script src="https://maps.googleapis.com/maps/api/js"></script> -->
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+    <script type="text/javascript">
+	$(document).ready(function() {
+		$('.ajaxProgress').hide();
+		$('.success').hide();
+		$('.matching_name').hide()
+	});
+	</script>
+	
+	<script>
+	
+	//haha I need to declare the map variable here to call it later in the ajaxRequest function!
+	var map;
+	var myLatlng = new google.maps.LatLng(19.738571, -72.196125);
+	var marker2;
+	
+  function initialize() {
+    var mapCanvas = document.getElementById('map_canvas');
+    
+    var mapOptions = {
+      center: myLatlng,
+      zoom: 13,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    }
+    map = new google.maps.Map(mapCanvas, mapOptions);
+    
+    
+    var marker = new google.maps.Marker({
+    position: myLatlng,
+    draggable:true,
+    icon: "{% static "entries/img/purple_MarkerA.png" %}"
+    //title:"Hello World!"
+	});
+
+	// To add the marker to the map, call setMap();
+	marker.setMap(map);
+
+	 google.maps.event.addListener(marker, "dragend", function(){
+        document.getElementById("lat").value=marker.position.lat();
+        document.getElementById("lon").value=marker.position.lng();
+    });
+    
+  }
+  //map.data.loadGeoJson('https://storage.googleapis.com/maps-devrel/google.json');
+  google.maps.event.addDomListener(window, 'load', initialize);
+    
+</script>
+
+	
+	<script type="text/javascript">
+
+    function ajaxRequest() {
+    	$('.ajaxProgress').show();
+    	
+        $.ajax({
+            type: "POST",
+            url: "{% url 'entries:post-request' %}",
+            dataType: "JSON",
+            async: true,
+            data: {
+            	organization : $('#organization').val(),
+            	lat : $('#lat').val(),
+            	lon : $('#lon').val(),
+            },
+            success: function (json) {
+                //alert(json);
+                //var result = JSON.stringify(json);
+                //alert(result);
+                console.log('no alerts?');
+                
+                nearby_facilities_json = json['nearby_facilities']
+                
+                matching_facility = json['matching_facilities'];
+                
+                
+                if (typeof matching_facilities != undefined) {
+    				// variable is undefined
+    				$('.matching_name').show();
+				}
+                
+                var matching_facility_string = JSON.stringify(matching_facility);
+                //alert(matching_facility_string);
+                
+                /*
+                //this works to some degree
+				var items = [];
+				  $.each(json.matching_facilities.features[0].properties, function (key, val) {
+						items.push('<li id="' + key + '">' + key + ': ' + val + '</li>');
+				});
+				*/
+				
+				var items = [];
+				  
+				  /*
+				  $.each(json.matching_facilities[i], function (i,val) {
+				  		console.log('hi');
+				  		console.log(val);
+					  $.each(json.matching_facilities.features[0].properties, function (key, val) {
+							//items.push('<li id="' + key + '">' + key + ': ' + val + '</li>');
+							console.log(val);
+					});
+				});
+				*/
+				
+				var key, count = 0;
+				for(key in json.matching_facilities.features) {
+				  if(json.matching_facilities.features.hasOwnProperty(key)) {
+					count++;
+				  }
+				}
+				console.log('count is: ');
+				console.log(count);
+
+				for(var i = 0; i < count; i++){
+					console.log(json.matching_facilities.features[i].properties);
+					items.push('<p>');
+					$.each(json.matching_facilities.features[i].properties, function (key, val) {
+							items.push('<li id="' + key + '">' + key + ': ' + val + '</li>');
+					});
+					
+					create_point(matching_facility.features[i].properties.latitude, matching_facility.features[i].properties.longitude);
+				
+				};
+        
+        
+				//this call is good, looked at: http://stackoverflow.com/questions/13462580/iterating-geojson-object-with-javascript
+				//console.log(json.matching_facilities.features[0])
+				
+				$( "<ul/>", {
+					"class": "my-new-list",
+					html: items.join( "" )
+				  }).appendTo( "body" );
+                
+                $('.ajaxProgress').hide();
+                $('.success').show();
+                
+                $("#output").html(json.type);
+                console.log('success' + json);
+                
+                /*
+                var json2_string = '{"type": "Point","coordinates": [-105.01621,39.57422]}';
+				var json2 = JSON.parse(json2_string);
+				var result2 = JSON.stringify(json2);
+                alert(result2);
+				*/
+				
+				//adds the nearby facilities to the map
+				map.data.addGeoJson(nearby_facilities_json);
+                
+                // not working for some reason
+                //map.data.overrideStyle(map.data.getFeatureById('match'), {icon: "{% static "entries/img/purple_MarkerA.png" %}"});
+                
+                //just create a new marker with same lat lon
+                console.log(matching_facility.features[0].properties.latitude)
+                console.log(matching_facility.features[0].properties.longitude)
+                
+                function create_point(lat,lon) {
+                	var matching_facility_marker = new google.maps.LatLng(lat,lon);
+                	// To add the marker to the map, use the 'map' property
+                	var matching_marker = new google.maps.Marker({
+						position: matching_facility_marker,
+						title:"Hello World!",
+						icon: "{% static "entries/img/purple_MarkerA.png" %}"
+					});
+					// To add the marker to the map, call setMap();
+					matching_marker.setMap(map);
+                }
+                
+            }
+        });
+        
+    }
+    
+	</script>
+
+
+</head>
+
+	
+  <body>
+ 
+{% comment %}
+<form action= "{% url 'entries:post-request' %}" method="post" name="test_form">
+{% csrf_token %}
+{% endcomment %}
+
+<form onsubmit="return false;">
+<br>
+Organization: <input type="text" id = "organization" name="organization" style="width: 300px;"><br>
+<br>
+Select provided services:
+<br>
+<br>
+<input type="checkbox" name="Cardiovascular" value="Cardiovascular">Cardiovascular<br>
+<input type="checkbox" name="Dental" value="Dental">Dental<br>
+<input type="checkbox" name="Diabetes" value="Diabetes">Diabetes<br>
+<input type="checkbox" name="Emergency" value="Emergency">Emergency<br>
+<br>
+lat: <input id="lat" type="text" name="lat" style="width: 150px;"> lon: <input id="lon" type="text" name="lon" style="width: 150px;"> 
+<br>
+<br>
+<div id="map_canvas"></div>
+<br>
+<button class="updateButton" onclick="ajaxRequest()">Submit</Button>
+{% comment %}
+<input type="submit" value="Create new account" />
+{% endcomment %}
+</form>
+
+<div id="output">
+	<div class = "ajaxProgress">
+		<h3>please wait...</h3>
+	</div>
+	<div class = "success">
+		<h3>Success!</h3>
+	</div>
+	<div class = "matching_name">
+		<h3>One of the results has the same name</h3>
+	</div>
+</div>
+
+<br>
+
+ </body>
+ 
+
+</html>
+
+

@@ -1,7 +1,7 @@
 HOS-Django
 ===========
 
-Develop Branch 2
+Develop Branch
 
 HopeOneSource GeoDjango Project
 

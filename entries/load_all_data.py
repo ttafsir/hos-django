@@ -9,7 +9,7 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'hos2.settings'
 #loads all data from three datasets
 
 if (True):
-	import entries.load_ServiceType_table
+	import entries.load_servicetype_table
 	
 if (True):
 	import entries.load_data_hac

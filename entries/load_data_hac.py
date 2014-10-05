@@ -9,12 +9,18 @@ sys.path.append(your_djangoproject_home)
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'hos2.settings'
  
-from entries.models import ServiceProvider,Location,EffortInstance,ServiceType,EffortInstanceServices, haiti_adm3_minustah
+from entries.models import ServiceProvider,Location,EffortInstance,ServiceType,EffortInstanceService,haiti_adm3_minustah
  
 import csv
 #module used for regular expressions
 import re
 import random
+import time
+import datetime
+
+#http://stackoverflow.com/questions/13890935/timestamp-python
+ts = time.time()
+utc_datetime = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
 #loads the classify_service_types dictionary, used to classify the service types
 from service_type_dict import classify_service_types
@@ -36,14 +42,13 @@ def upfirstletter(value):
     return first.upper() + remaining
 	
 for row in dataReader:
-
-	#print 'hi5'
 	
 	if row[0] != 'id': # Ignore the header row, import everything else
 		
 		EffortInstanceObj = EffortInstance()
 		
 		EffortInstanceObj.effort_instance_id = row[0]
+		
 		if row[33] == 'Hopital' or row[33] == 'CSL' or row[33] == 'CAL':
 			#EffortInstanceObj.date_start = '9999-12-31'
 			print 'long-term recorded'
@@ -56,13 +61,17 @@ for row in dataReader:
 			EffortInstanceObj.provider_type = 'CL'
 			#print 'clinic recorded'
 		
-		#ServiceProviderObj = ServiceProvider()
-		
 		#cool way to make Service Providers unique, if obj does not exist then it creates it.
 		#https://docs.djangoproject.com/en/1.6/ref/models/querysets/#get-or-create
 		ServiceProviderObj, created = ServiceProvider.objects.get_or_create(provider_name = row[1])
 		
 		EffortInstanceObj.service_provider = ServiceProvider.objects.get(provider_name=row[1])
+		
+		EffortInstanceObj.updated_on = utc_datetime
+		
+		EffortInstanceObj.updated_by = 'MSPP scrape'
+		
+		EffortInstanceObj.save()
 		
 		loc = Location()
 		
@@ -78,10 +87,11 @@ for row in dataReader:
 			print "longval is "+longVal
 			loc.longitude = longVal
 			
-		loc.save()
+		if loc.latitude and loc.longitude:
+			loc.save(EffortInstanceObj.effort_instance_id)
 		
-		#EffortInstanceObj.location = Location.objects.get(location_id=loc.location_id)
-		EffortInstanceObj.location = Location.objects.get(id=loc.id)
+			#EffortInstanceObj.location = Location.objects.get(location_id=loc.location_id)
+			EffortInstanceObj.location = Location.objects.get(id=loc.id)
 		
 			#LocationObj, created = Location.objects.get_or_create(location_id=row[0],latitude = loc.latitude, longitude = loc.longitude)
 			
@@ -110,14 +120,14 @@ for row in dataReader:
 			#print row[x]
 				#if hacServiceCols[x] != "0":
 				#	print "service "+str(x) +" is not equal to 1"
-				EffortInstanceServicesObj = EffortInstanceServices()
-				EffortInstanceServicesObj.effort_instance = EffortInstance.objects.get(effort_instance_id=row[0])
+				EffortInstanceServiceObj = EffortInstanceService()
+				EffortInstanceServiceObj.effort_instance = EffortInstance.objects.get(effort_instance_id=row[0])
 		
-				EffortInstanceServicesObj.effort_service_description = upfirstletter(hacHeaders[x].replace("_", " "));
+				EffortInstanceServiceObj.effort_service_description = upfirstletter(hacHeaders[x].replace("_", " "));
 		
-				#classify EffortInstanceServicesObj.effort_service_description based on a dictionary
-				if ServiceType.objects.filter(service_name=classify_service_types[EffortInstanceServicesObj.effort_service_description]).count() == 1:
-					serviceType = ServiceType.objects.get(service_name=classify_service_types[EffortInstanceServicesObj.effort_service_description])
-					EffortInstanceServicesObj.effort_service_type = serviceType
+				#classify EffortInstanceServiceObj.effort_service_description based on a dictionary
+				if ServiceType.objects.filter(service_name=classify_service_types[EffortInstanceServiceObj.effort_service_description]).count() == 1:
+					serviceType = ServiceType.objects.get(service_name=classify_service_types[EffortInstanceServiceObj.effort_service_description])
+					EffortInstanceServiceObj.effort_service_type = serviceType
 		
-				EffortInstanceServicesObj.save()
+				EffortInstanceServiceObj.save()

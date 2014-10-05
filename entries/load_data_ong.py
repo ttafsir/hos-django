@@ -9,13 +9,18 @@ sys.path.append(your_djangoproject_home)
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'hos2.settings'
  
-from entries.models import ServiceProvider,Location,EffortInstance,ServiceType,EffortInstanceServices, haiti_adm3_minustah
+from entries.models import ServiceProvider,Location,EffortInstance,ServiceType,EffortInstanceService,haiti_adm3_minustah
  
 import csv
 #module used for regular expressions
 import re
 import random
 import unicodedata
+import time
+import datetime
+
+ts = time.time()
+utc_datetime = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
 #loads the classify_service_types dictionary, used to classify the service types
 from service_type_dict import classify_service_types
@@ -82,6 +87,10 @@ for row in dataReader:
 		
 		EffortInstanceObj.service_provider = ServiceProvider.objects.get(provider_name=row[1])
 		
+		EffortInstanceObj.updated_on = utc_datetime
+		
+		EffortInstanceObj.updated_by = 'MSPP scrape'
+		
 		loc = Location()
 
 		#having problems with the location strings, must be special non-ASCII characters. ex.
@@ -90,21 +99,22 @@ for row in dataReader:
 		
 		print row[18]
 		
+		#need to save here so start and end dates are saved to the custom location save can create a new tuple for location_w_efforts table
+		EffortInstanceObj.save()
+		
 		if(len(row[17]) > 1 and not '\\' in row[17] and '.' in row[17]):
 			if(len(row[18]) > 1 and not '\\' in row[18] and '.' in row[18]):
 		
-			
 					loc.latitude = row[17].decode('ascii','ignore').replace(" ", "")
 					#loc.latitude = '18.305755'
 					loc.longitude = row[18].decode('ascii','ignore').replace(" ", "")
 					#loc.longitude = '-72.172367'
 			
-					loc.save()
+					loc.save(EffortInstanceObj.effort_instance_id)
 		
 					#LocationObj, created = Location.objects.get_or_create(location_id=row[0],latitude = loc.latitude, longitude = loc.longitude)
 			
-					
-					EffortInstanceObj.location = Location.objects.get(location_id=loc.location_id)
+					EffortInstanceObj.location = Location.objects.get(id=loc.id)
 					
 					#Location.objects.get(location_id=loc.location_id)
 		
@@ -112,8 +122,8 @@ for row in dataReader:
 		EffortInstanceObj.save()
 		
 		#The code below is finding what admin 3 zone the point is in and is adding the admin 3 zone in the effort instance table
-		if loc.point:
-			qs = haiti_adm3_minustah.objects.filter(geom__contains=loc.point)
+		if loc.geom:
+			qs = haiti_adm3_minustah.objects.filter(geom__contains=loc.geom)
 			print qs
 			
 			if len(qs):
@@ -131,16 +141,16 @@ for row in dataReader:
 			#print row[x]
 				#if hacServiceCols[x] != "0":
 				#	print "service "+str(x) +" is not equal to 1"
-				EffortInstanceServicesObj = EffortInstanceServices()
+				EffortInstanceServiceObj = EffortInstanceService()
 				
-				EffortInstanceServicesObj.effort_instance = EffortInstance.objects.get(effort_instance_id=row[0])
+				EffortInstanceServiceObj.effort_instance = EffortInstance.objects.get(effort_instance_id=row[0])
 		
-				EffortInstanceServicesObj.effort_service_description = upfirstletter(ongHeaders[x].replace("_", " "));
+				EffortInstanceServiceObj.effort_service_description = upfirstletter(ongHeaders[x].replace("_", " "));
 		
-				#classify EffortInstanceServicesObj.effort_service_description based on a dictionary
-				if ServiceType.objects.filter(service_name=classify_service_types[EffortInstanceServicesObj.effort_service_description]).count() == 1:
-					serviceType = ServiceType.objects.get(service_name=classify_service_types[EffortInstanceServicesObj.effort_service_description])
-					EffortInstanceServicesObj.effort_service_type = serviceType
+				#classify EffortInstanceServiceObj.effort_service_description based on a dictionary
+				if ServiceType.objects.filter(service_name=classify_service_types[EffortInstanceServiceObj.effort_service_description]).count() == 1:
+					serviceType = ServiceType.objects.get(service_name=classify_service_types[EffortInstanceServiceObj.effort_service_description])
+					EffortInstanceServiceObj.effort_service_type = serviceType
 		
-				EffortInstanceServicesObj.save()
+				EffortInstanceServiceObj.save()
 		

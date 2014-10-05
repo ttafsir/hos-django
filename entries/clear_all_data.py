@@ -6,7 +6,7 @@ sys.path.append(your_djangoproject_home)
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'hos2.settings'
  
-from entries.models import ServiceProvider,Location,EffortInstance,ServiceType,EffortInstanceServices
+from entries.models import *
 
 #clears data from all tables except admin tables and temporary tables
 
@@ -18,8 +18,9 @@ EffortInstance.objects.all().delete()
 
 ServiceType.objects.all().delete()
 
-EffortInstanceServices.objects.all().delete()
+EffortInstanceService.objects.all().delete()
 
+Location_w_efforts.objects.all().delete()
 
 
 

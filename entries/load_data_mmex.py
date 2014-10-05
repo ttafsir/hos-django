@@ -11,12 +11,17 @@ sys.path.append(your_djangoproject_home)
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'hos2.settings'
  
-from entries.models import ServiceProvider,Location,EffortInstance,ServiceType,EffortInstanceServices,haiti_adm1_minustah,haiti_adm3_minustah
+from entries.models import ServiceProvider,Location,EffortInstance,ServiceType,EffortInstanceService,haiti_adm1_minustah,haiti_adm3_minustah
  
 import csv
 #module used for regular expressions
 import re
 import random
+import time
+import datetime
+
+ts = time.time()
+utc_datetime = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
 #loads the classify_service_types dictionary, used to classify the service types
 from service_type_dict import classify_service_types
@@ -68,15 +73,16 @@ for row in dataReader:
 		
 		EffortInstanceObj.service_provider = ServiceProvider.objects.get(provider_name=row[2])
 		
+		EffortInstanceObj.updated_on = utc_datetime
+		
+		EffortInstanceObj.updated_by = 'MMEX scrape'
+		
 		#mmex does not have any lat lon coords, so don't add a location point
 		#Also, don't use random lat lon. It will break spatial queries
-		
+	
 		#loc = Location()
-		
 		#loc.latitude = str(random.randint(0,10))
-		
 		#loc.longitude = str(random.randint(0,10))
-		
 		#loc.save()
 		
 		
@@ -142,17 +148,17 @@ for row in dataReader:
 			for x in range(0,len(ServiceTypeSplit)):
 				
 				
-				EffortInstanceServicesObj = EffortInstanceServices()
-				EffortInstanceServicesObj.effort_instance = EffortInstance.objects.get(effort_instance_id=row[0])
+				EffortInstanceServiceObj = EffortInstanceService()
+				EffortInstanceServiceObj.effort_instance = EffortInstance.objects.get(effort_instance_id=row[0])
 				
-				EffortInstanceServicesObj.effort_service_description = ServiceTypeSplit[x].strip()
+				EffortInstanceServiceObj.effort_service_description = ServiceTypeSplit[x].strip()
 				
-				print EffortInstanceServicesObj.effort_service_description
+				print EffortInstanceServiceObj.effort_service_description
 				
-				#classify EffortInstanceServicesObj.effort_service_description based on a dictionary
-				EffortInstanceServicesObj.effort_service_type = ServiceType.objects.get(service_name=classify_service_types[EffortInstanceServicesObj.effort_service_description])
+				#classify EffortInstanceServiceObj.effort_service_description based on a dictionary
+				EffortInstanceServiceObj.effort_service_type = ServiceType.objects.get(service_name=classify_service_types[EffortInstanceServiceObj.effort_service_description])
 				
-				EffortInstanceServicesObj.save()	
+				EffortInstanceServiceObj.save()	
 			
 		
 

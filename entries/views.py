@@ -129,7 +129,6 @@ def post_request(request):
 		#before I used AJAX...
 		#return HttpResponseRedirect('/entries/test_form/')
 	
-	
 		#if it is a new organization name and in a new location then create new entry in DB
 	
 		#detects all of the services provided that were selected and puts in in a list
@@ -277,10 +276,10 @@ def shared_servicetype(request):
 			
 			'''
 			Tests that worked:
-			print("all Service type obejects with 2 picked:")
+			print("all Service type objects with 2 picked:")
 			print(ServiceType.objects.filter(service_name__in=['Pharmacy','Malaria']))
 			
-			print("all Service type obejects with 2000 picked:")
+			print("all Service type objects with list picked:")
 			print(ServiceType.objects.filter(service_name__in=all_services))
 			'''
 			

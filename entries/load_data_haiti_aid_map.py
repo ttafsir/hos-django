@@ -11,12 +11,17 @@ sys.path.append(your_djangoproject_home)
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'hos2.settings'
  
-from entries.models import ServiceProvider,Location,EffortInstance,ServiceType,EffortInstanceServices,haiti_adm1_minustah,haiti_adm2_minustah,haiti_adm3_minustah
+from entries.models import ServiceProvider,Location,EffortInstance,ServiceType,EffortInstanceService,haiti_adm1_minustah,haiti_adm2_minustah,haiti_adm3_minustah
  
 import csv
 #module used for regular expressions
 import re
 import random
+import time
+import datetime
+
+ts = time.time()
+utc_datetime = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
 #loads the classify_service_types dictionary, used to classify the service types
 from service_type_dict import classify_service_types
@@ -80,18 +85,18 @@ def FillTables(locationOrder,adm2Bool,adm3Bool):
 			#https://docs.djangoproject.com/en/1.6/ref/models/querysets/#get-or-create
 			ServiceProviderObj, created = ServiceProvider.objects.get_or_create(provider_name = row[1])
 		
-		
 			EffortInstanceObj.service_provider = ServiceProvider.objects.get(provider_name=row[1])
+			
+			EffortInstanceObj.updated_on = utc_datetime
+		
+			EffortInstanceObj.updated_by = 'Haiti Aid Map scrape'
 		
 			#HaitiAipMap does not have any lat lon coords, so don't add a location point
 			#Also, don't use random lat lon. It will break spatial queries
 			
 			#loc = Location()
-		
 			#loc.latitude = str(random.randint(0,10))
-		
 			#loc.longitude = str(random.randint(0,10))
-		
 			#loc.save()
 		
 			'''

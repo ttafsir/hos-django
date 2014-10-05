@@ -17,8 +17,8 @@ is there something like a python library that does this? nltk (natural language 
 Step 2:
 
 - Thread 1: create a psuedo-code version of the de-duplicator. It should look similarities from organization names as well as locations,
-maybe times as well? complete
-
+maybe times as well? 
+	-completed
 
 Next Goals:
 
@@ -27,6 +27,7 @@ Next Goals:
 - manually get rid of duplicates (procedure for database versions): maybe dumpdata/loaddata Django commands?
 	-http://stackoverflow.com/questions/21049330/how-to-backup-a-django-db
 - create dev and production github repos: created a master and develop branch
+	-complete
 - Integration with main Drupal site
 
 
@@ -36,23 +37,24 @@ Sidegoal:
 - getting people to connect to AWS instances
 
 
-
 Other, to-do list:
 
 -finish writing temporary table to display most important information in QGIS
+	-complete
 
 -start looking into WebGIS
-
--Think about adding description to effort instances table
 
 -Start thinking about moving to a different branching Git model(dev and production versions)
 	-check out: http://nvie.com/posts/a-successful-git-branching-model/
 
 -update Database diagram: check
 
+Changes to HOS DB on 5 Oct 2014:
 
-			
-			
-
+-added provider_name_fr and provider_name_cr provider names to ServiceProvider table
+-added updated_on,updated_by,description, and default (boolean) fields to EffortInstance table
+-added to Location table save function to automatically create a row in the Location_w_efforts table when a Location is saved
+-added a Common_EffortInstance_Info Abstraction table
+-renamed EffortInstanceServices table to EffortInstanceService
 
 

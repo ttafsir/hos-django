@@ -28,7 +28,12 @@ Next Goals:
 	-http://stackoverflow.com/questions/21049330/how-to-backup-a-django-db
 - create dev and production github repos: created a master and develop branch
 	-complete
+	
 - Integration with main Drupal site
+	-we need to work on the import from the HOS side:
+		1)Location in Lat and Lon
+		2)Name of Org (Also French and Creole versions if available)
+		3)Services provided(if available)
 
 
 Sidegoal:

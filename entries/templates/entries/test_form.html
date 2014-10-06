@@ -75,6 +75,10 @@
             	organization : $('#organization').val(),
             	lat : $('#lat').val(),
             	lon : $('#lon').val(),
+            	Cardiovascular : $('#Cardiovascular').val(),
+            	Dental : $('#Dental').val(),
+            	Diabetes : $('#Diabetes').val(),
+            	Emergency : $('#Emergency').val(),
             },
             success: function (json) {
                 //alert(json);
@@ -196,10 +200,10 @@ Organization: <input type="text" id = "organization" name="organization" style="
 Select provided services:
 <br>
 <br>
-<input type="checkbox" name="Cardiovascular" value="Cardiovascular">Cardiovascular<br>
-<input type="checkbox" name="Dental" value="Dental">Dental<br>
-<input type="checkbox" name="Diabetes" value="Diabetes">Diabetes<br>
-<input type="checkbox" name="Emergency" value="Emergency">Emergency<br>
+<input type="checkbox" id="Cardiovascular" name="Cardiovascular" value="Cardiovascular">Cardiovascular<br>
+<input type="checkbox" id="Dental" name="Dental" value="Dental">Dental<br>
+<input type="checkbox" id="Diabetes" name="Diabetes" value="Diabetes">Diabetes<br>
+<input type="checkbox" id="Emergency" name="Emergency" value="Emergency">Emergency<br>
 <br>
 lat: <input id="lat" type="text" name="lat" style="width: 150px;"> lon: <input id="lon" type="text" name="lon" style="width: 150px;"> 
 <br>

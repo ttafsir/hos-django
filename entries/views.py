@@ -34,6 +34,9 @@ def results(request, entries_id):
 @csrf_exempt
 def post_request(request):
 	
+	print('print request')
+	print(request)
+	
 	organization = request.POST.get('organization', None)
 	
 	#this validation is not returning the HttpResponse for some reason...
@@ -151,15 +154,27 @@ def post_request(request):
 		find all IDs with 55 to the left, then find the max number,
 		then separate the 55 and what is to the right, then find the next incremental value, then append
 		'''
-		the_55s = EffortInstance.objects.filter(effort_instance_id__startswith=111588)
-		list_of_55s = []
-		for i in the_55s:
-			list_of_55s.append(i.effort_instance_id)
-		highest_55 = max(list_of_55s)
-		left_two = str(highest_55)[:2]
-		to_the_right = str(highest_55)[2:]
-		increment_one = int(to_the_right) + 1
-		new_id = left_two + str(increment_one)
+		the_55s = EffortInstance.objects.filter(effort_instance_id__startswith=55)
+		print('55: ')
+		print(the_55s)
+		if the_55s:
+			print('incrementing...')
+			list_of_55s = []
+			for i in the_55s:
+				list_of_55s.append(i.effort_instance_id)
+			highest_55 = max(list_of_55s)
+			print('highest_55')
+			print(highest_55)
+			left_two = str(highest_55)[:2]
+			to_the_right = str(highest_55)[2:]
+			
+			increment_one = int(to_the_right) + 1
+			new_id = left_two + str(increment_one)
+		else:
+			new_id = 551
+			
+		print('new_id: ')
+		print(new_id)
 		
 		#http://stackoverflow.com/questions/13890935/timestamp-python
 		ts = time.time()
@@ -170,6 +185,9 @@ def post_request(request):
 		
 		EffortInstanceObj.updated_on = utc_datetime
 		EffortInstanceObj.updated_by = 'HOS registration'
+		
+		#make a default effort instance
+		EffortInstanceObj.default = True
 	
 		#Create ServiceProvider
 		ServiceProviderObj, created = ServiceProvider.objects.get_or_create(provider_name=organization)

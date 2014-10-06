@@ -35,6 +35,8 @@ Next Goals:
 		2)Name of Org (Also French and Creole versions if available)
 		3)Services provided(if available)
 
+when the user makes a decision and resubmits the form, their can be a flag variable that specifies whether 
+the new POST request is creating a new org or associating with an existing one.(This part isn't implemented yet)
 
 Sidegoal:
 

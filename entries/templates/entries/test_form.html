@@ -66,6 +66,11 @@
     function ajaxRequest() {
     	$('.ajaxProgress').show();
     	
+    	//I hard-coded sending Cardiovascular,Dental,Diabetes, and Emergency values 
+    	//simulating as if they were checked by the user
+    	//In a real ver, there would be code that would put only the checkboxes
+    	//that were checked on the form in data:
+    	
         $.ajax({
             type: "POST",
             url: "{% url 'entries:post-request' %}",

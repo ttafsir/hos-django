@@ -64,4 +64,6 @@ Changes to HOS DB on 5 Oct 2014:
 -added a Common_EffortInstance_Info Abstraction table
 -renamed EffortInstanceServices table to EffortInstanceService
 
+**need to add django-geodjango and possibly django-leaflet into dependencies?
+
 

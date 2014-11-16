@@ -1,0 +1,43 @@
+
+{
+  "variables": {
+    "aws_access_key": "",
+    "aws_secret_key": ""
+  },
+  
+  "builders": [{
+    "type": "amazon-ebs",
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "region": "us-east-1",
+    "source_ami": "ami-00ab0168",
+    "instance_type": "t1.micro",
+    "ssh_username": "ubuntu",
+    "ami_name": "packer-hos {{timestamp}}"
+  }],
+  
+  "provisioners": [{
+    "type": "shell",
+    "inline": [
+      "#!/bin/bash -eux",
+      "sleep 30",
+      "sudo apt-get install python-software-properties -y",
+	  "sudo add-apt-repository ppa:ubuntugis/ppa -y",
+      "sudo apt-get update -y",
+      "sudo apt-get install whois",
+      "sudo apt-get install python-gdal python-mapnik2 python-pyproj postgresql-9.3 postgis pgadmin3 -y",
+      "sudo apt-get install python-dev libpq-dev -y",
+      "sudo apt-get install git -y",
+      "sudo apt-get install python-virtualenv -y",
+      "virtualenv -p /usr/bin/python2.7 py27env",
+      ". py27env/bin/activate",
+      "pip install django",
+      "pip install psycopg2"
+
+    ]
+  }]
+  
+}
+
+
+  

@@ -7,10 +7,13 @@ from djgeojson.serializers import Serializer as GeoJSONSerializer
 from django.contrib.gis.geos import *
 from django.contrib.gis.measure import Distance, D
 from django.views.decorators.csrf import csrf_exempt
-from django.utils import simplejson
+#apparently simplejson is depreciated...
+#Django deprecates simplejson in favor of Python's built-in json module.
 from django.core import serializers
+import json
 import time
 import datetime
+import pdb;
 
 from entries.models import *
 
@@ -33,6 +36,8 @@ def results(request, entries_id):
 #disables csrf token validation on this view
 @csrf_exempt
 def post_request(request):
+	
+	#pdb.set_trace()
 	
 	print('print request')
 	print(request)
@@ -84,14 +89,21 @@ def post_request(request):
 	except:
 		print("exception")
 	else:
+		print("continue...")
 		matching_facilities = GeoJSONSerializer().serialize(selected_choice, use_natural_keys=True)
-		matching_facilities_list = simplejson.loads(matching_facilities)
+		print(matching_facilities)
+		matching_facilities_list = json.loads(matching_facilities)
+		print("continue1.4..")
 	
-	#tests to see if there are existing organization close by
+	#tests to see if there are existing organizations close by
+	print("continue2...")
 	if len(health_facilities_within_100_meters) > 0:
 		nearby_facilities = GeoJSONSerializer().serialize(health_facilities_within_100_meters, use_natural_keys=True) 
-		#print(nearby_facilities)
-		nearby_facilities_list = simplejson.loads( nearby_facilities )
+		print("ok...")
+		print(nearby_facilities)
+		print("ok...")
+		#nearby_facilities_list = simplejson.loads( nearby_facilities )
+		nearby_facilities_list = json.loads(nearby_facilities)
 	else:
 		nearby_facilities_list= ""
 		
@@ -116,14 +128,17 @@ def post_request(request):
 	try:
 		if len(similar_name_list) > 0:
 			print('no matching name, but similar name or names')
-			similar_name_list = simplejson.loads(similar_name_list)
+			#similar_name_list = simplejson.loads(similar_name_list)
+			similar_name_list = json.loads(similar_name_list)
 			json_data_input_list['similar_names'] = similar_name_list
 	except NameError:
   		print("well, it WASN'T defined after all!")
 	else:
 	  	print("next step...")
 	
-	json_data = simplejson.dumps(json_data_input_list)
+	#json_data = simplejson.dumps(json_data_input_list)
+	json_data = json.dumps(json_data_input_list)
+	json_data = json.dumps(json_data_input_list)
 	
 	print(json_data)
 	

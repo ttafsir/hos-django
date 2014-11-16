@@ -1,13 +1,13 @@
 {\rtf1\ansi\ansicpg1252\cocoartf1265\cocoasubrtf210
 {\fonttbl\f0\froman\fcharset0 TimesNewRomanPSMT;\f1\fnil\fcharset0 Menlo-Regular;\f2\fswiss\fcharset0 ArialMT;
-\f3\fnil\fcharset0 Consolas;\f4\froman\fcharset0 Times-Roman;\f5\fnil\fcharset0 Menlo-Bold;
-\f6\fnil\fcharset0 Menlo-Italic;\f7\fmodern\fcharset0 Courier;\f8\fnil\fcharset0 SourceSansPro-Regular;
-\f9\fmodern\fcharset0 CourierNewPSMT;}
-{\colortbl;\red255\green255\blue255;\red0\green0\blue255;\red180\green36\blue25;\red47\green180\blue29;
-\red128\green0\blue0;\red34\green34\blue34;\red51\green51\blue51;\red26\green26\blue26;\red64\green11\blue217;
-\red60\green95\blue255;}
+\f3\fnil\fcharset0 Consolas;\f4\froman\fcharset0 Times-Roman;\f5\fnil\fcharset0 Monaco;
+\f6\fnil\fcharset0 Menlo-Bold;\f7\fnil\fcharset0 Menlo-Italic;\f8\fmodern\fcharset0 Courier;
+\f9\fnil\fcharset0 SourceSansPro-Regular;\f10\fmodern\fcharset0 CourierNewPSMT;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue255;\red180\green36\blue25;\red163\green209\blue38;
+\red47\green180\blue29;\red128\green0\blue0;\red34\green34\blue34;\red51\green51\blue51;\red26\green26\blue26;
+\red64\green11\blue217;\red60\green95\blue255;}
 {\info
-{\author Thomas Gertin}}\vieww21460\viewh18120\viewkind1\viewscale140
+{\author Thomas Gertin}}\vieww22060\viewh18720\viewkind1\viewscale140
 \deftab720
 \pard\pardeftab720\ri0
 
@@ -112,64 +112,80 @@ I am using Packer to automatically create an Amazon Machine Image (AMI) that has
 \
 Going through packer intro:\
 \
+\pard\pardeftab720\sl400
+
+\f5\fs28 \cf4 \cb0 \kerning1\expnd4\expndtw20
+$ packer build \\\
+    -var 'aws_access_key=YOUR ACCESS KEY' \\\
+    -var 'aws_secret_key=YOUR SECRET KEY' \\\
+    example.json\cf1 \kerning1\expnd4\expndtw20
+\
+\pard\pardeftab720\ri0
+
+\f0\fs24 \cf0 \cb1 \kerning1\expnd0\expndtw0 \
+***for some reason it want\'92s it in a really picky format. I can\'92t tell what the difference is; but I need to copy the above text and modify it for it to work***\
+\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
 
-\f1\fs22 \cf0 tom-gertins-mbp:~ thomasgertin1$ packer build -var 'aws_access_key=[ENTER ACCESS KEY HERE] -var 'aws_secret_key=[ENTER PRIVATE KEY HERE]\'92 /Users/thomasgertin1/hos-django/packer/example.json\
+\f1\fs22 \cf0 tom-gertins-mbp:~ thomasgertin1$ packer build \\\
+    -var 'aws_access_key=[ENTER KEY HERE] \\\
+    -var 'aws_secret_key=[ENTER KEY HERE] \\\
+    /Users/thomasgertin1/thenandnow/packer_thenandnow.json\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
 
-\f5\b \cf4 amazon-ebs output will be in this color.
+\f6\b \cf5 amazon-ebs output will be in this color.
 \f1\b0 \cf0 \
 \
 
-\f5\b \cf4 ==> amazon-ebs: Creating temporary keypair: packer 539e1169-d35b-12a9-9d0e-452b6b84c29a
+\f6\b \cf5 ==> amazon-ebs: Creating temporary keypair: packer 539e1169-d35b-12a9-9d0e-452b6b84c29a
 \f1\b0 \cf0 \
 
-\f5\b \cf4 ==> amazon-ebs: Creating temporary security group for this instance...
+\f6\b \cf5 ==> amazon-ebs: Creating temporary security group for this instance...
 \f1\b0 \cf0 \
 
-\f5\b \cf4 ==> amazon-ebs: Authorizing SSH access on the temporary security group...
+\f6\b \cf5 ==> amazon-ebs: Authorizing SSH access on the temporary security group...
 \f1\b0 \cf0 \
 
-\f5\b \cf4 ==> amazon-ebs: Launching a source AWS instance...
-\f1\b0 \cf0 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
-\cf4     amazon-ebs: Instance ID: i-497fb062\cf0 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
-
-\f5\b \cf4 ==> amazon-ebs: Waiting for instance (i-497fb062) to become ready...
-\f1\b0 \cf0 \
-
-\f5\b \cf4 ==> amazon-ebs: Waiting for SSH to become available...
-\f1\b0 \cf0 \
-
-\f5\b \cf4 ==> amazon-ebs: Connected to SSH!
-\f1\b0 \cf0 \
-
-\f5\b \cf4 ==> amazon-ebs: Stopping the source instance...
-\f1\b0 \cf0 \
-
-\f5\b \cf4 ==> amazon-ebs: Waiting for the instance to stop...
-\f1\b0 \cf0 \
-
-\f5\b \cf4 ==> amazon-ebs: Creating the AMI: packer-example 1402868073
+\f6\b \cf5 ==> amazon-ebs: Launching a source AWS instance...
 \f1\b0 \cf0 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
-\cf4     amazon-ebs: AMI: ami-70867918\cf0 \
+\cf5     amazon-ebs: Instance ID: i-497fb062\cf0 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
 
-\f5\b \cf4 ==> amazon-ebs: Waiting for AMI to become ready...
+\f6\b \cf5 ==> amazon-ebs: Waiting for instance (i-497fb062) to become ready...
 \f1\b0 \cf0 \
 
-\f5\b \cf4 ==> amazon-ebs: Terminating the source AWS instance...
+\f6\b \cf5 ==> amazon-ebs: Waiting for SSH to become available...
 \f1\b0 \cf0 \
 
-\f5\b \cf4 ==> amazon-ebs: Deleting temporary security group...
+\f6\b \cf5 ==> amazon-ebs: Connected to SSH!
 \f1\b0 \cf0 \
 
-\f5\b \cf4 ==> amazon-ebs: Deleting temporary keypair...
+\f6\b \cf5 ==> amazon-ebs: Stopping the source instance...
 \f1\b0 \cf0 \
 
-\f5\b \cf4 Build 'amazon-ebs' finished.
+\f6\b \cf5 ==> amazon-ebs: Waiting for the instance to stop...
+\f1\b0 \cf0 \
+
+\f6\b \cf5 ==> amazon-ebs: Creating the AMI: packer-example 1402868073
+\f1\b0 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
+\cf5     amazon-ebs: AMI: ami-70867918\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
+
+\f6\b \cf5 ==> amazon-ebs: Waiting for AMI to become ready...
+\f1\b0 \cf0 \
+
+\f6\b \cf5 ==> amazon-ebs: Terminating the source AWS instance...
+\f1\b0 \cf0 \
+
+\f6\b \cf5 ==> amazon-ebs: Deleting temporary security group...
+\f1\b0 \cf0 \
+
+\f6\b \cf5 ==> amazon-ebs: Deleting temporary keypair...
+\f1\b0 \cf0 \
+
+\f6\b \cf5 Build 'amazon-ebs' finished.
 \f1\b0 \cf0 \
 \
 ==> Builds finished. The artifacts of successful builds are:\
@@ -237,7 +253,7 @@ Example of packer command to run packer template:\
 I need to create keys for everybody.\
 \pard\pardeftab720\ri0
 
-\f6\i\fs26 \cf0 \
+\f7\i\fs26 \cf0 \
 \pard\pardeftab720\ri0
 
 \f1\i0 \cf0 I want to use mkpasswd command:\
@@ -259,7 +275,7 @@ ubuntu@domU-12-31-39-07-6A-D7:~$ sudo useradd prometeo -p `mkpasswd someword`
 \f3\fs20 \cf0 \
 How to enable password authorization:\
 \pard\tx916\tx1832\tx2748\tx3664\tx4580\tx5496\tx6412\tx7328\tx8244\tx9160\tx10076\tx10992\tx11908\tx12824\tx13740\tx14656\pardeftab720\ri0\sl267
-\cf0 sudo sed -i \cf5 's/PermitEmptyPasswords no/PermitEmptyPasswords yes/'\cf0  /etc/ssh/sshd_config\
+\cf0 sudo sed -i \cf6 's/PermitEmptyPasswords no/PermitEmptyPasswords yes/'\cf0  /etc/ssh/sshd_config\
 \pard\pardeftab720\ri0
 \cf0 \
 from ({\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/questions/23369917/cleaner-way-to-write-multiple-sed-commands"}}{\fldrslt \cf2 \ul \ulc2 http://stackoverflow.com/questions/23369917/cleaner-way-to-write-multiple-sed-commands}})\
@@ -268,7 +284,7 @@ followed by:\
 \
 \pard\tx916\tx1832\tx2748\tx3664\tx4580\tx5496\tx6412\tx7328\tx8244\tx9160\tx10076\tx10992\tx11908\tx12824\tx13740\tx14656\pardeftab720\ri0\sl218
 
-\fs22 \cf6 sudo service ssh restart\cf7 \
+\fs22 \cf7 sudo service ssh restart\cf8 \
 \pard\pardeftab720\ri0
 
 \fs20 \cf0 \
@@ -282,19 +298,19 @@ followed by:\
 -create a new user (w with root privileges)  {\field{\*\fldinst{HYPERLINK "https://help.ubuntu.com/community/RootSudo"}}{\fldrslt \cf2 \ul \ulc2 https://help.ubuntu.com/community/RootSudo}}\
 \pard\tx916\tx1832\tx2748\tx3664\tx4580\tx5496\tx6412\tx7328\tx8244\tx9160\tx10076\tx10992\tx11908\tx12824\tx13740\tx14656\pardeftab720\ri0\sl240\sa120
 
-\f7\fs19 \cf7 sudo adduser <username> sudo\
+\f8\fs19 \cf8 sudo adduser <username> sudo\
 \pard\pardeftab720\ri0
 
 \f0\fs24 \cf0 \
 \pard\pardeftab720\ri0
 {\field{\*\fldinst{HYPERLINK "http://askubuntu.com/questions/168280/how-do-i-grant-sudo-privile"}}{\fldrslt 
-\f8\fs25 \cf2 \ul \ulc2 http://askubuntu.com/questions/168280/how-do-i-grant-sudo-privileges-to-an-existing-user}}
-\f8\fs25 \cf8 \
+\f9\fs25 \cf2 \ul \ulc2 http://askubuntu.com/questions/168280/how-do-i-grant-sudo-privileges-to-an-existing-user}}
+\f9\fs25 \cf9 \
 \
 \pard\pardeftab720\ri0
 
 \f1\fs22 \cf0 ubuntu@domU-12-31-39-0A-38-AA:/home/jkeesh$ sudo usermod -a -G sudo jkeesh
-\f8\fs25 \cf8 \
+\f9\fs25 \cf9 \
 \
 make it so that the user doesn\'92t need to enter their password after using the sudo command.
 \f4\fs20 \cf0 \
@@ -330,7 +346,7 @@ Ex.\
 \
 \pard\tx916\tx1832\tx2748\tx3664\tx4580\tx5496\tx6412\tx7328\tx8244\tx9160\tx10076\tx10992\tx11908\tx12824\tx13740\tx14656\pardeftab720\ri0\sl180\sa240
 
-\f9 \cf0 # cd ~user \
+\f10 \cf0 # cd ~user \
 # mkdir .ssh \
 # chmod 700 .ssh \
 # chown user:user .ssh \
@@ -420,7 +436,7 @@ Tom-Gertins-MacBook-Pro:Hope_One_Source thomasgertin1$ ssh -i hos.pem ubuntu@ec2
 \f1\fs22 \cf0 ubuntu@ip-10-139-23-160:/home$ cd ~/\
 ubuntu@ip-10-139-23-160:~$ ls\
 guest.pub  
-\f5\b \cf9 py27env
+\f6\b \cf10 py27env
 \f1\b0 \cf0 \
 \pard\pardeftab720\ri0
 \cf0 ubuntu@ip-10-139-23-160:~$ sudo mv guest.pub /home/guest\
@@ -462,10 +478,10 @@ Resolving deltas: 100% (112/112), done.\
 [ec2-user@domU-12-31-39-14-08-48 ~]$ cd hos-django\
 [ec2-user@domU-12-31-39-14-08-48 hos-django]$ ls\
 \pard\pardeftab720\ri0
-\cf10 entries\cf0   \cf10 haiti_geospatial_data\cf0   \cf10 hos2\cf0   manage.py  \cf10 notes\cf0   README.md\
+\cf11 entries\cf0   \cf11 haiti_geospatial_data\cf0   \cf11 hos2\cf0   manage.py  \cf11 notes\cf0   README.md\
 \
 After running Packer and creating a new instance with the new AMI you need to log in as ubuntu:\
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural
 
 \fs26 \cf0 \CocoaLigature0 Tom-Gertins-MacBook-Pro:keys thomasgertin1$ ssh -i tiles3.pem ubuntu@ec2-54-87-131-252.compute-1.amazonaws.com}

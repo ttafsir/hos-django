@@ -63,6 +63,8 @@
 	
 	<script type="text/javascript">
 
+
+
     function ajaxRequest() {
     	$('.ajaxProgress').show();
     	
@@ -70,6 +72,14 @@
     	//simulating as if they were checked by the user
     	//In a real ver, there would be code that would put only the checkboxes
     	//that were checked on the form in data:
+    	
+		//builds an array of what checkboxes were checked
+		services_array = [];
+    	$('input[type=checkbox]:checked').each(function() {
+			// Do something interesting
+			console.log($(this).attr("id"));
+			services_array[services_array.length] = $(this).attr("id");
+		});
     	
         $.ajax({
             type: "POST",
@@ -80,10 +90,11 @@
             	organization : $('#organization').val(),
             	lat : $('#lat').val(),
             	lon : $('#lon').val(),
-            	Cardiovascular : $('#Cardiovascular').val(),
-            	Dental : $('#Dental').val(),
-            	Diabetes : $('#Diabetes').val(),
-            	Emergency : $('#Emergency').val(),
+            	services : services_array,
+            	//Cardiovascular : $('#Cardiovascular').val(),
+            	//Dental : $('#Dental').val(),
+            	//Diabetes : $('#Diabetes').val(),
+            	//Emergency : $('#Emergency').val(),
             },
             success: function (json) {
                 //alert(json);
@@ -92,6 +103,7 @@
                 $('.matching_name').hide()
                 
                 console.log('no alerts?');
+
                 
                 nearby_facilities_json = json['nearby_facilities']
                 

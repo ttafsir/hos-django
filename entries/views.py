@@ -157,12 +157,19 @@ def post_request(request):
 	
 		#if it is a new organization name and in a new location then create new entry in DB
 	
+		service_list = request.POST.getlist('services[]', None)
+		
+		print('printing services list')
+		print(service_list)
+		
+		'''
 		#detects all of the services provided that were selected and puts in in a list
-		service_list = []
-	
+		previous code when services were stored in separate variables instead of a single array
 		for e in ServiceType.objects.all():
 			if (request.POST.get(e.service_name)):
 				service_list.append(e.service_name)
+		'''
+	
    
 		'''
 		We want to append 55 to imported HOS site data

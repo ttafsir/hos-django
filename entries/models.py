@@ -7,6 +7,7 @@ from django.contrib.gis.geos import *
 class ServiceProvider(models.Model):
 	service_provider_id =  models.AutoField(primary_key=True)
 	provider_name = models.CharField(max_length = 500)
+	provider_name_en = models.CharField(max_length = 500)
 	provider_name_fr = models.CharField(max_length = 500)
 	provider_name_cr = models.CharField(max_length = 500)
 
@@ -137,8 +138,10 @@ class EffortInstance(Common_EffortInstance_Info):
 	
 class ServiceType(models.Model):
     service_type_id = models.IntegerField(primary_key=True)
-    service_name = models.CharField(max_length=100, blank=True)
-    service_description = models.CharField(max_length=300, blank=True)
+    service_name_en = models.CharField(max_length=100, blank=True)
+    service_name_fr = models.CharField(max_length=100, blank=True)
+    service_name_cr = models.CharField(max_length=100, blank=True)
+    #service_description = models.CharField(max_length=300, blank=True)
     
 class EffortInstanceService(models.Model):
     effort_instance_service_id = models.AutoField(primary_key=True)

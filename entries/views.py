@@ -44,6 +44,9 @@ def post_request(request):
 	
 	organization = request.POST.get('organization', None)
 	
+	print('org name: ')
+	print(organization)
+	
 	#this validation is not returning the HttpResponse for some reason...
 	if len(organization) < 1:
 		print('if org name is blank')
@@ -61,8 +64,11 @@ def post_request(request):
 	
 	input_point = Point(lon,lat)
 	
-	print('org name: ')
-	print(organization)
+	service_list = request.POST.getlist('services[]', None)
+		
+	print('printing services list')
+	print(service_list)
+	
 	
 	health_facilities_within_100_meters = Location_w_efforts.objects.filter(geom__distance_lt=(input_point, D(m=1000)))
 	print('health_facilities_within_100_meters len')
@@ -157,14 +163,10 @@ def post_request(request):
 	
 		#if it is a new organization name and in a new location then create new entry in DB
 	
-		service_list = request.POST.getlist('services[]', None)
-		
-		print('printing services list')
-		print(service_list)
 		
 		'''
-		#detects all of the services provided that were selected and puts in in a list
 		previous code when services were stored in separate variables instead of a single array
+		#detects all of the services provided that were selected and puts in in a list
 		for e in ServiceType.objects.all():
 			if (request.POST.get(e.service_name)):
 				service_list.append(e.service_name)

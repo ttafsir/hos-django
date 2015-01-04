@@ -148,8 +148,8 @@ for row in dataReader:
 				EffortInstanceServiceObj.effort_service_description = upfirstletter(ongHeaders[x].replace("_", " "));
 		
 				#classify EffortInstanceServiceObj.effort_service_description based on a dictionary
-				if ServiceType.objects.filter(service_name=classify_service_types[EffortInstanceServiceObj.effort_service_description]).count() == 1:
-					serviceType = ServiceType.objects.get(service_name=classify_service_types[EffortInstanceServiceObj.effort_service_description])
+				if ServiceType.objects.filter(service_name_en=classify_service_types[EffortInstanceServiceObj.effort_service_description]).count() == 1:
+					serviceType = ServiceType.objects.get(service_name_en=classify_service_types[EffortInstanceServiceObj.effort_service_description])
 					EffortInstanceServiceObj.effort_service_type = serviceType
 		
 				EffortInstanceServiceObj.save()

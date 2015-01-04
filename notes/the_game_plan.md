@@ -66,4 +66,37 @@ Changes to HOS DB on 5 Oct 2014:
 
 **need to add django-geodjango and possibly django-leaflet into dependencies?
 
+1 Dec 2014:
+
+-you can check the Django version by typing the following into the command line: python -c "import django; print(django.get_version())"
+
+-Django is upgraded to 1.71
+-had some issues upgrading (see Toms_Installing_Django notes)
+
+got this error after this command(python load_servicetype_table.py):
+ raise AppRegistryNotReady("Models aren't loaded yet.")
+django.core.exceptions.AppRegistryNotReady: Models aren't loaded yet.
+
+so did this:
+-added the following 2 lines to top of load_servicetype_table.py (**don't think it was necessary though**) 
+
+import django
+django.setup()
+
+got this error:
+django.core.exceptions.ImproperlyConfigured: Requested setting LOGGING_CONFIG, but settings are not configured. You must either define the environment variable DJANGO_SETTINGS_MODULE or call settings.configure() before accessing settings.
+
+so ran this:
+Tom-Gertins-MacBook-Pro:entries thomasgertin1$ export DJANGO_SETTINGS_MODULE=hos2.settings
+and got this error: 
+ImportError: Could not import settings 'hos2.settings' (Is it on sys.path? Is there an import error in the settings file?): No module named hos2.settings
+
+so exported the following into my Python path:
+http://stackoverflow.com/questions/20270297/consistently-getting-importerror-could-not-import-settings-myapp-settings-err
+Tom-Gertins-MacBook-Pro:entries thomasgertin1$ export PYTHONPATH=/Users/thomasgertin1/hos-django/:$PYTHONPATH
+
+and I was finally able to run:
+
+Tom-Gertins-MacBook-Pro:entries thomasgertin1$ python load_servicetype_table.py
+
 

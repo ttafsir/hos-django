@@ -156,7 +156,7 @@ for row in dataReader:
 				print EffortInstanceServiceObj.effort_service_description
 				
 				#classify EffortInstanceServiceObj.effort_service_description based on a dictionary
-				EffortInstanceServiceObj.effort_service_type = ServiceType.objects.get(service_name=classify_service_types[EffortInstanceServiceObj.effort_service_description])
+				EffortInstanceServiceObj.effort_service_type = ServiceType.objects.get(service_name_en=classify_service_types[EffortInstanceServiceObj.effort_service_description])
 				
 				EffortInstanceServiceObj.save()	
 			

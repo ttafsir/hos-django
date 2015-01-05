@@ -11,9 +11,6 @@ django.setup()
 
 # Full path to your django project directory
 
-#your_djangoproject_home="/Users/thomasgertin1/hos-django/"
-# two directories up. Chained!
-#your_djangoproject_home="../../hos-django/"
 your_djangoproject_home="../"
 
 import sys,os
@@ -101,14 +98,47 @@ services_cr = ['kadyo-vaskilè',
 'Vaksinasyon (PEV)',
 'Lòt']
 
+#create list in french
+services_fr = ['Cardiovasculaire',
+'Services de clinique',
+'Maladies contagieuses',
+'Dentaire',
+'Diabète',
+'Urgence',
+'Santé Environnementale',
+'Ophtalmologie',
+'Violence basée sur les genres',
+'Médecine Générale',
+'HIV-SIDA Infections',
+'Hypertension',
+'Santé pour enfants en bas âge',
+'Soins Intensifs',
+'Laboratoire',
+'Malaria',
+'Soins pour femmes enceintes/obstétric',
+'Nutrition',
+'Gynécologie',
+'Soins obstétriques',
+'Bloc opératoire',
+'ORL',
+'Soins Palliatifs',
+'Pédiatrie',
+'Pharmacie',
+'Thérapie Physique',
+'Psychologie',
+'Re-éducation (Santé Publique)',
+'Chirurgie',
+'Vaccination',
+'Autre']
+
 count = 1
 
 for x in range(0,len(services_en)):
 
 	ServiceType.service_type_id = count
 	ServiceType.service_name_en = services_en[x]
-	#ServiceType.service_name_fr = services_fr[x]
 	ServiceType.service_name_cr = services_cr[x]
+	ServiceType.service_name_fr = services_fr[x]
 	
 	
 	count = count + 1

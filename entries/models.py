@@ -7,9 +7,9 @@ from django.contrib.gis.geos import *
 class ServiceProvider(models.Model):
 	service_provider_id =  models.AutoField(primary_key=True)
 	provider_name = models.CharField(max_length = 500)
-	provider_name_en = models.CharField(max_length = 500)
-	provider_name_fr = models.CharField(max_length = 500)
-	provider_name_cr = models.CharField(max_length = 500)
+	#provider_name_en = models.CharField(max_length = 500)
+	#provider_name_fr = models.CharField(max_length = 500)
+	#provider_name_cr = models.CharField(max_length = 500)
 
 class Location(models.Model):
 	#latitude and longitude need to be changed to string types for GeoDjango
@@ -123,6 +123,8 @@ class Common_EffortInstance_Info(models.Model):
 	date_end = models.DateTimeField(auto_now=False, null=True)
 	default = models.NullBooleanField(primary_key=False, blank=True)
 	description = models.CharField(max_length=600, blank=True)
+	
+	drupal_id = models.IntegerField(default=0)
 	
 	class Meta:
 		abstract = True

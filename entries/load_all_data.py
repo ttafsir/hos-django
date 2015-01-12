@@ -5,6 +5,9 @@ import sys,os
 sys.path.append(your_djangoproject_home)
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'hos2.settings'
+
+import django
+django.setup()
  
 #loads all data from three datasets
 

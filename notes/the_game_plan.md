@@ -84,7 +84,8 @@ import django
 django.setup()
 
 got this error:
-django.core.exceptions.ImproperlyConfigured: Requested setting LOGGING_CONFIG, but settings are not configured. You must either define the environment variable DJANGO_SETTINGS_MODULE or call settings.configure() before accessing settings.
+django.core.exceptions.ImproperlyConfigured: Requested setting LOGGING_CONFIG, but settings are not configured. 
+You must either define the environment variable DJANGO_SETTINGS_MODULE or call settings.configure() before accessing settings.
 
 so ran this:
 Tom-Gertins-MacBook-Pro:entries thomasgertin1$ export DJANGO_SETTINGS_MODULE=hos2.settings
@@ -93,7 +94,7 @@ ImportError: Could not import settings 'hos2.settings' (Is it on sys.path? Is th
 
 so exported the following into my Python path:
 http://stackoverflow.com/questions/20270297/consistently-getting-importerror-could-not-import-settings-myapp-settings-err
-Tom-Gertins-MacBook-Pro:entries thomasgertin1$ export PYTHONPATH=/Users/thomasgertin1/hos-django/:$PYTHONPATH
+Tom-Gertins-MacBook-Pro:entries thomasgertin1$ export PYTHONPATH=/Users/thomasgertin3/repos/hos-django/:$PYTHONPATH
 
 and I was finally able to run:
 

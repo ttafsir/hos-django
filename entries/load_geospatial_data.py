@@ -10,6 +10,9 @@ sys.path.append(your_djangoproject_home)
 
 #os.environ['DJANGO_SETTINGS_MODULE'] = 'hos2.settings'
 
+import django
+django.setup()
+
 from django.contrib.gis.utils import LayerMapping
 from entries.models import haiti_adm1_minustah
 from entries.models import haiti_adm2_minustah
@@ -102,3 +105,7 @@ def run(verbose=True):
     
     
 #load_geospatial_data.run()
+
+
+if __name__ == "__main__":
+    run()

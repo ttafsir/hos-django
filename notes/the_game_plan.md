@@ -32,7 +32,7 @@ Next Goals:
 - Integration with main Drupal site
 	-we need to work on the import from the HOS side:
 		1)Location in Lat and Lon
-		2)Name of Org (Also French and Creole versions if available)
+		2)Name of Org
 		3)Services provided(if available)
 
 when the user makes a decision and resubmits the form, their can be a flag variable that specifies whether 

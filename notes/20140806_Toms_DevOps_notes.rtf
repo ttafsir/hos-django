@@ -1,17 +1,130 @@
-{\rtf1\ansi\ansicpg1252\cocoartf1265\cocoasubrtf210
-{\fonttbl\f0\froman\fcharset0 TimesNewRomanPSMT;\f1\fnil\fcharset0 Menlo-Regular;\f2\fswiss\fcharset0 ArialMT;
-\f3\fnil\fcharset0 Consolas;\f4\froman\fcharset0 Times-Roman;\f5\fnil\fcharset0 Monaco;
-\f6\fnil\fcharset0 Menlo-Bold;\f7\fnil\fcharset0 Menlo-Italic;\f8\fmodern\fcharset0 Courier;
-\f9\fnil\fcharset0 SourceSansPro-Regular;\f10\fmodern\fcharset0 CourierNewPSMT;}
-{\colortbl;\red255\green255\blue255;\red0\green0\blue255;\red180\green36\blue25;\red163\green209\blue38;
-\red47\green180\blue29;\red128\green0\blue0;\red34\green34\blue34;\red51\green51\blue51;\red26\green26\blue26;
+{\rtf1\ansi\ansicpg1252\cocoartf1344\cocoasubrtf720
+{\fonttbl\f0\froman\fcharset0 TimesNewRomanPSMT;\f1\fnil\fcharset0 Menlo-Regular;\f2\fnil\fcharset0 Monaco;
+\f3\fnil\fcharset0 Menlo-Bold;\f4\fswiss\fcharset0 ArialMT;\f5\fnil\fcharset0 Consolas;
+\f6\froman\fcharset0 Times-Roman;\f7\fnil\fcharset0 Menlo-Italic;\f8\fmodern\fcharset0 Courier;
+\f9\fswiss\fcharset0 Helvetica;\f10\fmodern\fcharset0 CourierNewPSMT;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue255;\red163\green209\blue38;\red47\green180\blue29;
+\red180\green36\blue25;\red128\green0\blue0;\red34\green34\blue34;\red51\green51\blue51;\red26\green26\blue26;
 \red64\green11\blue217;\red60\green95\blue255;}
 {\info
-{\author Thomas Gertin}}\vieww22060\viewh18720\viewkind1\viewscale140
+{\author Thomas Gertin}}\vieww18520\viewh16580\viewkind1\viewscale140
 \deftab720
 \pard\pardeftab720\ri0
 
-\f0\fs24 \cf0 HOS Amazon AWS set up notes\
+\f0\fs24 \cf0 \
+*********************************\
+\
+\pard\pardeftab720\ri0
+
+\f1\fs22 \cf0 I am using Packer to automatically create an Amazon Machine Image (AMI) that has all the dependencies needed by hos-django!\
+\pard\pardeftab720\ri0
+{\field{\*\fldinst{HYPERLINK "http://pretengineer.com/post/packer-vagrant-infra/"}}{\fldrslt 
+\f0\fs24 \cf2 \ul \ulc2 http://pretengineer.com/post/packer-vagrant-infra/}}
+\f0\fs24 \
+\
+\pard\pardeftab720\ri0
+{\field{\*\fldinst{HYPERLINK "http://www.packer.io/intro/"}}{\fldrslt \cf2 \ul \ulc2 http://www.packer.io/intro/}}\
+\
+Going through packer intro:\
+\
+\pard\pardeftab720\sl400
+
+\f2\fs28 \cf3 \cb0 \kerning1\expnd4\expndtw20
+$ packer build \\\
+    -var 'aws_access_key=YOUR ACCESS KEY' \\\
+    -var 'aws_secret_key=YOUR SECRET KEY' \\\
+    example.json\cf1 \kerning1\expnd4\expndtw20
+\
+\pard\pardeftab720\ri0
+
+\f0\fs24 \cf0 \cb1 \kerning1\expnd0\expndtw0 \
+***for some reason it want\'92s it in a really picky format. I can\'92t tell what the difference is; but I need to copy the above text and modify it for it to work***\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
+
+\f1\fs22 \cf0 tom-gertins-mbp:~ thomasgertin1$ packer build \\\
+    -var 'aws_access_key=[ENTER KEY HERE] \\\
+    -var 'aws_secret_key=[ENTER KEY HERE] \\\
+    /Users/thomasgertin1/thenandnow/packer_thenandnow.json\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
+
+\f3\b \cf4 amazon-ebs output will be in this color.
+\f1\b0 \cf0 \
+\
+
+\f3\b \cf4 ==> amazon-ebs: Creating temporary keypair: packer 539e1169-d35b-12a9-9d0e-452b6b84c29a
+\f1\b0 \cf0 \
+
+\f3\b \cf4 ==> amazon-ebs: Creating temporary security group for this instance...
+\f1\b0 \cf0 \
+
+\f3\b \cf4 ==> amazon-ebs: Authorizing SSH access on the temporary security group...
+\f1\b0 \cf0 \
+
+\f3\b \cf4 ==> amazon-ebs: Launching a source AWS instance...
+\f1\b0 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
+\cf4     amazon-ebs: Instance ID: i-497fb062\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
+
+\f3\b \cf4 ==> amazon-ebs: Waiting for instance (i-497fb062) to become ready...
+\f1\b0 \cf0 \
+
+\f3\b \cf4 ==> amazon-ebs: Waiting for SSH to become available...
+\f1\b0 \cf0 \
+
+\f3\b \cf4 ==> amazon-ebs: Connected to SSH!
+\f1\b0 \cf0 \
+
+\f3\b \cf4 ==> amazon-ebs: Stopping the source instance...
+\f1\b0 \cf0 \
+
+\f3\b \cf4 ==> amazon-ebs: Waiting for the instance to stop...
+\f1\b0 \cf0 \
+
+\f3\b \cf4 ==> amazon-ebs: Creating the AMI: packer-example 1402868073
+\f1\b0 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
+\cf4     amazon-ebs: AMI: ami-70867918\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
+
+\f3\b \cf4 ==> amazon-ebs: Waiting for AMI to become ready...
+\f1\b0 \cf0 \
+
+\f3\b \cf4 ==> amazon-ebs: Terminating the source AWS instance...
+\f1\b0 \cf0 \
+
+\f3\b \cf4 ==> amazon-ebs: Deleting temporary security group...
+\f1\b0 \cf0 \
+
+\f3\b \cf4 ==> amazon-ebs: Deleting temporary keypair...
+\f1\b0 \cf0 \
+
+\f3\b \cf4 Build 'amazon-ebs' finished.
+\f1\b0 \cf0 \
+\
+==> Builds finished. The artifacts of successful builds are:\
+--> amazon-ebs: AMIs were created:\
+\
+\pard\pardeftab720\ri0
+\cf0 us-east-1: ami-70867918\
+\
+Lessons learned while installing dependencies on server and building packer template:\
+\
+-I originally use the Amazon Linux image (CentOS based). It started giving me more trouble. I changed it to Ubuntu instead.\
+\
+\pard\pardeftab720\ri0
+
+\fs26 \cf0 ({\field{\*\fldinst{HYPERLINK "http://joelmccune.com/2014/01/06/installing-geodjango-on-ubuntu-12-04/"}}{\fldrslt \cf2 \ul \ulc2 http://joelmccune.com/2014/01/06/installing-geodjango-on-ubuntu-12-04/}})
+\fs22 \
+\pard\pardeftab720\ri0
+
+\f0\fs24 \cf0 \
+\
+*********************************\
+\
+\
+HOS Amazon AWS set up notes\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
 
@@ -22,7 +135,7 @@ Tom-Gertins-MacBook-Pro:Hope_One_Source thomasgertin1$ chmod 400 hos.pem\
 Then you can log into your instance:\
 \
 \pard\pardeftab720\ri0
-\cf0 Tom-Gertins-MacBook-Pro:Hope_One_Source thomasgertin1$ ssh -i hos.pem {\field{\*\fldinst{HYPERLINK "mailto:ec2-user@ec2-54-204-61-176.compute-1.amazonaws.com"}}{\fldrslt \cf2 \ul \ulc2 ec2-user@ec2-54-204-61-176.compute-1.amazonaws.com}}\
+\cf0 Tom-Gertins-MacBook-Pro:Hope_One_Source thomasgertin1$ ssh -i hos.pem {\field{\*\fldinst{HYPERLINK "mailto:ec2-user@ec2-54-204-61-176.compute-1.amazonaws.com"}}{\fldrslt \cf2 \ul \ulc2 ubuntu@ec2-54-204-61-176.compute-1.amazonaws.com}}\
 \
 useful sites:\
 \
@@ -42,16 +155,16 @@ How to change Password Authentication (later decided not to enable and go with k
 \
 \pard\pardeftab720\ri0
 
-\f2\fs20 \cf0 I edited /etc/ssh/sshd_config and set\'a0
-\f3 PasswordAuthentication
-\f2 \'a0to\'a0
-\f3 yes
-\f2 .\
+\f4\fs20 \cf0 I edited /etc/ssh/sshd_config and set\'a0
+\f5 PasswordAuthentication
+\f4 \'a0to\'a0
+\f5 yes
+\f4 .\
 \
 \pard\pardeftab720\ri0
 
 \f1\fs22 \cf0 ubuntu@domU-12-31-39-07-8C-8C:/etc/ssh$ sudo vim sshd_config
-\f4\fs20 \
+\f6\fs20 \
 
 \f1\fs22 \
 \pard\pardeftab720\ri0
@@ -86,13 +199,13 @@ ex. of code needed in settings.py:\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
 
-\fs26 \cf3 'ENGINE'\cf0 : \cf3 'django.contrib.gis.db.backends.postgis'\cf0 ,\
-        \cf3 'USER'\cf0 : \cf3 'hosadmin'\cf0 ,\
-                \cf3 'NAME'\cf0 : \cf3 'hos3'\cf0 ,\
-                \cf3 'PASSWORD'\cf0 : \cf3 'H0$1password'\cf0 ,\
-                \cf3 'HOST'\cf0 : \cf3 'awspostgresql.c00fcyyjglve.us-east-1.rds.amazonaws.com'\cf0 ,\
+\fs26 \cf5 'ENGINE'\cf0 : \cf5 'django.contrib.gis.db.backends.postgis'\cf0 ,\
+        \cf5 'USER'\cf0 : \cf5 'hosadmin'\cf0 ,\
+                \cf5 'NAME'\cf0 : \cf5 'hos3'\cf0 ,\
+                \cf5 'PASSWORD'\cf0 : \cf5 'H0$1password'\cf0 ,\
+                \cf5 'HOST'\cf0 : \cf5 'awspostgresql.c00fcyyjglve.us-east-1.rds.amazonaws.com'\cf0 ,\
 \pard\pardeftab720\ri0
-\cf0                 \cf3 'PORT'\cf0 : \cf3 '5432'\cf0 ,
+\cf0                 \cf5 'PORT'\cf0 : \cf5 '5432'\cf0 ,
 \fs22 \
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
@@ -101,113 +214,18 @@ ex. of code needed in settings.py:\
 -I also needed to enable the PostGIS Extension. I did this through PGAdmin3 right-clicking on the extensions of hos3 DB and adding postgis\
 \pard\pardeftab720\ri0
 \cf0 \
-I am using Packer to automatically create an Amazon Machine Image (AMI) that has all the dependencies needed by hos-django!\
-\pard\pardeftab720\ri0
-{\field{\*\fldinst{HYPERLINK "http://pretengineer.com/post/packer-vagrant-infra/"}}{\fldrslt 
-\f0\fs24 \cf2 \ul \ulc2 http://pretengineer.com/post/packer-vagrant-infra/}}
-\f0\fs24 \
-\
-\pard\pardeftab720\ri0
-{\field{\*\fldinst{HYPERLINK "http://www.packer.io/intro/"}}{\fldrslt \cf2 \ul \ulc2 http://www.packer.io/intro/}}\
-\
-Going through packer intro:\
-\
-\pard\pardeftab720\sl400
-
-\f5\fs28 \cf4 \cb0 \kerning1\expnd4\expndtw20
-$ packer build \\\
-    -var 'aws_access_key=YOUR ACCESS KEY' \\\
-    -var 'aws_secret_key=YOUR SECRET KEY' \\\
-    example.json\cf1 \kerning1\expnd4\expndtw20
 \
 \pard\pardeftab720\ri0
 
-\f0\fs24 \cf0 \cb1 \kerning1\expnd0\expndtw0 \
-***for some reason it want\'92s it in a really picky format. I can\'92t tell what the difference is; but I need to copy the above text and modify it for it to work***\
+\f0\fs24 \cf0 *********************************\
+
+\b\fs28 Below are notes from the commands I made while setting up the install the 1st time:
+\f1\b0\fs22 \
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
-
-\f1\fs22 \cf0 tom-gertins-mbp:~ thomasgertin1$ packer build \\\
-    -var 'aws_access_key=[ENTER KEY HERE] \\\
-    -var 'aws_secret_key=[ENTER KEY HERE] \\\
-    /Users/thomasgertin1/thenandnow/packer_thenandnow.json\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
-
-\f6\b \cf5 amazon-ebs output will be in this color.
-\f1\b0 \cf0 \
-\
-
-\f6\b \cf5 ==> amazon-ebs: Creating temporary keypair: packer 539e1169-d35b-12a9-9d0e-452b6b84c29a
-\f1\b0 \cf0 \
-
-\f6\b \cf5 ==> amazon-ebs: Creating temporary security group for this instance...
-\f1\b0 \cf0 \
-
-\f6\b \cf5 ==> amazon-ebs: Authorizing SSH access on the temporary security group...
-\f1\b0 \cf0 \
-
-\f6\b \cf5 ==> amazon-ebs: Launching a source AWS instance...
-\f1\b0 \cf0 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
-\cf5     amazon-ebs: Instance ID: i-497fb062\cf0 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
-
-\f6\b \cf5 ==> amazon-ebs: Waiting for instance (i-497fb062) to become ready...
-\f1\b0 \cf0 \
-
-\f6\b \cf5 ==> amazon-ebs: Waiting for SSH to become available...
-\f1\b0 \cf0 \
-
-\f6\b \cf5 ==> amazon-ebs: Connected to SSH!
-\f1\b0 \cf0 \
-
-\f6\b \cf5 ==> amazon-ebs: Stopping the source instance...
-\f1\b0 \cf0 \
-
-\f6\b \cf5 ==> amazon-ebs: Waiting for the instance to stop...
-\f1\b0 \cf0 \
-
-\f6\b \cf5 ==> amazon-ebs: Creating the AMI: packer-example 1402868073
-\f1\b0 \cf0 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
-\cf5     amazon-ebs: AMI: ami-70867918\cf0 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
-
-\f6\b \cf5 ==> amazon-ebs: Waiting for AMI to become ready...
-\f1\b0 \cf0 \
-
-\f6\b \cf5 ==> amazon-ebs: Terminating the source AWS instance...
-\f1\b0 \cf0 \
-
-\f6\b \cf5 ==> amazon-ebs: Deleting temporary security group...
-\f1\b0 \cf0 \
-
-\f6\b \cf5 ==> amazon-ebs: Deleting temporary keypair...
-\f1\b0 \cf0 \
-
-\f6\b \cf5 Build 'amazon-ebs' finished.
-\f1\b0 \cf0 \
-\
-==> Builds finished. The artifacts of successful builds are:\
---> amazon-ebs: AMIs were created:\
-\
-\pard\pardeftab720\ri0
-\cf0 us-east-1: ami-70867918\
-\
-Lessons learned while installing dependencies on server and building packer template:\
-\
--I originally use the Amazon Linux image (CentOS based). It started giving me more trouble. I changed it to Ubuntu instead.\
 \
 \pard\pardeftab720\ri0
 
-\fs26 \cf0 ({\field{\*\fldinst{HYPERLINK "http://joelmccune.com/2014/01/06/installing-geodjango-on-ubuntu-12-04/"}}{\fldrslt \cf2 \ul \ulc2 http://joelmccune.com/2014/01/06/installing-geodjango-on-ubuntu-12-04/}})
-\fs22 \
-\
-\
-\
-\
-
-\fs26 \
+\fs26 \cf0 \
 \
 ubuntu@domU-12-31-39-16-1C-8A:~$ sudo add-apt-repository ppa:ubuntugis/ppa\
 \
@@ -272,7 +290,7 @@ ubuntu@domU-12-31-39-07-6A-D7:~$ sudo useradd prometeo -p `mkpasswd someword`
 \fs26 \
 \pard\pardeftab720\ri0
 
-\f3\fs20 \cf0 \
+\f5\fs20 \cf0 \
 How to enable password authorization:\
 \pard\tx916\tx1832\tx2748\tx3664\tx4580\tx5496\tx6412\tx7328\tx8244\tx9160\tx10076\tx10992\tx11908\tx12824\tx13740\tx14656\pardeftab720\ri0\sl267
 \cf0 sudo sed -i \cf6 's/PermitEmptyPasswords no/PermitEmptyPasswords yes/'\cf0  /etc/ssh/sshd_config\
@@ -313,7 +331,7 @@ followed by:\
 \f9\fs25 \cf9 \
 \
 make it so that the user doesn\'92t need to enter their password after using the sudo command.
-\f4\fs20 \cf0 \
+\f6\fs20 \cf0 \
 \pard\pardeftab720\ri0
 {\field{\*\fldinst{HYPERLINK "http://brianflove.com/2013/06/18/add-new-sudo-user-to-ec2-ubuntu/"}}{\fldrslt 
 \f0\fs24 \cf2 \ul \ulc2 http://brianflove.com/2013/06/18/add-new-sudo-user-to-ec2-ubuntu/}}
@@ -330,7 +348,7 @@ Ex.\
 \
 \pard\tx916\tx1832\tx2748\tx3664\tx4580\tx5496\tx6412\tx7328\tx8244\tx9160\tx10076\tx10992\tx11908\tx12824\tx13740\tx14656\pardeftab720\ri0\sl267
 
-\f3\fs20 \cf0 scp -i /path/to/your/.pemkey -r /copy/from/path user@server:/copy/to/path\
+\f5\fs20 \cf0 scp -i /path/to/your/.pemkey -r /copy/from/path user@server:/copy/to/path\
 \pard\pardeftab720\ri0
 
 \f0\fs24 \cf0 \
@@ -436,7 +454,7 @@ Tom-Gertins-MacBook-Pro:Hope_One_Source thomasgertin1$ ssh -i hos.pem ubuntu@ec2
 \f1\fs22 \cf0 ubuntu@ip-10-139-23-160:/home$ cd ~/\
 ubuntu@ip-10-139-23-160:~$ ls\
 guest.pub  
-\f6\b \cf10 py27env
+\f3\b \cf10 py27env
 \f1\b0 \cf0 \
 \pard\pardeftab720\ri0
 \cf0 ubuntu@ip-10-139-23-160:~$ sudo mv guest.pub /home/guest\

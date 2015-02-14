@@ -10,7 +10,13 @@ your_djangoproject_home="../"
 import sys,os
 sys.path.append(your_djangoproject_home)
 
+from django.core.wsgi import get_wsgi_application
+
 os.environ['DJANGO_SETTINGS_MODULE'] = 'hos2.settings'
+application = get_wsgi_application()
+
+import django
+django.setup()
  
 from entries.models import ServiceProvider,Location,EffortInstance,ServiceType,EffortInstanceService,Location_w_efforts
  

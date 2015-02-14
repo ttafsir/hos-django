@@ -4,7 +4,11 @@
 <p>
 
 <!--for some reason you can't have the parenthesis after effortinstance.effortinstanceservices_set.all in django templates-->
+<!--It is hard to output the services because the template view only likes one model in it-->
 {% for service in effortinstance.effortinstanceservice_set.all %}
     <!--<input type="radio" name="service" id="service{{ forloop.counter }}" value="{{ service.effort_instance_service_id }}" />-->
     <label for="service{{ forloop.counter }}">{{ service.effort_service_type.service_name }}</label><br />
+
 {% endfor %}
+
+

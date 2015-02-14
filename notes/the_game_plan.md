@@ -68,4 +68,6 @@ and I was finally able to run:
 
 Tom-Gertins-MacBook-Pro:entries thomasgertin1$ python load_servicetype_table.py
 
+14 Feb 2015:
 
+-added requests module (sudo pip install requests)

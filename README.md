@@ -1,8 +1,6 @@
 HOS-Django
 ===========
 
-Develop Branch
-
 HopeOneSource GeoDjango Project
 
 This project consists of a GeoDjango implementation modeling health facilities in Haiti including their locations

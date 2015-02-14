@@ -1,13 +1,14 @@
 {\rtf1\ansi\ansicpg1252\cocoartf1344\cocoasubrtf720
 {\fonttbl\f0\froman\fcharset0 TimesNewRomanPSMT;\f1\fnil\fcharset0 Menlo-Regular;\f2\fnil\fcharset0 Monaco;
-\f3\fnil\fcharset0 Menlo-Bold;\f4\fswiss\fcharset0 ArialMT;\f5\fnil\fcharset0 Consolas;
-\f6\froman\fcharset0 Times-Roman;\f7\fnil\fcharset0 Menlo-Italic;\f8\fmodern\fcharset0 Courier;
+\f3\fnil\fcharset0 Menlo-Bold;\f4\fnil\fcharset0 Consolas;\f5\froman\fcharset0 Times-Roman;
+\f6\fswiss\fcharset0 ArialMT;\f7\fnil\fcharset0 Menlo-Italic;\f8\fmodern\fcharset0 Courier;
 \f9\fswiss\fcharset0 Helvetica;\f10\fmodern\fcharset0 CourierNewPSMT;}
 {\colortbl;\red255\green255\blue255;\red0\green0\blue255;\red163\green209\blue38;\red47\green180\blue29;
-\red180\green36\blue25;\red128\green0\blue0;\red34\green34\blue34;\red51\green51\blue51;\red26\green26\blue26;
-\red64\green11\blue217;\red60\green95\blue255;}
+\red26\green26\blue26;\red234\green234\blue234;\red64\green11\blue217;\red19\green8\blue105;\red246\green246\blue246;
+\red14\green60\blue38;\red180\green36\blue25;\red128\green0\blue0;\red34\green34\blue34;\red51\green51\blue51;
+\red60\green95\blue255;}
 {\info
-{\author Thomas Gertin}}\vieww18520\viewh16580\viewkind1\viewscale140
+{\author Thomas Gertin}}\vieww19120\viewh16580\viewkind1\viewscale140
 \deftab720
 \pard\pardeftab720\ri0
 
@@ -147,6 +148,135 @@ useful sites:\
 \pard\pardeftab720\ri0
 {\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/quest"}}{\fldrslt \cf2 \ul \ulc2 http://stackoverflow.com/questions/8339912/allowing-users-to-ssh-to-an-ec2-ubuntu-instance}}\
 \
+\
+*********************************\
+How to set-up database on EC2:\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f1\fs22 \cf0 \CocoaLigature0 ubuntu@ip-172-31-59-160:~$ sudo su postgres\
+
+\f4\fs24 \cf5 \cb6 \expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+
+\f1\fs22 \cf0 \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 postgres@ip-172-31-59-160:/home/ubuntu$ createdb template_postgis
+\f4\fs24 \cf5 \cb6 \expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\pard\pardeftab720
+
+\f0 \cf0 \cb1 \kerning1\expnd0\expndtw0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f1\fs22 \cf0 \CocoaLigature0 postgres@ip-172-31-59-160:/home/ubuntu$ psql
+\f0\fs24 \CocoaLigature1 \
+\pard\pardeftab720\ri0
+\cf0 (password is \'91postgres\'92)\
+\
+***(tip, if not already logged in as user \'91postgres\'92) tom-gertins-mbp:~ thomasgertin1$ sudo -u postgres psql\
+\
+***fyi, how to delete a database: 
+\f1\fs22 \CocoaLigature0 postgres=# DROP DATABASE "hos1";
+\f0\fs24 \CocoaLigature1 \
+\
+postgres=# CREATE ROLE gisadmin PASSWORD 'mypassword' LOGIN SUPERUSER INHERIT CREATEDB;\
+  \
+postgres=# 
+\f1\fs22 \CocoaLigature0 CREATE DATABASE hos1 WITH OWNER = gisadmin TEMPLATE = template_postgis;
+\f0\fs24 \CocoaLigature1 \
+\
+or instead of referring to the template_postgis\'85\
+\
+you can connect to database:  
+\f1\fs22 \CocoaLigature0 postgres=# \\connect 'hos1'\
+\
+then\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+\cf0 hos1-# CREATE EXTENSION postgis;\
+\
+hos1-# CREATE EXTENSION postgis_topology;\
+
+\f0\fs24 \CocoaLigature1 \
+\pard\pardeftab720\ri0
+\cf0 -tip: typing \'91exit\'92 will exit you out of the postgres user and into the ubuntu user, typing \'91exit\'92 again will exit you out of the server\
+\
+*********************************\
+\
+example of database settings (in settings.py file)\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f1\fs22 \cf0 \CocoaLigature0 DATABASES = \{\
+    
+\f3\b \cf4 'default'
+\f1\b0 \cf0 : \{\
+        
+\f3\b \cf4 'ENGINE'
+\f1\b0 \cf0 : 
+\f3\b \cf4 'django.contrib.gis.db.backends.postgis'
+\f1\b0 \cf0 ,\
+        
+\f3\b \cf4 'USER'
+\f1\b0 \cf0 : 
+\f3\b \cf4 'gisadmin'
+\f1\b0 \cf0 ,\
+                
+\f3\b \cf4 'NAME'
+\f1\b0 \cf0 : 
+\f3\b \cf4 'hos1'
+\f1\b0 \cf0 ,\
+                
+\f3\b \cf4 'PASSWORD'
+\f1\b0 \cf0 : 
+\f3\b \cf4 'mypassword'
+\f1\b0 \cf0 ,\
+                
+\f3\b \cf4 'HOST'
+\f1\b0 \cf0 : 
+\f3\b \cf4 'localhost'
+\f1\b0 \cf0 ,\
+                
+\f3\b \cf4 'PORT'
+\f1\b0 \cf0 : 
+\f3\b \cf4 '5432'
+\f1\b0 \cf0 ,\
+    \}\
+\}\
+\
+\pard\pardeftab720\ri0
+
+\f0\fs24 \cf0 \CocoaLigature1 *********************************\
+\
+Django set-up:\
+\
+(to activate virtualenv) -need to cd into 
+\f3\b\fs22 \cf7 \CocoaLigature0 py27env 
+\f0\b0\fs24 \cf0 \CocoaLigature1 into type: 
+\f4\fs26 \cf5 \cb6 \expnd0\expndtw0\kerning0
+source bin/activate\
+\
+
+\f0\fs24 \cf0 \cb1 \kerning1\expnd0\expndtw0  then you need to cd inside 
+\f3\b\fs22 \cf7 \CocoaLigature0 hos-django 
+\f0\b0\fs24 \cf0 \CocoaLigature1 and type: 
+\f1\fs22 \CocoaLigature0 python manage.py makemigrations\
+\
+thenm 
+\f0\fs24 \CocoaLigature1 type: 
+\f1\fs22 \CocoaLigature0 python manage.py makemigrations
+\f0\fs24 \CocoaLigature1 \
+\
+\pard\pardeftab720
+
+\f5\fs28 \cf8 \cb9 \expnd0\expndtw0\kerning0
+$ \cf10 \expnd0\expndtw0\kerning0
+python manage.py runserver
+\f0\fs24 \cf0 \cb1 \kerning1\expnd0\expndtw0 \
+\pard\pardeftab720\ri0
+\cf0 \
+\
+*********************************\
+\
 How to change Password Authentication (later decided not to enable and go with keys instead):\
 \
 \pard\pardeftab720\ri0
@@ -155,16 +285,16 @@ How to change Password Authentication (later decided not to enable and go with k
 \
 \pard\pardeftab720\ri0
 
-\f4\fs20 \cf0 I edited /etc/ssh/sshd_config and set\'a0
-\f5 PasswordAuthentication
-\f4 \'a0to\'a0
-\f5 yes
-\f4 .\
+\f6\fs20 \cf0 I edited /etc/ssh/sshd_config and set\'a0
+\f4 PasswordAuthentication
+\f6 \'a0to\'a0
+\f4 yes
+\f6 .\
 \
 \pard\pardeftab720\ri0
 
 \f1\fs22 \cf0 ubuntu@domU-12-31-39-07-8C-8C:/etc/ssh$ sudo vim sshd_config
-\f6\fs20 \
+\f5\fs20 \
 
 \f1\fs22 \
 \pard\pardeftab720\ri0
@@ -199,13 +329,13 @@ ex. of code needed in settings.py:\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
 
-\fs26 \cf5 'ENGINE'\cf0 : \cf5 'django.contrib.gis.db.backends.postgis'\cf0 ,\
-        \cf5 'USER'\cf0 : \cf5 'hosadmin'\cf0 ,\
-                \cf5 'NAME'\cf0 : \cf5 'hos3'\cf0 ,\
-                \cf5 'PASSWORD'\cf0 : \cf5 'H0$1password'\cf0 ,\
-                \cf5 'HOST'\cf0 : \cf5 'awspostgresql.c00fcyyjglve.us-east-1.rds.amazonaws.com'\cf0 ,\
+\fs26 \cf11 'ENGINE'\cf0 : \cf11 'django.contrib.gis.db.backends.postgis'\cf0 ,\
+        \cf11 'USER'\cf0 : \cf11 'hosadmin'\cf0 ,\
+                \cf11 'NAME'\cf0 : \cf11 'hos3'\cf0 ,\
+                \cf11 'PASSWORD'\cf0 : \cf11 'H0$1password'\cf0 ,\
+                \cf11 'HOST'\cf0 : \cf11 'awspostgresql.c00fcyyjglve.us-east-1.rds.amazonaws.com'\cf0 ,\
 \pard\pardeftab720\ri0
-\cf0                 \cf5 'PORT'\cf0 : \cf5 '5432'\cf0 ,
+\cf0                 \cf11 'PORT'\cf0 : \cf11 '5432'\cf0 ,
 \fs22 \
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
@@ -214,12 +344,12 @@ ex. of code needed in settings.py:\
 -I also needed to enable the PostGIS Extension. I did this through PGAdmin3 right-clicking on the extensions of hos3 DB and adding postgis\
 \pard\pardeftab720\ri0
 \cf0 \
-\
 \pard\pardeftab720\ri0
 
-\f0\fs24 \cf0 *********************************\
+\f0\fs24 \cf0 \
+\pard\pardeftab720\ri0
 
-\b\fs28 Below are notes from the commands I made while setting up the install the 1st time:
+\b\fs28 \cf0 Below are notes from the commands I made while setting up the install the 1st time:
 \f1\b0\fs22 \
 \
 \
@@ -290,10 +420,10 @@ ubuntu@domU-12-31-39-07-6A-D7:~$ sudo useradd prometeo -p `mkpasswd someword`
 \fs26 \
 \pard\pardeftab720\ri0
 
-\f5\fs20 \cf0 \
+\f4\fs20 \cf0 \
 How to enable password authorization:\
 \pard\tx916\tx1832\tx2748\tx3664\tx4580\tx5496\tx6412\tx7328\tx8244\tx9160\tx10076\tx10992\tx11908\tx12824\tx13740\tx14656\pardeftab720\ri0\sl267
-\cf0 sudo sed -i \cf6 's/PermitEmptyPasswords no/PermitEmptyPasswords yes/'\cf0  /etc/ssh/sshd_config\
+\cf0 sudo sed -i \cf12 's/PermitEmptyPasswords no/PermitEmptyPasswords yes/'\cf0  /etc/ssh/sshd_config\
 \pard\pardeftab720\ri0
 \cf0 \
 from ({\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/questions/23369917/cleaner-way-to-write-multiple-sed-commands"}}{\fldrslt \cf2 \ul \ulc2 http://stackoverflow.com/questions/23369917/cleaner-way-to-write-multiple-sed-commands}})\
@@ -302,7 +432,7 @@ followed by:\
 \
 \pard\tx916\tx1832\tx2748\tx3664\tx4580\tx5496\tx6412\tx7328\tx8244\tx9160\tx10076\tx10992\tx11908\tx12824\tx13740\tx14656\pardeftab720\ri0\sl218
 
-\fs22 \cf7 sudo service ssh restart\cf8 \
+\fs22 \cf13 sudo service ssh restart\cf14 \
 \pard\pardeftab720\ri0
 
 \fs20 \cf0 \
@@ -316,22 +446,22 @@ followed by:\
 -create a new user (w with root privileges)  {\field{\*\fldinst{HYPERLINK "https://help.ubuntu.com/community/RootSudo"}}{\fldrslt \cf2 \ul \ulc2 https://help.ubuntu.com/community/RootSudo}}\
 \pard\tx916\tx1832\tx2748\tx3664\tx4580\tx5496\tx6412\tx7328\tx8244\tx9160\tx10076\tx10992\tx11908\tx12824\tx13740\tx14656\pardeftab720\ri0\sl240\sa120
 
-\f8\fs19 \cf8 sudo adduser <username> sudo\
+\f8\fs19 \cf14 sudo adduser <username> sudo\
 \pard\pardeftab720\ri0
 
 \f0\fs24 \cf0 \
 \pard\pardeftab720\ri0
 {\field{\*\fldinst{HYPERLINK "http://askubuntu.com/questions/168280/how-do-i-grant-sudo-privile"}}{\fldrslt 
 \f9\fs25 \cf2 \ul \ulc2 http://askubuntu.com/questions/168280/how-do-i-grant-sudo-privileges-to-an-existing-user}}
-\f9\fs25 \cf9 \
+\f9\fs25 \cf5 \
 \
 \pard\pardeftab720\ri0
 
 \f1\fs22 \cf0 ubuntu@domU-12-31-39-0A-38-AA:/home/jkeesh$ sudo usermod -a -G sudo jkeesh
-\f9\fs25 \cf9 \
+\f9\fs25 \cf5 \
 \
 make it so that the user doesn\'92t need to enter their password after using the sudo command.
-\f6\fs20 \cf0 \
+\f5\fs20 \cf0 \
 \pard\pardeftab720\ri0
 {\field{\*\fldinst{HYPERLINK "http://brianflove.com/2013/06/18/add-new-sudo-user-to-ec2-ubuntu/"}}{\fldrslt 
 \f0\fs24 \cf2 \ul \ulc2 http://brianflove.com/2013/06/18/add-new-sudo-user-to-ec2-ubuntu/}}
@@ -348,7 +478,7 @@ Ex.\
 \
 \pard\tx916\tx1832\tx2748\tx3664\tx4580\tx5496\tx6412\tx7328\tx8244\tx9160\tx10076\tx10992\tx11908\tx12824\tx13740\tx14656\pardeftab720\ri0\sl267
 
-\f5\fs20 \cf0 scp -i /path/to/your/.pemkey -r /copy/from/path user@server:/copy/to/path\
+\f4\fs20 \cf0 scp -i /path/to/your/.pemkey -r /copy/from/path user@server:/copy/to/path\
 \pard\pardeftab720\ri0
 
 \f0\fs24 \cf0 \
@@ -454,7 +584,7 @@ Tom-Gertins-MacBook-Pro:Hope_One_Source thomasgertin1$ ssh -i hos.pem ubuntu@ec2
 \f1\fs22 \cf0 ubuntu@ip-10-139-23-160:/home$ cd ~/\
 ubuntu@ip-10-139-23-160:~$ ls\
 guest.pub  
-\f3\b \cf10 py27env
+\f3\b \cf7 py27env
 \f1\b0 \cf0 \
 \pard\pardeftab720\ri0
 \cf0 ubuntu@ip-10-139-23-160:~$ sudo mv guest.pub /home/guest\
@@ -496,7 +626,7 @@ Resolving deltas: 100% (112/112), done.\
 [ec2-user@domU-12-31-39-14-08-48 ~]$ cd hos-django\
 [ec2-user@domU-12-31-39-14-08-48 hos-django]$ ls\
 \pard\pardeftab720\ri0
-\cf11 entries\cf0   \cf11 haiti_geospatial_data\cf0   \cf11 hos2\cf0   manage.py  \cf11 notes\cf0   README.md\
+\cf15 entries\cf0   \cf15 haiti_geospatial_data\cf0   \cf15 hos2\cf0   manage.py  \cf15 notes\cf0   README.md\
 \
 After running Packer and creating a new instance with the new AMI you need to log in as ubuntu:\
 \

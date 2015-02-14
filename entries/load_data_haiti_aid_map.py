@@ -10,6 +10,9 @@ import sys,os
 sys.path.append(your_djangoproject_home)
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'hos2.settings'
+
+import django
+django.setup()
  
 from entries.models import ServiceProvider,Location,EffortInstance,ServiceType,EffortInstanceService,haiti_adm1_minustah,haiti_adm2_minustah,haiti_adm3_minustah
  

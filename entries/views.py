@@ -17,7 +17,6 @@ import pdb
 import requests
 import yaml
 
-
 from entries.models import *
 
 import difflib
@@ -43,8 +42,24 @@ def results(request, entries_id):
 #disables csrf token validation on this view
 @csrf_exempt
 def post_request(request):
+
+	#print('print request')
+	#print(request.body)
 	
-	#pdb.set_trace()
+	#item = request.body
+	#item = request.POST
+	item = json.loads(request.body)
+	print(item)
+	
+	#data = json.loads(request.body)
+	#print(data)
+	
+	#r_list = json.loads(request)
+	#print(r_list)
+	
+	#validate(item)
+	
+	'''
 	
 	print('print request')
 	print(request)
@@ -75,7 +90,6 @@ def post_request(request):
 		
 	print('printing services list')
 	print(service_list)
-	
 	
 	health_facilities_within_100_meters = Location_w_efforts.objects.filter(geom__distance_lt=(input_point, D(m=1000)))
 	print('health_facilities_within_100_meters len')
@@ -163,141 +177,32 @@ def post_request(request):
 		return HttpResponse(json_data,content_type='application/json')
 	# if no nearby entry or entry with matching or similar name, then create a new entry
 	else:
+		data_import(organization,lat,lon,input_point,service_list)
+	'''
 		
-		print('time to create a new org')
-		#before I used AJAX...
-		#return HttpResponseRedirect('/entries/test_form/')
-	
-		#if it is a new organization name and in a new location then create new entry in DB
-	
-		
-		'''
-		previous code when services were stored in separate variables instead of a single array
-		#detects all of the services provided that were selected and puts in in a list
-		for e in ServiceType.objects.all():
-			if (request.POST.get(e.service_name)):
-				service_list.append(e.service_name)
-		'''
-	
-   
-		'''
-		We want to append 55 to imported HOS site data
-		find all IDs with 55 to the left, then find the max number,
-		then separate the 55 and what is to the right, then find the next incremental value, then append
-		'''
-		the_55s = EffortInstance.objects.filter(effort_instance_id__startswith=55)
-		print('55: ')
-		print(the_55s)
-		if the_55s:
-			print('incrementing...')
-			list_of_55s = []
-			for i in the_55s:
-				list_of_55s.append(i.effort_instance_id)
-			highest_55 = max(list_of_55s)
-			print('highest_55')
-			print(highest_55)
-			left_two = str(highest_55)[:2]
-			to_the_right = str(highest_55)[2:]
-			
-			increment_one = int(to_the_right) + 1
-			new_id = left_two + str(increment_one)
-		else:
-			new_id = 551
-			
-		print('new_id: ')
-		print(new_id)
-		
-		#http://stackoverflow.com/questions/13890935/timestamp-python
-		ts = time.time()
-		utc_datetime = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-	
-		EffortInstanceObj = EffortInstance()
-		EffortInstanceObj.effort_instance_id = new_id
-		
-		EffortInstanceObj.updated_on = utc_datetime
-		EffortInstanceObj.updated_by = 'HOS registration'
-		
-		#make a default effort instance
-		EffortInstanceObj.default = True
-	
-		#Create ServiceProvider
-		ServiceProviderObj, created = ServiceProvider.objects.get_or_create(provider_name=organization)
-		EffortInstanceObj.service_provider = ServiceProvider.objects.get(provider_name=organization)
-	
-		#insert default date for effortInstance
-		
-		EffortInstanceObj.save()
-		
-		#Create Location
-		loc = Location()
-		loc.latitude = lat_str
-		loc.longitude = lon_str
-		loc.save(EffortInstanceObj.effort_instance_id)
-		EffortInstanceObj.location = Location.objects.get(id=loc.id)
-		EffortInstanceObj.save()
-	
-		if loc.geom:
-			qs = haiti_adm3_minustah.objects.filter(geom__contains=loc.geom)
-			#return HttpResponse(qs[0])
-		
-			if len(qs):
-			
-				#return HttpResponse(qs[0].adm3)
-				EffortInstanceObj.adm_3 = haiti_adm3_minustah.objects.get(id=qs[0].id)
-				
-			EffortInstanceObj.save()
-	
-	
-		#Create Services
-		for x in service_list:
-				EffortInstanceServiceObj = EffortInstanceService()
-				EffortInstanceServiceObj.effort_instance = EffortInstance.objects.get(effort_instance_id=new_id)
-	
-				EffortInstanceServiceObj.effort_service_description = x
-				
-				EffortInstanceServiceObj.effort_service_type = ServiceType.objects.get(service_name=x)
-	
-				EffortInstanceServiceObj.save()
-	
-	
-		print('saved new org')
-		return HttpResponse('saved new org')
-	
-		#just consider a simple password for drupal to pass with each post for authentication
-		#next step would be https
-	
-
-
-
-
 def get_hos_data():
 	
 	#ex. of how to run, $ python -c 'import views; print views.get_hos_data()'
 	
 	r = requests.get('http://hopeonesource.org/api/org/view-orgs')
 	
-	#result = r.json()
-	#j = json.loads('{"one" : "1", "two" : "2", "three" : "3"}')
-	#print(j['two'])
-	
-	
 	r_list = json.loads(r.text)
 	print(r_list[1])
 	
 	#It is having trouble converting all of the json into a dictionary
 	#It works if I break it up into parts
-	
 		
 	for index, item in enumerate(r_list):
-		#print index, item
-		#print(item['name'])
-		
-		validate_and_import(item)
-		
-		#call a function for each one that will validate and input into database
-	
 
-def validate_and_import(item):
+		validate(item)
+	
+	
+#think about having one function just to validate, it then returns the ones that could be duplicates and passess
+#the rest to and import function to import to DB
+
+#need to extract extra items from hos get request?
+
+def validate(item):
 
 	print(item['name'])
 
@@ -306,26 +211,18 @@ def validate_and_import(item):
 	lat = float(item['latitude'])
 	lon = float(item['longitude'])
 	
-	print(lat)
-	print(lon)
-	
-	
+	#print(lat)
+	#print(lon)
 	input_point = Point(lon,lat)
-	
-	#service_list = request.POST.getlist('services[]', None)
 	
 	service_list = item['services']
 
-		
-	print('printing services list')
-	print(service_list)
-	
-	
-	
+	#print('printing services list')
+	#print(service_list)
+
 	health_facilities_within_100_meters = Location_w_efforts.objects.filter(geom__distance_lt=(input_point, D(m=1000)))
 	print('health_facilities_within_100_meters len')
 	print(len(health_facilities_within_100_meters))
-	
 	
 	#tests to see if there is an existing organization name that is exactly the same
 	try:
@@ -351,7 +248,6 @@ def validate_and_import(item):
 		matching_facilities_list = json.loads(matching_facilities)
 		print("continue1.4..")
 	
-	
 	#tests to see if there are existing organizations close by
 	print("continue2...")
 	if len(health_facilities_within_100_meters) > 0:
@@ -364,8 +260,6 @@ def validate_and_import(item):
 	else:
 		nearby_facilities_list= ""
 		
-	
-		
 	json_data_input_list= {}
 	
 	#print('selected choice: ')
@@ -376,8 +270,6 @@ def validate_and_import(item):
 		json_data_input_list['matching_facilities'] = matching_facilities_list
 		print('matching name')
 		
-	
-	
 	print('nearby fac: ')
 	print(nearby_facilities_list)
 	if not nearby_facilities_list:
@@ -386,124 +278,121 @@ def validate_and_import(item):
 		json_data_input_list['nearby_facilities'] = nearby_facilities_list
 		print('nearby facility')
 		
-	
-		
 	try:
 		if len(similar_name_list) > 0:
 			print('no matching name, but similar name or names')
-			#similar_name_list = simplejson.loads(similar_name_list)
 			similar_name_list = json.loads(similar_name_list)
 			json_data_input_list['similar_names'] = similar_name_list
 	except NameError:
   		print("well, it WASN'T defined after all!")
 	else:
 	  	print("next step...")
-	
-	#json_data = simplejson.dumps(json_data_input_list)
 
 	json_data = json.dumps(json_data_input_list)
 	
 	print(json_data)
 	
 	#helpful link: http://kiaran.net/post/54943617485/serialize-multiple-lists-of-django-models-to-json
-	#json_data = simplejson.dumps( {'nearby_facilities':nearby_facilities_list, 'matching_facilities':matching_facilities_list})
-	
 	
 	if selected_choice or nearby_facilities_list:
 		print('returning')
 		return HttpResponse(json_data,content_type='application/json')
 	# if no nearby entry or entry with matching or similar name, then create a new entry
 	else:
+		data_import(organization,lat,lon,input_point,service_list)
 		
-		print('time to create a new org')
-		#before I used AJAX...
-		#return HttpResponseRedirect('/entries/test_form/')
+
+def data_import(organization,lat,lon,input_point,service_list):
+		
+	print('time to create a new org')
+	#before I used AJAX...
+	#return HttpResponseRedirect('/entries/test_form/')
+
+	#if it is a new organization name and in a new location then create new entry in DB
+
+	the_55s = EffortInstance.objects.filter(effort_instance_id__startswith=55)
+	print('55: ')
+	print(the_55s)
+	if the_55s:
+		print('incrementing...')
+		list_of_55s = []
+		for i in the_55s:
+			list_of_55s.append(i.effort_instance_id)
+		highest_55 = max(list_of_55s)
+		print('highest_55')
+		print(highest_55)
+		left_two = str(highest_55)[:2]
+		to_the_right = str(highest_55)[2:]
+		
+		increment_one = int(to_the_right) + 1
+		new_id = left_two + str(increment_one)
+	else:
+		new_id = 551
+		
+	print('new_id: ')
+	print(new_id)
 	
-		#if it is a new organization name and in a new location then create new entry in DB
+	#http://stackoverflow.com/questions/13890935/timestamp-python
+	ts = time.time()
+	utc_datetime = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+
+	EffortInstanceObj = EffortInstance()
+	EffortInstanceObj.effort_instance_id = new_id
 	
-		the_55s = EffortInstance.objects.filter(effort_instance_id__startswith=55)
-		print('55: ')
-		print(the_55s)
-		if the_55s:
-			print('incrementing...')
-			list_of_55s = []
-			for i in the_55s:
-				list_of_55s.append(i.effort_instance_id)
-			highest_55 = max(list_of_55s)
-			print('highest_55')
-			print(highest_55)
-			left_two = str(highest_55)[:2]
-			to_the_right = str(highest_55)[2:]
+	EffortInstanceObj.updated_on = utc_datetime
+	EffortInstanceObj.updated_by = 'HOS registration'
+	
+	#make a default effort instance
+	EffortInstanceObj.default = True
+
+	#Create ServiceProvider
+	ServiceProviderObj, created = ServiceProvider.objects.get_or_create(provider_name=organization)
+	EffortInstanceObj.service_provider = ServiceProvider.objects.get(provider_name=organization)
+
+	#insert default date for effortInstance
+	
+	EffortInstanceObj.save()
+	
+	#Create Location
+	loc = Location()
+	loc.latitude = str(lat)
+	loc.longitude = str(lon)
+	loc.save(EffortInstanceObj.effort_instance_id)
+	EffortInstanceObj.location = Location.objects.get(id=loc.id)
+	EffortInstanceObj.save()
+
+	if loc.geom:
+		qs = haiti_adm3_minustah.objects.filter(geom__contains=loc.geom)
+		#return HttpResponse(qs[0])
+	
+		if len(qs):
+		
+			#return HttpResponse(qs[0].adm3)
+			EffortInstanceObj.adm_3 = haiti_adm3_minustah.objects.get(id=qs[0].id)
 			
-			increment_one = int(to_the_right) + 1
-			new_id = left_two + str(increment_one)
-		else:
-			new_id = 551
-			
-		print('new_id: ')
-		print(new_id)
-		
-		#http://stackoverflow.com/questions/13890935/timestamp-python
-		ts = time.time()
-		utc_datetime = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-	
-		EffortInstanceObj = EffortInstance()
-		EffortInstanceObj.effort_instance_id = new_id
-		
-		EffortInstanceObj.updated_on = utc_datetime
-		EffortInstanceObj.updated_by = 'HOS registration'
-		
-		#make a default effort instance
-		EffortInstanceObj.default = True
-	
-		#Create ServiceProvider
-		ServiceProviderObj, created = ServiceProvider.objects.get_or_create(provider_name=organization)
-		EffortInstanceObj.service_provider = ServiceProvider.objects.get(provider_name=organization)
-	
-		#insert default date for effortInstance
-		
 		EffortInstanceObj.save()
-		
-		#Create Location
-		loc = Location()
-		loc.latitude = str(lat)
-		loc.longitude = str(lon)
-		loc.save(EffortInstanceObj.effort_instance_id)
-		EffortInstanceObj.location = Location.objects.get(id=loc.id)
-		EffortInstanceObj.save()
-	
-		if loc.geom:
-			qs = haiti_adm3_minustah.objects.filter(geom__contains=loc.geom)
-			#return HttpResponse(qs[0])
-		
-			if len(qs):
+
+
+	#Create Services
+	for x in service_list:
+			EffortInstanceServiceObj = EffortInstanceService()
+			EffortInstanceServiceObj.effort_instance = EffortInstance.objects.get(effort_instance_id=new_id)
+
+			EffortInstanceServiceObj.effort_service_description = x
 			
-				#return HttpResponse(qs[0].adm3)
-				EffortInstanceObj.adm_3 = haiti_adm3_minustah.objects.get(id=qs[0].id)
-				
-			EffortInstanceObj.save()
+			#might need to re-factor for different languages
+			#EffortInstanceServiceObj.effort_service_type = ServiceType.objects.get(service_name=x)
+			EffortInstanceServiceObj.effort_service_type = ServiceType.objects.get(service_name_en=x)
+
+			EffortInstanceServiceObj.save()
+
+
+	print('saved new org')
+	return HttpResponse('saved new org')
+
+	#just consider a simple password for drupal to pass with each post for authentication
+	#next step would be https
 	
-	
-		#Create Services
-		for x in service_list:
-				EffortInstanceServiceObj = EffortInstanceService()
-				EffortInstanceServiceObj.effort_instance = EffortInstance.objects.get(effort_instance_id=new_id)
-	
-				EffortInstanceServiceObj.effort_service_description = x
-				
-				#might need to re-factor for different languages
-				#EffortInstanceServiceObj.effort_service_type = ServiceType.objects.get(service_name=x)
-				EffortInstanceServiceObj.effort_service_type = ServiceType.objects.get(service_name_en=x)
-	
-				EffortInstanceServiceObj.save()
-	
-	
-		print('saved new org')
-		return HttpResponse('saved new org')
-	
-		#just consider a simple password for drupal to pass with each post for authentication
-		#next step would be https
-		
 		
 		
 		     
@@ -619,6 +508,7 @@ class SetEncoder(json.JSONEncoder):
           return list(obj)
        return json.JSONEncoder.default(self, obj)
 
+
 def service_results(self,pk):
 
 	print(pk)
@@ -630,20 +520,15 @@ def service_results(self,pk):
 	all_services = set([entry['effort_service_type__service_name_en'] for entry in all_services_qs])
 	
 	print(all_services)
-  
 	
 	json_data = json.dumps(all_services, cls=SetEncoder)
 	
 	print(json_data)
 	
 	return HttpResponse(json_data)
-	
-	#return HttpResponse(json_stuff, content_type ="application/json")
-
-	#return HttpResponse(all_services)
 		
     
-		
+
 def all_facilities(request):
 
 	"""

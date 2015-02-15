@@ -68,6 +68,11 @@ Next, import the load_geospatial_data module, call the run routine, and watch La
 >>> load_geospatial_data.run()
 
 
+Dependencies
+
+-pip install django-leaflet
+
+
 FAQ:
 
 Why do I have trouble importing CSVs from my mac to Github?

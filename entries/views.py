@@ -39,7 +39,8 @@ def results(request, entries_id):
     entry = get_object_or_404(EffortInstance, effort_instance_id=entries_id)
     return render(request, 'entries/results.html', {'entry': entry})
 
-	
+#disables csrf token validation on this view
+@csrf_exempt
 def data_import(organization,lat,lon,input_point,service_list):
 		
 	print('time to create a new org')
@@ -124,7 +125,6 @@ def data_import(organization,lat,lon,input_point,service_list):
 
 			EffortInstanceServiceObj.save()
 
-
 	print('saved new org')
 	return HttpResponse('saved new org')
 
@@ -132,37 +132,80 @@ def data_import(organization,lat,lon,input_point,service_list):
 	#next step would be https
 
 
-#think about having one function just to validate, it then returns the ones that could be duplicates and passess
-#the rest to and import function to import to DB
-
-#need to extract extra items from hos get request?
-
-#print a list of results: the ones that were added to the Databases, and the ones that were not because flagged as potential duplicates
-
+#disables csrf token validation on this view
+@csrf_exempt
 def validate(item):
 
 	print('let us begin validation')
 	
 	organization = item['name']
+	if type(organization) is list:
+		organization = organization[0]
 	
-	print(organization)
-	print('name check?0')
+	#print(organization)
 	
-	lat = float(item['latitude'])
+	print('timestamp before')
+	if 'timestamp' in item:
 	
-	print(item['latitude'])
-	print('name check?1')
+		timestamp = item['timestamp']
+		if type(timestamp) is list:
+			timestamp = timestamp[0]
+		
+	print('timestamp after')
 	
-	lon = float(item['longitude'])
+	print('updated_on before')
+	if 'updated_on' in item:
+	
+		updated_on = item['updated_on']
+		if type(updated_on) is list:
+			updated_on = updated_on[0]
+		
+	print('updated_on after')
+	
+	print('updated_by before')
+	if 'updated_by' in item:
+	
+		updated_by = item['updated_by']
+		if type(updated_by) is list:
+			updated_by = updated_by[0]
+		
+	print('updated_by after')
+	
+	print('drupal id before')
+	if 'drupal_id' in item:
+	
+		drupal_id = item['drupal_id']
+		if type(drupal_id) is list:
+			drupal_id = drupal_id[0]
+		
+	print('drupal id after')
+	
+	lat = item['latitude']
+	lon = item['longitude']
+	
+	if type(lat) is list:
+		lat = lat[0]
+		
+	if type(lon) is list:
+		lon = lon[0]
+
+	#make them only 15 characters
+	#lat_str = lat_str[:15]
+	#lon_str = lon_str[:15]
+
+	lat = float(lat)
+	lon = float(lon)
 
 	input_point = Point(lon,lat)
 	
 	print(input_point)
-	print('name check?')
 	
-	service_list = item['services']
+	service_list = item['services[]']
 	
-	
+	if service_list:
+		pass
+	else:
+		service_list = item['services']
 
 	health_facilities_within_100_meters = Location_w_efforts.objects.filter(geom__distance_lt=(input_point, D(m=1000)))
 	#print('health_facilities_within_100_meters len')
@@ -189,6 +232,7 @@ def validate(item):
 	else:
 		#print("continue...")
 		matching_facilities = GeoJSONSerializer().serialize(selected_choice, use_natural_keys=True)
+		print('matching facilities')
 		print(matching_facilities)
 		matching_facilities_list = json.loads(matching_facilities)
 		#print("continue..1..2..3...")
@@ -197,7 +241,7 @@ def validate(item):
 	if len(health_facilities_within_100_meters) > 0:
 		nearby_facilities = GeoJSONSerializer().serialize(health_facilities_within_100_meters, use_natural_keys=True) 
 		#print("ok...")
-		print(nearby_facilities)
+		#print(nearby_facilities)
 		#print("ok...")
 		#nearby_facilities_list = simplejson.loads( nearby_facilities )
 		nearby_facilities_list = json.loads(nearby_facilities)
@@ -209,12 +253,14 @@ def validate(item):
 	#adds matching_facilities_list to json_data_input_list
 	if not selected_choice:
 		print('selected choice is empty ')
+		pass
 	if selected_choice:
 		json_data_input_list['matching_facilities'] = matching_facilities_list
 	
 	#adds nearby_facilities_list to json_data_input_list
 	if not nearby_facilities_list:
-		print('nearby_facilities_list is empty ')
+		#print('nearby_facilities_list is empty ')
+		pass
 	if nearby_facilities_list:
 		json_data_input_list['nearby_facilities'] = nearby_facilities_list
 		
@@ -224,25 +270,34 @@ def validate(item):
 			similar_name_list = json.loads(similar_name_list)
 			json_data_input_list['similar_names'] = similar_name_list
 	except NameError:
-  		print("well, it WASN'T defined after all!")
+  		print("NameError exception")
 	else:
-	  	print("next step...")
+	  	#print("next step...")
+	  	pass
 
 	json_data = json.dumps(json_data_input_list)
 	
 	print(json_data)
 	
 	#helpful link: http://kiaran.net/post/54943617485/serialize-multiple-lists-of-django-models-to-json
-	
 	if selected_choice or nearby_facilities_list:
-		print('not added to database, check if already exists')
-		return HttpResponse(json_data,content_type='application/json')
+		print('not added to database, check if already exists1')
+		#return HttpResponse(json_data,content_type='application/json')
+		return json_data
 	# if no nearby entry or entry with matching or similar name, then create a new entry
 	else:
 		data_import(organization,lat,lon,input_point,service_list)
 		
 
 def get_hos_data():
+	
+	#print a list of results: the ones that were added to the Databases, and the ones that 
+	#were not because flagged as potential duplicates
+
+	# added (effort instance id, name
+	# not added, flagged for duplicates (effort instance id, name, similiar name or close by or both)
+	# what about temp table with locations?
+	results_dict = {}
 	
 	#ex. of how to run, $ python -c 'import views; print views.get_hos_data()'
 	
@@ -257,7 +312,8 @@ def get_hos_data():
 	for index, item in enumerate(r_list):
 
 		validate(item)
-	
+		
+		
 		
 #disables csrf token validation on this view
 @csrf_exempt
@@ -265,14 +321,18 @@ def post_request(request):
 
 	item = request.POST
 	
+	#print(item)
+	
 	#http://stackoverflow.com/questions/13349573/how-to-change-a-django-querydict-to-python-dict
-	myDict = dict(item.iterlists())
+	#myDict = item.dict()
+	myDict = dict(item._iterlists())
 	
 	print(myDict)
-	
-	print('nothing2')
-	
+
 	validate(myDict)
+	
+	#Since this function is called, you need the HttpResponse inside this function, or else you might get a 500 server error
+	return HttpResponse(validate(myDict),content_type='application/json')
 		     
 def find_facilities(request):
 
@@ -310,6 +370,19 @@ def find_facilities(request):
 	"""
 	facilities = Location_w_efforts.objects.filter(geom__distance_lt=(point2, D(m=buffer)))
 	
+	#testing query not using Location_w_efforts table
+	locations_only = Location.objects.filter(geom__distance_lt=(point2, D(m=buffer)))
+	print('printing locations_only')
+	print(locations_only)
+	
+	#https://docs.djangoproject.com/en/1.7/topics/db/examples/one_to_one/
+	#need to find all effort instances that have the locations in facilities
+	
+	efforts_matching_locations_only = EffortInstance.objects.filter(location=locations_only)
+	
+	print('printing efforts_matching_locations_only')
+	print(efforts_matching_locations_only)
+	
 	'''
 	originally I tried .get() , but that returned a MultipleObjectsReturned error
 	so I changed it to .filter()
@@ -324,6 +397,8 @@ def shared_servicetype(request):
 
 	#example of a get request: http://127.0.0.1:8000/entries/shared_servicetype/?id=11779
 	#11779 should have 7 services
+	
+	#grabs other health facilities that offer the same type of services
 	
 	effort_instance_id = request.GET.get('id', None)
 	
@@ -364,7 +439,11 @@ def shared_servicetype(request):
 			'''
 			
 			#http://stackoverflow.com/questions/853184/django-orm-selecting-related-set
-			sel_service_types = ServiceType.objects.filter(service_name__in=all_services)
+			sel_service_types = ServiceType.objects.filter(service_name_en__in=all_services)
+			
+			print('printing sel_service_types:')
+			print(sel_service_types)
+			
 			
 			#You want distinct because many EffortInstanceService objects will link to the same EffortInstance object, so you
 			#don't want duplicates of EffortInstance objects selected
@@ -389,6 +468,8 @@ class SetEncoder(json.JSONEncoder):
 
 def service_results(self,pk):
 
+	#example of request: http://127.0.0.1:8000/entries/11887/results/
+	
 	print(pk)
 	
 	selected_effort_instance = EffortInstance.objects.get(effort_instance_id=pk)

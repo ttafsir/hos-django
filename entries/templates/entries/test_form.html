@@ -102,15 +102,15 @@
                 //alert(result);
                 $('.matching_name').hide()
                 
-                console.log('no alerts?');
-
                 
                 nearby_facilities_json = json['nearby_facilities']
                 
                 matching_facilities = json['matching_facilities'];
                 
+                console.log('testing...')
                 console.log(typeof matching_facilities)
                 
+                //if there are matching facilities with similiar names
                 if (typeof matching_facilities != 'undefined') {
     				// variable is defined
     				console.log("should be defined")
@@ -172,6 +172,12 @@
 				
 				//adds the nearby facilities to the map
 				map.data.addGeoJson(nearby_facilities_json);
+				
+				//if there are nearby facilities
+				if (typeof nearby_facilities_json != 'undefined') {
+					$('.ajaxProgress').hide();
+					$('.success').show();
+				}
                 
                 //not working for some reason
                 //map.data.overrideStyle(map.data.getFeatureById('match'), {icon: "{% static "entries/img/purple_MarkerA.png" %}"});

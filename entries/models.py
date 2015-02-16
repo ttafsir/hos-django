@@ -133,7 +133,9 @@ class EffortInstance(Common_EffortInstance_Info):
 	effort_instance_id =  models.IntegerField(primary_key=True)
 	updated_on = models.DateTimeField(auto_now=False, null=True)
 	updated_by = models.CharField(max_length=100, blank=True)
-	location = models.ForeignKey(Location,blank=True, null=True)
+	#location = models.ForeignKey(Location,blank=True, null=True)
+	#change Location to One-to-one relationship: https://docs.djangoproject.com/en/1.7/topics/db/examples/one_to_one/
+	location = models.OneToOneField(Location,blank=True, null=True)
 	adm_1 = models.ForeignKey(haiti_adm1_minustah, blank=True, null=True)
 	adm_2 = models.ForeignKey(haiti_adm2_minustah, blank=True, null=True)
 	adm_3 = models.ForeignKey(haiti_adm3_minustah, blank=True, null=True)
@@ -165,6 +167,7 @@ class Location_w_efforts(Common_EffortInstance_Info):
 
 	#overriding the default manager with a GeoManager instance. 
 	geom = models.PointField(dim=3, geography=True, blank=True, null=True)
+	
 	objects = models.GeoManager()
 	
 	def save(self):

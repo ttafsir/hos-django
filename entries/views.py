@@ -207,7 +207,31 @@ def validate(item):
 	else:
 		service_list = item['services']
 
-	health_facilities_within_100_meters = Location_w_efforts.objects.filter(geom__distance_lt=(input_point, D(m=1000)))
+	#health_facilities_within_100_meters = Location_w_efforts.objects.filter(geom__distance_lt=(input_point, D(m=1000)))
+	locations_only_within_100_meters = Location.objects.filter(geom__distance_lt=(input_point, D(m=1000)))
+	effort_intances_only_within_100_meters = EffortInstance.objects.filter(location=locations_only_within_100_meters)
+
+	Location_w_efforts_temp.objects.all().delete()
+	
+	for item in effort_intances_only_within_100_meters:
+	
+		print('printing object')
+		print(item.service_provider.service_provider_id)
+		
+		Location_w_efforts_tempObj = Location_w_efforts_temp()
+		
+		Location_w_efforts_tempObj.date_start = item.date_start
+		Location_w_efforts_tempObj.date_end = item.date_end
+		Location_w_efforts_tempObj.latitude = item.location.latitude
+		Location_w_efforts_tempObj.longitude = item.location.longitude
+		Location_w_efforts_tempObj.id = item.effort_instance_id
+		Location_w_efforts_tempObj.service_provider = item.service_provider
+		Location_w_efforts_tempObj.provider_name = item.service_provider.provider_name
+		
+		Location_w_efforts_tempObj.save()
+		
+	health_facilities_within_100_meters = Location_w_efforts_temp.objects.all()
+	
 	#print('health_facilities_within_100_meters len')
 	#print(len(health_facilities_within_100_meters))
 	
@@ -368,12 +392,22 @@ def find_facilities(request):
 	Why distance_lt instead of dwithin?
 	http://stackoverflow.com/questions/2235043/geodjango-difference-between-dwithin-and-distance-lt
 	"""
-	facilities = Location_w_efforts.objects.filter(geom__distance_lt=(point2, D(m=buffer)))
+	
+	'''
+	originally I tried .get() , but that returned a MultipleObjectsReturned error
+	so I changed it to .filter()
+	If there will be more than one result, you need .filter()
+	'''
+	
+	#depreciated (doing buffer queries on the Location table instead of Location_w_efforts
+	#facilities = Location_w_efforts.objects.filter(geom__distance_lt=(point2, D(m=buffer)))
 	
 	#testing query not using Location_w_efforts table
+	#probably best to Location_w_efforts as a temporary table to just store
+	#results of buffer, then I could serialize it with GeoJSONSerializer, and erase the table afterwards
 	locations_only = Location.objects.filter(geom__distance_lt=(point2, D(m=buffer)))
 	print('printing locations_only')
-	print(locations_only)
+	#print(locations_only)
 	
 	#https://docs.djangoproject.com/en/1.7/topics/db/examples/one_to_one/
 	#need to find all effort instances that have the locations in facilities
@@ -381,15 +415,35 @@ def find_facilities(request):
 	efforts_matching_locations_only = EffortInstance.objects.filter(location=locations_only)
 	
 	print('printing efforts_matching_locations_only')
-	print(efforts_matching_locations_only)
+	#print(efforts_matching_locations_only)
 	
-	'''
-	originally I tried .get() , but that returned a MultipleObjectsReturned error
-	so I changed it to .filter()
-	If there will be more than one result, you need .filter()
-	'''
-
-	geojson_data = GeoJSONSerializer().serialize(facilities, use_natural_keys=True) 
+	#add results of buffer (effort instance info, location geom, service provider name) to Location_w_efforts_temp table
+	
+	Location_w_efforts_temp.objects.all().delete()
+	
+	for item in efforts_matching_locations_only:
+	
+		print('printing object')
+		print(item.service_provider.service_provider_id)
+		
+		Location_w_efforts_tempObj = Location_w_efforts_temp()
+		
+		Location_w_efforts_tempObj.date_start = item.date_start
+		Location_w_efforts_tempObj.date_end = item.date_end
+		Location_w_efforts_tempObj.latitude = item.location.latitude
+		Location_w_efforts_tempObj.longitude = item.location.longitude
+		Location_w_efforts_tempObj.id = item.effort_instance_id
+		Location_w_efforts_tempObj.service_provider = item.service_provider
+		Location_w_efforts_tempObj.provider_name = item.service_provider.provider_name
+		
+		Location_w_efforts_tempObj.save()
+		
+	print('done filling table')
+	
+	#depreciated
+	#geojson_data = GeoJSONSerializer().serialize(facilities, use_natural_keys=True) 
+	
+	geojson_data = GeoJSONSerializer().serialize(Location_w_efforts_temp.objects.all(), use_natural_keys=True) 
 	
 	return HttpResponse(geojson_data,content_type='application/json')
 

@@ -176,6 +176,29 @@ class Location_w_efforts(Common_EffortInstance_Info):
 			self.geom = fromstr(lString)
 		super(Location_w_efforts, self).save()
 		
+#temporary model to display points along with their associated effort instance and service provider
+#inherits from the Common_EffortInstance_Info base class
+class Location_w_efforts_temp(Common_EffortInstance_Info):
+	
+	provider_name = models.CharField(max_length = 500)
+	
+	#you don't need location_id below because you have location field above
+	#location_id = models.IntegerField(primary_key=False)
+	#latitude and longitude need to be changed to string types for GeoDjango
+	latitude = models.CharField(max_length=15, blank=True, null=True)
+	longitude = models.CharField(max_length=15, blank=True, null=True) 
+
+	#overriding the default manager with a GeoManager instance. 
+	geom = models.PointField(dim=3, geography=True, blank=True, null=True)
+	
+	objects = models.GeoManager()
+	
+	def save(self):
+		if self.latitude != None and len(self.latitude) > 0:
+			lString = 'POINT(%s %s)' % (self.longitude.strip(), self.latitude.strip())
+			self.geom = fromstr(lString)
+		super(Location_w_efforts_temp, self).save()
+		
 #table to store the spatial clusters results
 class Spatial_cluster_results(Common_EffortInstance_Info):
 

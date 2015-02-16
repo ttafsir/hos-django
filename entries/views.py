@@ -16,6 +16,7 @@ import datetime
 import pdb
 import requests
 import yaml
+import urllib
 
 from entries.models import *
 
@@ -38,270 +39,7 @@ def results(request, entries_id):
     entry = get_object_or_404(EffortInstance, effort_instance_id=entries_id)
     return render(request, 'entries/results.html', {'entry': entry})
 
-
-#disables csrf token validation on this view
-@csrf_exempt
-def post_request(request):
-
-	#print('print request')
-	#print(request.body)
 	
-	#item = request.body
-	#item = request.POST
-	item = json.loads(request.body)
-	print(item)
-	
-	#data = json.loads(request.body)
-	#print(data)
-	
-	#r_list = json.loads(request)
-	#print(r_list)
-	
-	#validate(item)
-	
-	'''
-	
-	print('print request')
-	print(request)
-	
-	organization = request.POST.get('organization', None)
-	
-	print('org name: ')
-	print(organization)
-	
-	#this validation is not returning the HttpResponse for some reason...
-	if len(organization) < 1:
-		print('if org name is blank')
-		return HttpResponse('Please fill in an Organization name')
-	
-	lat_str = request.POST.get('lat', None)
-	lon_str = request.POST.get('lon', None)
-	
-	#make them only 15 characters
-	lat_str = lat_str[:15]
-	lon_str = lon_str[:15]
-	
-	lat = float(lat_str)
-	lon = float(lon_str)
-	
-	input_point = Point(lon,lat)
-	
-	service_list = request.POST.getlist('services[]', None)
-		
-	print('printing services list')
-	print(service_list)
-	
-	health_facilities_within_100_meters = Location_w_efforts.objects.filter(geom__distance_lt=(input_point, D(m=1000)))
-	print('health_facilities_within_100_meters len')
-	print(len(health_facilities_within_100_meters))
-	
-	#Need to do something about Location_w_efforts table...
-	#Need to do updates to HOS DB
-	
-	#tests to see if there is an existing organization name that is exactly the same
-	try:
-		#I needed to do a filter with starts_with for some reason, the good thing anyways is that 
-		#it will catch multiple organizations if they all start with the same name
-		selected_choice = Location_w_efforts.objects.filter(provider_name__startswith=organization)
-		print(selected_choice)
-		print(len(selected_choice))
-		if len(selected_choice)<1:
-			print("testing for a similar result")
-			similar_name_list = []
-			for i in Location_w_efforts.objects.all():
-				#print(difflib.SequenceMatcher(None, organization, i.provider_name).ratio())
-				if difflib.SequenceMatcher(None, organization, i.provider_name).ratio() > .95:
-					similar_name_list.append(i.provider_name)
-
-	except:
-		print("exception")
-	else:
-		print("continue...")
-		matching_facilities = GeoJSONSerializer().serialize(selected_choice, use_natural_keys=True)
-		print(matching_facilities)
-		matching_facilities_list = json.loads(matching_facilities)
-		print("continue1.4..")
-	
-	#tests to see if there are existing organizations close by
-	print("continue2...")
-	if len(health_facilities_within_100_meters) > 0:
-		nearby_facilities = GeoJSONSerializer().serialize(health_facilities_within_100_meters, use_natural_keys=True) 
-		print("ok...")
-		print(nearby_facilities)
-		print("ok...")
-		#nearby_facilities_list = simplejson.loads( nearby_facilities )
-		nearby_facilities_list = json.loads(nearby_facilities)
-	else:
-		nearby_facilities_list= ""
-		
-	json_data_input_list= {}
-	
-	print('selected choice: ')
-	print(selected_choice)
-	if not selected_choice:
-		print('selected choice is empty ')
-	if selected_choice:
-		json_data_input_list['matching_facilities'] = matching_facilities_list
-		print('matching name')
-	
-	print('nearby fac: ')
-	print(nearby_facilities_list)
-	if not nearby_facilities_list:
-		print('nearby_facilities_list is empty ')
-	if nearby_facilities_list:
-		json_data_input_list['nearby_facilities'] = nearby_facilities_list
-		print('nearby facility')
-		
-	try:
-		if len(similar_name_list) > 0:
-			print('no matching name, but similar name or names')
-			#similar_name_list = simplejson.loads(similar_name_list)
-			similar_name_list = json.loads(similar_name_list)
-			json_data_input_list['similar_names'] = similar_name_list
-	except NameError:
-  		print("well, it WASN'T defined after all!")
-	else:
-	  	print("next step...")
-	
-	#json_data = simplejson.dumps(json_data_input_list)
-	json_data = json.dumps(json_data_input_list)
-	json_data = json.dumps(json_data_input_list)
-	
-	print(json_data)
-	
-	#helpful link: http://kiaran.net/post/54943617485/serialize-multiple-lists-of-django-models-to-json
-	#json_data = simplejson.dumps( {'nearby_facilities':nearby_facilities_list, 'matching_facilities':matching_facilities_list})
-	
-	if selected_choice or nearby_facilities_list:
-		print('returning')
-		return HttpResponse(json_data,content_type='application/json')
-	# if no nearby entry or entry with matching or similar name, then create a new entry
-	else:
-		data_import(organization,lat,lon,input_point,service_list)
-	'''
-		
-def get_hos_data():
-	
-	#ex. of how to run, $ python -c 'import views; print views.get_hos_data()'
-	
-	r = requests.get('http://hopeonesource.org/api/org/view-orgs')
-	
-	r_list = json.loads(r.text)
-	print(r_list[1])
-	
-	#It is having trouble converting all of the json into a dictionary
-	#It works if I break it up into parts
-		
-	for index, item in enumerate(r_list):
-
-		validate(item)
-	
-	
-#think about having one function just to validate, it then returns the ones that could be duplicates and passess
-#the rest to and import function to import to DB
-
-#need to extract extra items from hos get request?
-
-def validate(item):
-
-	print(item['name'])
-
-	organization = item['name']
-	
-	lat = float(item['latitude'])
-	lon = float(item['longitude'])
-	
-	#print(lat)
-	#print(lon)
-	input_point = Point(lon,lat)
-	
-	service_list = item['services']
-
-	#print('printing services list')
-	#print(service_list)
-
-	health_facilities_within_100_meters = Location_w_efforts.objects.filter(geom__distance_lt=(input_point, D(m=1000)))
-	print('health_facilities_within_100_meters len')
-	print(len(health_facilities_within_100_meters))
-	
-	#tests to see if there is an existing organization name that is exactly the same
-	try:
-		#I needed to do a filter with starts_with for some reason, the good thing anyways is that 
-		#it will catch multiple organizations if they all start with the same name
-		selected_choice = Location_w_efforts.objects.filter(provider_name__startswith=organization)
-		print(selected_choice)
-		print(len(selected_choice))
-		if len(selected_choice)<1:
-			print("testing for a similar result")
-			similar_name_list = []
-			for i in Location_w_efforts.objects.all():
-				#print(difflib.SequenceMatcher(None, organization, i.provider_name).ratio())
-				if difflib.SequenceMatcher(None, organization, i.provider_name).ratio() > .95:
-					similar_name_list.append(i.provider_name)
-
-	except:
-		print("exception")
-	else:
-		print("continue...")
-		matching_facilities = GeoJSONSerializer().serialize(selected_choice, use_natural_keys=True)
-		print(matching_facilities)
-		matching_facilities_list = json.loads(matching_facilities)
-		print("continue1.4..")
-	
-	#tests to see if there are existing organizations close by
-	print("continue2...")
-	if len(health_facilities_within_100_meters) > 0:
-		nearby_facilities = GeoJSONSerializer().serialize(health_facilities_within_100_meters, use_natural_keys=True) 
-		print("ok...")
-		print(nearby_facilities)
-		print("ok...")
-		#nearby_facilities_list = simplejson.loads( nearby_facilities )
-		nearby_facilities_list = json.loads(nearby_facilities)
-	else:
-		nearby_facilities_list= ""
-		
-	json_data_input_list= {}
-	
-	#print('selected choice: ')
-	#print(selected_choice)
-	if not selected_choice:
-		print('selected choice is empty ')
-	if selected_choice:
-		json_data_input_list['matching_facilities'] = matching_facilities_list
-		print('matching name')
-		
-	print('nearby fac: ')
-	print(nearby_facilities_list)
-	if not nearby_facilities_list:
-		print('nearby_facilities_list is empty ')
-	if nearby_facilities_list:
-		json_data_input_list['nearby_facilities'] = nearby_facilities_list
-		print('nearby facility')
-		
-	try:
-		if len(similar_name_list) > 0:
-			print('no matching name, but similar name or names')
-			similar_name_list = json.loads(similar_name_list)
-			json_data_input_list['similar_names'] = similar_name_list
-	except NameError:
-  		print("well, it WASN'T defined after all!")
-	else:
-	  	print("next step...")
-
-	json_data = json.dumps(json_data_input_list)
-	
-	print(json_data)
-	
-	#helpful link: http://kiaran.net/post/54943617485/serialize-multiple-lists-of-django-models-to-json
-	
-	if selected_choice or nearby_facilities_list:
-		print('returning')
-		return HttpResponse(json_data,content_type='application/json')
-	# if no nearby entry or entry with matching or similar name, then create a new entry
-	else:
-		data_import(organization,lat,lon,input_point,service_list)
-		
-
 def data_import(organization,lat,lon,input_point,service_list):
 		
 	print('time to create a new org')
@@ -392,9 +130,149 @@ def data_import(organization,lat,lon,input_point,service_list):
 
 	#just consider a simple password for drupal to pass with each post for authentication
 	#next step would be https
+
+
+#think about having one function just to validate, it then returns the ones that could be duplicates and passess
+#the rest to and import function to import to DB
+
+#need to extract extra items from hos get request?
+
+#print a list of results: the ones that were added to the Databases, and the ones that were not because flagged as potential duplicates
+
+def validate(item):
+
+	print('let us begin validation')
+	
+	organization = item['name']
+	
+	print(organization)
+	print('name check?0')
+	
+	lat = float(item['latitude'])
+	
+	print(item['latitude'])
+	print('name check?1')
+	
+	lon = float(item['longitude'])
+
+	input_point = Point(lon,lat)
+	
+	print(input_point)
+	print('name check?')
+	
+	service_list = item['services']
+	
+	
+
+	health_facilities_within_100_meters = Location_w_efforts.objects.filter(geom__distance_lt=(input_point, D(m=1000)))
+	#print('health_facilities_within_100_meters len')
+	#print(len(health_facilities_within_100_meters))
+	
+	#tests to see if there is an existing organization name that is exactly the same
+	try:
+		#I needed to do a filter with starts_with for some reason, the good thing anyways is that 
+		#it will catch multiple organizations if they all start with the same name
+		selected_choice = Location_w_efforts.objects.filter(provider_name__startswith=organization)
+		#print(selected_choice)
+		#print(len(selected_choice))
+		#if there was no matching organization, test if the similarity ration exceeds a certain ratio
+		if len(selected_choice)<1:
+			#print("testing for a similar result")
+			similar_name_list = []
+			for i in Location_w_efforts.objects.all():
+				#print(difflib.SequenceMatcher(None, organization, i.provider_name).ratio())
+				if difflib.SequenceMatcher(None, organization, i.provider_name).ratio() > .95:
+					similar_name_list.append(i.provider_name)
+
+	except:
+		print("exception")
+	else:
+		#print("continue...")
+		matching_facilities = GeoJSONSerializer().serialize(selected_choice, use_natural_keys=True)
+		print(matching_facilities)
+		matching_facilities_list = json.loads(matching_facilities)
+		#print("continue..1..2..3...")
+	
+	#tests to see if there are existing organizations close by
+	if len(health_facilities_within_100_meters) > 0:
+		nearby_facilities = GeoJSONSerializer().serialize(health_facilities_within_100_meters, use_natural_keys=True) 
+		#print("ok...")
+		print(nearby_facilities)
+		#print("ok...")
+		#nearby_facilities_list = simplejson.loads( nearby_facilities )
+		nearby_facilities_list = json.loads(nearby_facilities)
+	else:
+		nearby_facilities_list= ""
+		
+	json_data_input_list= {}
+	
+	#adds matching_facilities_list to json_data_input_list
+	if not selected_choice:
+		print('selected choice is empty ')
+	if selected_choice:
+		json_data_input_list['matching_facilities'] = matching_facilities_list
+	
+	#adds nearby_facilities_list to json_data_input_list
+	if not nearby_facilities_list:
+		print('nearby_facilities_list is empty ')
+	if nearby_facilities_list:
+		json_data_input_list['nearby_facilities'] = nearby_facilities_list
+		
+	try:
+		if len(similar_name_list) > 0:
+			#print('no matching name, but similar name or names')
+			similar_name_list = json.loads(similar_name_list)
+			json_data_input_list['similar_names'] = similar_name_list
+	except NameError:
+  		print("well, it WASN'T defined after all!")
+	else:
+	  	print("next step...")
+
+	json_data = json.dumps(json_data_input_list)
+	
+	print(json_data)
+	
+	#helpful link: http://kiaran.net/post/54943617485/serialize-multiple-lists-of-django-models-to-json
+	
+	if selected_choice or nearby_facilities_list:
+		print('not added to database, check if already exists')
+		return HttpResponse(json_data,content_type='application/json')
+	# if no nearby entry or entry with matching or similar name, then create a new entry
+	else:
+		data_import(organization,lat,lon,input_point,service_list)
+		
+
+def get_hos_data():
+	
+	#ex. of how to run, $ python -c 'import views; print views.get_hos_data()'
+	
+	r = requests.get('http://hopeonesource.org/api/org/view-orgs')
+	
+	r_list = json.loads(r.text)
+	#print(r_list[1])
+	
+	#It is having trouble converting all of the json into a dictionary
+	#It works if I break it up into parts
+		
+	for index, item in enumerate(r_list):
+
+		validate(item)
 	
 		
-		
+#disables csrf token validation on this view
+@csrf_exempt
+def post_request(request):
+
+	item = request.POST
+	
+	#http://stackoverflow.com/questions/13349573/how-to-change-a-django-querydict-to-python-dict
+	myDict = dict(item.iterlists())
+	
+	print(myDict)
+	
+	print('nothing2')
+	
+	validate(myDict)
 		     
 def find_facilities(request):
 

@@ -70,8 +70,10 @@ Next, import the load_geospatial_data module, call the run routine, and watch La
 
 Dependencies
 
--pip install django-leaflet
-
+- pip install django-leaflet
+- pip install django-geojson
+- pip install requests
+- pip install pyyaml 
 
 FAQ:
 

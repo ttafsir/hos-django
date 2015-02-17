@@ -180,6 +180,9 @@ class Location_w_efforts(Common_EffortInstance_Info):
 #inherits from the Common_EffortInstance_Info base class
 class Location_w_efforts_temp(Common_EffortInstance_Info):
 	
+	#used when finding duplicates
+	similarity = models.CharField(max_length = 100,null=True)
+	
 	provider_name = models.CharField(max_length = 500)
 	
 	#you don't need location_id below because you have location field above

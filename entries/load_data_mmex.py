@@ -154,12 +154,14 @@ for row in dataReader:
 				EffortInstanceServiceObj = EffortInstanceService()
 				EffortInstanceServiceObj.effort_instance = EffortInstance.objects.get(effort_instance_id=row[0])
 				
-				EffortInstanceServiceObj.effort_service_description = ServiceTypeSplit[x].strip()
+				#EffortInstanceServiceObj.effort_service_description = ServiceTypeSplit[x].strip()
+				effort_service_description = ServiceTypeSplit[x].strip()
 				
-				print EffortInstanceServiceObj.effort_service_description
+				#print EffortInstanceServiceObj.effort_service_description
 				
 				#classify EffortInstanceServiceObj.effort_service_description based on a dictionary
-				EffortInstanceServiceObj.effort_service_type = ServiceType.objects.get(service_name_en=classify_service_types[EffortInstanceServiceObj.effort_service_description])
+				#EffortInstanceServiceObj.effort_service_type = ServiceType.objects.get(service_name_en=classify_service_types[EffortInstanceServiceObj.effort_service_description])
+				EffortInstanceServiceObj.effort_service_type = ServiceType.objects.get(service_name_en=classify_service_types[effort_service_description])
 				
 				EffortInstanceServiceObj.save()	
 			

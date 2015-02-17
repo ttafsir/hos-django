@@ -22,6 +22,8 @@ from entries.models import *
 
 import difflib
 
+from service_type_dict import classify_service_types
+
 import django
 django.setup()
 
@@ -41,7 +43,7 @@ def results(request, entries_id):
 
 #disables csrf token validation on this view
 @csrf_exempt
-def data_import(organization,lat,lon,input_point,service_list):
+def data_import(organization,lat,lon,input_point,service_list,updated_on,updated_by,drupal_id):
 		
 	print('time to create a new org')
 	#before I used AJAX...
@@ -78,8 +80,18 @@ def data_import(organization,lat,lon,input_point,service_list):
 	EffortInstanceObj = EffortInstance()
 	EffortInstanceObj.effort_instance_id = new_id
 	
-	EffortInstanceObj.updated_on = utc_datetime
-	EffortInstanceObj.updated_by = 'HOS registration'
+	if not updated_on == 0:
+		utc_datetime = datetime.datetime.fromtimestamp(float(updated_on)).strftime('%Y-%m-%d %H:%M:%S')
+		EffortInstanceObj.updated_on = utc_datetime
+	else:
+		EffortInstanceObj.updated_on = utc_datetime
+		
+	if not updated_by == 'unknown':
+		EffortInstanceObj.updated_by = updated_by
+	else:
+		EffortInstanceObj.updated_by = 'HOS registration'
+		
+	EffortInstanceObj.drupal_id = drupal_id
 	
 	#make a default effort instance
 	EffortInstanceObj.default = True
@@ -87,8 +99,6 @@ def data_import(organization,lat,lon,input_point,service_list):
 	#Create ServiceProvider
 	ServiceProviderObj, created = ServiceProvider.objects.get_or_create(provider_name=organization)
 	EffortInstanceObj.service_provider = ServiceProvider.objects.get(provider_name=organization)
-
-	#insert default date for effortInstance
 	
 	EffortInstanceObj.save()
 	
@@ -117,26 +127,66 @@ def data_import(organization,lat,lon,input_point,service_list):
 			EffortInstanceServiceObj = EffortInstanceService()
 			EffortInstanceServiceObj.effort_instance = EffortInstance.objects.get(effort_instance_id=new_id)
 
-			EffortInstanceServiceObj.effort_service_description = x
+			print('service')
+			print(x)
+			#EffortInstanceServiceObj.effort_service_description = x
 			
 			#might need to re-factor for different languages
 			#EffortInstanceServiceObj.effort_service_type = ServiceType.objects.get(service_name=x)
-			EffortInstanceServiceObj.effort_service_type = ServiceType.objects.get(service_name_en=x)
+			#EffortInstanceServiceObj.effort_service_type = ServiceType.objects.get(service_name_en=x)
+			
+			if ServiceType.objects.filter(service_name_en=classify_service_types[x]).count() == 1:
+					serviceType = ServiceType.objects.get(service_name_en=classify_service_types[x])
+					EffortInstanceServiceObj.effort_service_type = serviceType
 
 			EffortInstanceServiceObj.save()
 
 	print('saved new org')
-	return HttpResponse('saved new org')
+	
+	Location_w_efforts_temp.objects.all().delete()
+	
+	print('new id: ')
+	print(new_id)
+	
+	added_Effort_Instance = EffortInstance.objects.get(effort_instance_id = new_id)
+	print('added effort instance:')
+	print(added_Effort_Instance)
+	
+	nearby = 'none'
+	add_to_Location_w_efforts_tempObj(added_Effort_Instance,nearby)
+	
+	json_data = GeoJSONSerializer().serialize(Location_w_efforts_temp.objects.filter(similarity = 'none'), use_natural_keys=True)
+	
+	print('about to add')
+	status = 'added'
+	return (json_data,status)
+	
+	
+	#return HttpResponse('saved new org')
 
 	#just consider a simple password for drupal to pass with each post for authentication
 	#next step would be https
 
+def add_to_Location_w_efforts_tempObj(item,nearby):
+		
+		Location_w_efforts_tempObj = Location_w_efforts_temp()
+		
+		Location_w_efforts_tempObj.similarity = nearby
+		Location_w_efforts_tempObj.date_start = item.date_start
+		Location_w_efforts_tempObj.date_end = item.date_end
+		Location_w_efforts_tempObj.latitude = item.location.latitude
+		Location_w_efforts_tempObj.longitude = item.location.longitude
+		Location_w_efforts_tempObj.id = item.effort_instance_id
+		Location_w_efforts_tempObj.service_provider = item.service_provider
+		Location_w_efforts_tempObj.provider_name = item.service_provider.provider_name
+		
+		Location_w_efforts_tempObj.save()
 
 #disables csrf token validation on this view
 @csrf_exempt
 def validate(item):
 
-	print('let us begin validation')
+	print('validation step')
 	
 	organization = item['name']
 	if type(organization) is list:
@@ -144,41 +194,37 @@ def validate(item):
 	
 	#print(organization)
 	
-	print('timestamp before')
-	if 'timestamp' in item:
+	#defaults
+	updated_on = 0
+	updated_by = 'unknown'
+	drupal_id = 'none'
 	
-		timestamp = item['timestamp']
-		if type(timestamp) is list:
-			timestamp = timestamp[0]
-		
-	print('timestamp after')
-	
-	print('updated_on before')
+	#print('updated_on before')
 	if 'updated_on' in item:
 	
 		updated_on = item['updated_on']
 		if type(updated_on) is list:
 			updated_on = updated_on[0]
 		
-	print('updated_on after')
+	#print('updated_on after')
 	
-	print('updated_by before')
+	#print('updated_by before')
 	if 'updated_by' in item:
 	
 		updated_by = item['updated_by']
 		if type(updated_by) is list:
 			updated_by = updated_by[0]
 		
-	print('updated_by after')
+	#print('updated_by after')
 	
-	print('drupal id before')
+	#print('drupal id before')
 	if 'drupal_id' in item:
 	
 		drupal_id = item['drupal_id']
 		if type(drupal_id) is list:
 			drupal_id = drupal_id[0]
 		
-	print('drupal id after')
+	#print('drupal id after')
 	
 	lat = item['latitude']
 	lon = item['longitude']
@@ -200,10 +246,10 @@ def validate(item):
 	
 	print(input_point)
 	
-	service_list = item['services[]']
+	if 'services[]' in item:
 	
-	if service_list:
-		pass
+		service_list = item['services[]']
+	
 	else:
 		service_list = item['services']
 
@@ -215,51 +261,74 @@ def validate(item):
 	
 	for item in effort_intances_only_within_100_meters:
 	
-		print('printing object')
-		print(item.service_provider.service_provider_id)
+		#print('printing object')
+		#print(item.service_provider.service_provider_id)
 		
-		Location_w_efforts_tempObj = Location_w_efforts_temp()
+		nearby = 'nearby'
 		
-		Location_w_efforts_tempObj.date_start = item.date_start
-		Location_w_efforts_tempObj.date_end = item.date_end
-		Location_w_efforts_tempObj.latitude = item.location.latitude
-		Location_w_efforts_tempObj.longitude = item.location.longitude
-		Location_w_efforts_tempObj.id = item.effort_instance_id
-		Location_w_efforts_tempObj.service_provider = item.service_provider
-		Location_w_efforts_tempObj.provider_name = item.service_provider.provider_name
+		add_to_Location_w_efforts_tempObj(item,nearby)
 		
-		Location_w_efforts_tempObj.save()
 		
-	health_facilities_within_100_meters = Location_w_efforts_temp.objects.all()
+	#health_facilities_within_100_meters = Location_w_efforts_temp.objects.all()
+	health_facilities_within_100_meters = Location_w_efforts_temp.objects.filter(similarity = 'nearby')
 	
-	#print('health_facilities_within_100_meters len')
-	#print(len(health_facilities_within_100_meters))
+	matching_facilities_list = []
+	nearby_facilities_list = []
 	
 	#tests to see if there is an existing organization name that is exactly the same
 	try:
 		#I needed to do a filter with starts_with for some reason, the good thing anyways is that 
 		#it will catch multiple organizations if they all start with the same name
-		selected_choice = Location_w_efforts.objects.filter(provider_name__startswith=organization)
-		#print(selected_choice)
-		#print(len(selected_choice))
+		
+		'''
+		need to change below to use effort instance and provider tables
+		
+		'''
+		#print('before selected_choice')
+		#print(ServiceProvider.objects.filter(provider_name__startswith=organization))
+		#print(EffortInstance.objects.filter(service_provider=ServiceProvider.objects.filter(provider_name__startswith=organization)))
+		#print('after')
+		
+		#selected_choice = Location_w_efforts.objects.filter(provider_name__startswith=organization)
+		
+		selected_choice = EffortInstance.objects.filter(service_provider=ServiceProvider.objects.filter(provider_name__startswith=organization))
+		
+		print('selected_choice')
+		print(selected_choice)
+		print(len(selected_choice))
 		#if there was no matching organization, test if the similarity ration exceeds a certain ratio
 		if len(selected_choice)<1:
 			#print("testing for a similar result")
 			similar_name_list = []
-			for i in Location_w_efforts.objects.all():
+			#for i in Location_w_efforts.objects.all():
+			for i in EffortInstance.objects.all():
 				#print(difflib.SequenceMatcher(None, organization, i.provider_name).ratio())
-				if difflib.SequenceMatcher(None, organization, i.provider_name).ratio() > .95:
-					similar_name_list.append(i.provider_name)
-
+				#if difflib.SequenceMatcher(None, organization, i.provider_name).ratio() > .95:
+				if difflib.SequenceMatcher(None, organization, i.service_provider.provider_name).ratio() > .95:
+					#similar_name_list.append(i.provider_name)
+					similar_name_list.append(i.service_provider.provider_name)
+					
+					nearby = 'similar_string'
+					add_to_Location_w_efforts_tempObj(i,nearby)
+					
+		else:
+			for i in selected_choice:
+				nearby = 'similar_string'
+				add_to_Location_w_efforts_tempObj(i,nearby)
+					
 	except:
 		print("exception")
 	else:
 		#print("continue...")
-		matching_facilities = GeoJSONSerializer().serialize(selected_choice, use_natural_keys=True)
-		print('matching facilities')
-		print(matching_facilities)
-		matching_facilities_list = json.loads(matching_facilities)
-		#print("continue..1..2..3...")
+		#matching_facilities = GeoJSONSerializer().serialize(selected_choice, use_natural_keys=True)
+		#print('similar strings')
+		#print(len(Location_w_efforts_temp.objects.filter(similarity = 'similar_string')))
+		if len(Location_w_efforts_temp.objects.filter(similarity = 'similar_string')) > 0:
+			matching_facilities = GeoJSONSerializer().serialize(Location_w_efforts_temp.objects.filter(similarity = 'similar_string'), use_natural_keys=True)
+			#print('matching facilities')
+			#print(matching_facilities)
+			matching_facilities_list = json.loads(matching_facilities)
+			#print("continue..1..2..3...")
 	
 	#tests to see if there are existing organizations close by
 	if len(health_facilities_within_100_meters) > 0:
@@ -267,20 +336,29 @@ def validate(item):
 		#print("ok...")
 		#print(nearby_facilities)
 		#print("ok...")
-		#nearby_facilities_list = simplejson.loads( nearby_facilities )
 		nearby_facilities_list = json.loads(nearby_facilities)
 	else:
 		nearby_facilities_list= ""
 		
 	json_data_input_list= {}
 	
+	'''
 	#adds matching_facilities_list to json_data_input_list
 	if not selected_choice:
-		print('selected choice is empty ')
+		#print('selected choice is empty ')
 		pass
 	if selected_choice:
+		print('printing matching_facilities_list:')
+		print(matching_facilities_list)
+		json_data_input_list['matching_facilities_list'] = matching_facilities_list
+	'''
+	#adds matching_facilities_list to json_data_input_list
+	#if not matching_facilities_list:
+		#print('nearby_facilities_list is empty ')
+		#pass
+	if matching_facilities_list:
 		json_data_input_list['matching_facilities'] = matching_facilities_list
-	
+		
 	#adds nearby_facilities_list to json_data_input_list
 	if not nearby_facilities_list:
 		#print('nearby_facilities_list is empty ')
@@ -288,6 +366,7 @@ def validate(item):
 	if nearby_facilities_list:
 		json_data_input_list['nearby_facilities'] = nearby_facilities_list
 		
+	'''
 	try:
 		if len(similar_name_list) > 0:
 			#print('no matching name, but similar name or names')
@@ -298,19 +377,22 @@ def validate(item):
 	else:
 	  	#print("next step...")
 	  	pass
-
+	'''
+	
 	json_data = json.dumps(json_data_input_list)
 	
 	print(json_data)
 	
 	#helpful link: http://kiaran.net/post/54943617485/serialize-multiple-lists-of-django-models-to-json
 	if selected_choice or nearby_facilities_list:
-		print('not added to database, check if already exists1')
+		print('not added to database, check if already exists')
 		#return HttpResponse(json_data,content_type='application/json')
-		return json_data
+		status = 'flagged'
+		return (json_data, status)
 	# if no nearby entry or entry with matching or similar name, then create a new entry
 	else:
-		data_import(organization,lat,lon,input_point,service_list)
+		print('on to data import!')
+		return data_import(organization,lat,lon,input_point,service_list,updated_on,updated_by,drupal_id)
 		
 
 def get_hos_data():
@@ -321,7 +403,9 @@ def get_hos_data():
 	# added (effort instance id, name
 	# not added, flagged for duplicates (effort instance id, name, similiar name or close by or both)
 	# what about temp table with locations?
-	results_dict = {}
+	results_list = []
+	added_list = 0
+	flagged_list = 0
 	
 	#ex. of how to run, $ python -c 'import views; print views.get_hos_data()'
 	
@@ -332,11 +416,37 @@ def get_hos_data():
 	
 	#It is having trouble converting all of the json into a dictionary
 	#It works if I break it up into parts
+	
+	#for index, item in enumerate(r_list):
+	for item in r_list:
 		
-	for index, item in enumerate(r_list):
+		processed_import = validate(item)
+		
+		results_list.append(processed_import)
+	
+	#print('printing results_dict: ')	
+	#print(results_list)
+		
+	
+	for item in results_list:
+		#each item in list is actually a tuple with the status being the second one
+		print(item[1])
+		
+		if item[1] == 'flagged':
+			flagged_list += 1
+			
+		if item[1] == 'added':
+			added_list += 1
+			
+	print('processed: ')
+	print(len(r_list))
 
-		validate(item)
-		
+	print('flagged: ')	
+	print(flagged_list)
+
+	print('added: ')	
+	print(added_list)
+
 		
 		
 #disables csrf token validation on this view

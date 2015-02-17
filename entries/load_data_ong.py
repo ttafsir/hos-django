@@ -141,18 +141,26 @@ for row in dataReader:
 			#print "now going through column "+str(x) +" which is "+str(ongHeaders[x])
 			#makes sure column has that service type (1 would be the value)
 			if row[x] == '1':
-			#print row[x]
+				#print row[x]
 				#if hacServiceCols[x] != "0":
 				#	print "service "+str(x) +" is not equal to 1"
 				EffortInstanceServiceObj = EffortInstanceService()
 				
 				EffortInstanceServiceObj.effort_instance = EffortInstance.objects.get(effort_instance_id=row[0])
 		
-				EffortInstanceServiceObj.effort_service_description = upfirstletter(ongHeaders[x].replace("_", " "));
+				#EffortInstanceServiceObj.effort_service_description = upfirstletter(ongHeaders[x].replace("_", " "));
+				
+				effort_service_description = upfirstletter(ongHeaders[x].replace("_", " "));
 		
+				'''
 				#classify EffortInstanceServiceObj.effort_service_description based on a dictionary
 				if ServiceType.objects.filter(service_name_en=classify_service_types[EffortInstanceServiceObj.effort_service_description]).count() == 1:
 					serviceType = ServiceType.objects.get(service_name_en=classify_service_types[EffortInstanceServiceObj.effort_service_description])
+					EffortInstanceServiceObj.effort_service_type = serviceType
+				'''
+				
+				if ServiceType.objects.filter(service_name_en=classify_service_types[effort_service_description]).count() == 1:
+					serviceType = ServiceType.objects.get(service_name_en=classify_service_types[effort_service_description])
 					EffortInstanceServiceObj.effort_service_type = serviceType
 		
 				EffortInstanceServiceObj.save()

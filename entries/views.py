@@ -255,11 +255,11 @@ def validate(item):
 
 	#health_facilities_within_100_meters = Location_w_efforts.objects.filter(geom__distance_lt=(input_point, D(m=1000)))
 	locations_only_within_100_meters = Location.objects.filter(geom__distance_lt=(input_point, D(m=1000)))
-	effort_intances_only_within_100_meters = EffortInstance.objects.filter(location=locations_only_within_100_meters)
+	effort_instances_only_within_100_meters = EffortInstance.objects.filter(location=locations_only_within_100_meters)
 
 	Location_w_efforts_temp.objects.all().delete()
 	
-	for item in effort_intances_only_within_100_meters:
+	for item in effort_instances_only_within_100_meters:
 	
 		#print('printing object')
 		#print(item.service_provider.service_provider_id)
@@ -495,6 +495,9 @@ def find_facilities(request):
 	lat = float(lat)
 	point2 = Point(lon,lat)
 	
+	print(point2)
+	print(buffer)
+	
 	#test_pnt = Point(-104.93, 39.73)
 	
 
@@ -517,7 +520,7 @@ def find_facilities(request):
 	#results of buffer, then I could serialize it with GeoJSONSerializer, and erase the table afterwards
 	locations_only = Location.objects.filter(geom__distance_lt=(point2, D(m=buffer)))
 	print('printing locations_only')
-	#print(locations_only)
+	print(locations_only)
 	
 	#https://docs.djangoproject.com/en/1.7/topics/db/examples/one_to_one/
 	#need to find all effort instances that have the locations in facilities
@@ -531,7 +534,12 @@ def find_facilities(request):
 	
 	Location_w_efforts_temp.objects.all().delete()
 	
-	for item in efforts_matching_locations_only:
+	nearby = 'nearby'
+	for i in efforts_matching_locations_only:
+	
+		add_to_Location_w_efforts_tempObj(i,nearby)
+	
+	'''
 	
 		print('printing object')
 		print(item.service_provider.service_provider_id)
@@ -547,6 +555,7 @@ def find_facilities(request):
 		Location_w_efforts_tempObj.provider_name = item.service_provider.provider_name
 		
 		Location_w_efforts_tempObj.save()
+	'''
 		
 	print('done filling table')
 	
@@ -665,12 +674,24 @@ def all_facilities(request):
 	http://stackoverflow.com/questions/22898547/error-with-geodjango-serializer-and-foreignkey-field
 	"""
 	
-	facilities = Location_w_efforts.objects.all()
+	#facilities = Location_w_efforts.objects.all()
 	
-	print ('hello')
+	#print ('hello')
+	
+	
+	
+	Location_w_efforts_temp.objects.all().delete()
+	
+	all_health_facilities = EffortInstance.objects.all()
+	
+	nearby = 'other'
+	
+	for i in all_health_facilities:
+
+		add_to_Location_w_efforts_tempObj(i,nearby)
 		
 	
-	geojson_data = GeoJSONSerializer().serialize(facilities, use_natural_keys=True) 
+	geojson_data = GeoJSONSerializer().serialize(Location_w_efforts_temp.objects.all(), use_natural_keys=True) 
 	
 	return HttpResponse(geojson_data,content_type='application/json')
 	

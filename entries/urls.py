@@ -14,6 +14,8 @@ urlpatterns = patterns('',
     # ex: /entries/11795/results/   This returns the services that are provided by the specified Effort Instance
     #arg in views needs to be self and pk
     url(r'^(?P<pk>\d+)/results/$', views.service_results, name='service-results'),
+    #returns other health facilities that offer the same type of services
+    #example of a get request: http://127.0.0.1:8000/entries/shared_servicetype/?id=11779
     url(r'^shared_servicetype/$', 'entries.views.shared_servicetype', name='shared-servicetype'),
     # A post_request is called internally by the test_form to create a new organization
     url(r'^post_request/$', views.post_request, name='post-request'),

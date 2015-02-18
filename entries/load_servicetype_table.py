@@ -18,6 +18,7 @@ sys.path.append(your_djangoproject_home)
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'hos2.settings'
 #os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hos2.settings")
+
  
 from entries.models import ServiceProvider,Location,EffortInstance,ServiceType,EffortInstanceService
  

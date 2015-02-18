@@ -174,8 +174,14 @@ def add_to_Location_w_efforts_tempObj(item,nearby):
 		Location_w_efforts_tempObj.similarity = nearby
 		Location_w_efforts_tempObj.date_start = item.date_start
 		Location_w_efforts_tempObj.date_end = item.date_end
-		Location_w_efforts_tempObj.latitude = item.location.latitude
-		Location_w_efforts_tempObj.longitude = item.location.longitude
+		try:
+			Location_w_efforts_tempObj.latitude = item.location.latitude
+		except AttributeError:
+  			print "Attribute not defined"
+  		try:
+			Location_w_efforts_tempObj.longitude = item.location.longitude
+		except AttributeError:
+  			print "Attribute not defined"
 		Location_w_efforts_tempObj.id = item.effort_instance_id
 		Location_w_efforts_tempObj.service_provider = item.service_provider
 		Location_w_efforts_tempObj.provider_name = item.service_provider.provider_name
@@ -687,7 +693,6 @@ def all_facilities(request):
 	#print ('hello')
 	
 	
-	
 	Location_w_efforts_temp.objects.all().delete()
 	
 	all_health_facilities = EffortInstance.objects.all()
@@ -695,7 +700,9 @@ def all_facilities(request):
 	nearby = 'other'
 	
 	for i in all_health_facilities:
-
+	
+		print('printing i')
+		print(i.effort_instance_id)
 		add_to_Location_w_efforts_tempObj(i,nearby)
 		
 	

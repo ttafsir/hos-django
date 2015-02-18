@@ -8,7 +8,7 @@
 \red14\green60\blue38;\red180\green36\blue25;\red128\green0\blue0;\red34\green34\blue34;\red51\green51\blue51;
 \red60\green95\blue255;}
 {\info
-{\author Thomas Gertin}}\vieww19120\viewh16580\viewkind1\viewscale140
+{\author Thomas Gertin}}\vieww19420\viewh16580\viewkind1\viewscale140
 \deftab720
 \pard\pardeftab720\ri0
 
@@ -152,7 +152,7 @@ useful sites:\
 *********************************\
 How to set-up database on EC2:\
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural
 
 \f1\fs22 \cf0 \CocoaLigature0 ubuntu@ip-172-31-59-160:~$ sudo su postgres\
 
@@ -165,7 +165,7 @@ How to set-up database on EC2:\
 \pard\pardeftab720
 
 \f0 \cf0 \cb1 \kerning1\expnd0\expndtw0 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural
 
 \f1\fs22 \cf0 \CocoaLigature0 postgres@ip-172-31-59-160:/home/ubuntu$ psql
 \f0\fs24 \CocoaLigature1 \
@@ -191,12 +191,13 @@ you can connect to database:
 \
 then\
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural
 \cf0 hos1-# CREATE EXTENSION postgis;\
 \
 hos1-# CREATE EXTENSION postgis_topology;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural
 
-\f0\fs24 \CocoaLigature1 \
+\f0\fs24 \cf0 \CocoaLigature1 \
 \pard\pardeftab720\ri0
 \cf0 -tip: typing \'91exit\'92 will exit you out of the postgres user and into the ubuntu user, typing \'91exit\'92 again will exit you out of the server\
 \
@@ -204,7 +205,7 @@ hos1-# CREATE EXTENSION postgis_topology;\
 \
 example of database settings (in settings.py file)\
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural
 
 \f1\fs22 \cf0 \CocoaLigature0 DATABASES = \{\
     
@@ -276,6 +277,57 @@ python manage.py runserver
 \cf0 \
 \
 *********************************\
+setting up Gunicorn and Nginx servers\
+\
+http://michal.karzynski.pl/blog/2013/06/09/django-nginx-gunicorn-virtualenv-supervisor/\
+\
+pip install gunicorn\
+\
+\
+(py27env)ubuntu@ip-172-31-59-160:~/hos-django/hos2$ gunicorn wsgi:application --bind 172.31.59.160:8001\
+\
+\
+sudo apt-get install nginx\
+\
+\
+used partly these directions to set up Gunicorn and Nginx:\
+https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-django-with-postgres-nginx-and-gunicorn\
+\
+Gunicorn serves the python stuff and Nginx serves the static files, and decides what needs to be gotten from Gunicorn\
+\
+at first Nginx wasn't serving up the test_from map marker. This used a static url. I had to change the static link used\
+in the tutorial to the static folder in my entries application so it could find the png marker.\
+\
+so changed STATIC_ROOT = "/opt/myenv/static/"   to   STATIC_ROOT = "/home/ubuntu/hos-django/entries/static/"\
+\
+and in File: /etc/nginx/sites-available/myproject \
+\
+changed alias /opt/myenv/static/   to   /home/ubuntu/hos-django/entries/static/;\
+\
+so this File: /etc/nginx/sites-available/myproject   looks like this:   \
+\
+server \{\
+        server_name haitihealthfacilities.org;\
+\
+        access_log off;\
+\
+        location /static/ \{\
+            alias /home/ubuntu/hos-django/entries/static/;\
+        \}\
+\
+        location / \{\
+                proxy_pass http://127.0.0.1:8001;\
+                proxy_set_header X-Forwarded-Host $server_name;\
+                proxy_set_header X-Real-IP $remote_addr;\
+                add_header P3P 'CP="ALL DSP COR PSAa PSDa OUR NOR ONL UNI COM NAV"';\
+        \}\
+    \}\
+    \
+so take note that when Nginx needs hos-django for a request it goes to Gunicorn, which will be deployed here: http://127.0.0.1:8001\
+\
+(py27env)ubuntu@ip-172-31-59-160:~/hos-django/hos2$ gunicorn wsgi:application --bind 127.0.0.1:8001\
+\
+*******************************\
 \
 How to change Password Authentication (later decided not to enable and go with keys instead):\
 \

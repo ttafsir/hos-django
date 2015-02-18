@@ -66,9 +66,9 @@ Example:
 http://example.org/find/all/
 
 
-###GET /entries/<pk>/results/
+###GET /entries/'pk'/results/
 
-Returns other what services the requested health facility provides. Insert the EffortInstance ID for <pk>
+Returns other what services the requested health facility provides. Insert the EffortInstance ID for 'pk'
 
 Example:
 
@@ -85,11 +85,11 @@ Returns other health facilities that offer the same type of services.
 
 Example:
 
-http://example.org/entries/shared_servicetype/?id=11779
+http://example.org/entries/shared_servicetype/?id=33149
 
 response:
 
-{'effort_instance_id': 221810}{'effort_instance_id': 221818}{'effort_instance_id': 221542}{'effort_instance_id': 221983}{'effort_instance_id': 33009}{'effort_instance_id': 221732}{'effort_instance_id': 221834}{'effort_instance_id': 221991}{'effort_instance_id': 33089}{'effort_instance_id': 221754}{'effort_instance_id': 221865}{'effort_instance_id': 221809}{'effort_instance_id': 221871}{'effort_instance_id': 221869}{'effort_instance_id': 22409}{'effort_instance_id': 221830}{'effort_instance_id': 221984}{'effort_instance_id': 33102}{'effort_instance_id': 33134}{'effort_instance_id': 221533}{'effort_instance_id': 221870}{'effort_instance_id': 221543}{'effort_instance_id': 33034}{'effort_instance_id': 221757}{'effort_instance_id': 221832}{'effort_instance_id': 221825}{'effort_instance_id': 22410}{'effort_instance_id': 221873}{'effort_instance_id': 221868}{'effort_instance_id': 221858}{'effort_instance_id': 33127}{'effort_instance_id': 33104}{'effort_instance_id': 221954}{'effort_instance_id': 33142}{'effort_instance_id': 22165}{'effort_instance_id': 221996}{'effort_instance_id': 221957}{'effort_instance_id': 33043}{'effort_instance_id': 221867}{'effort_instance_id': 33045}{'effort_instance_id': 221821}{'effort_instance_id': 33095}{'effort_instance_id': 221982}{'effort_instance_id': 33123}{'effort_instance_id': 22951}{'effort_instance_id': 221859}{'effort_instance_id': 221736}{'effort_instance_id': 221864}{'effort_instance_id': 222007}{'effort_instance_id': 221819}{'effort_instance_id': 33118}{'effort_instance_id': 221725}{'effort_instance_id': 221827}{'effort_instance_id': 221861}{'effort_instance_id': 221737}{'effort_instance_id': 33100}{'effort_instance_id': 22952}{'effort_instance_id': 221862}{'effort_instance_id': 221833}{'effort_instance_id': 33048}{'effort_instance_id': 221817}{'effort_instance_id': 221815}{'effort_instance_id': 221951}{'effort_instance_id': 22950}{'effort_instance_id': 33116}{'effort_instance_id': 221955}{'effort_instance_id': 221829}{'effort_instance_id': 221826}{'effort_instance_id': 221866}{'effort_instance_id': 221828}{'effort_instance_id': 221831}{'effort_instance_id': 221811}{'effort_instance_id': 33010}{'effort_instance_id': 221529}{'effort_instance_id': 221822}{'effort_instance_id': 22408}{'effort_instance_id': 221863}{'effort_instance_id': 221824}{'effort_instance_id': 33026}{'effort_instance_id': 221872}{'effort_instance_id': 221714}{'effort_instance_id': 221875}{'effort_instance_id': 221816}{'effort_instance_id': 33137}{'effort_instance_id': 221981}{'effort_instance_id': 221734}{'effort_instance_id': 221528}{'effort_instance_id': 33060}{'effort_instance_id': 221814}{'effort_instance_id': 221874}{'effort_instance_id': 221823}{'effort_instance_id': 221860}
+{'effort_instance_id': 33009}{'effort_instance_id': 33089}{'effort_instance_id': 33108}{'effort_instance_id': 111286}{'effort_instance_id': 33091}{'effort_instance_id': 33101}{'effort_instance_id': 33131}{'effort_instance_id': 111040}{'effort_instance_id': 111037}{'effort_instance_id': 33018}{'effort_instance_id': 33044}{'effort_instance_id': 33107}{'effort_instance_id': 33138}{'effort_instance_id': 111171}{'effort_instance_id': 11971}{'effort_instance_id': 33032}{'effort_instance_id': 33056}{'effort_instance_id': 11870}{'effort_instance_id': 111101}{'effort_instance_id': 111051}{'effort_instance_id': 111214}{'effort_instance_id': 111032}{'effort_instance_id': 111202}{'effort_instance_id': 33092}{'effort_instance_id': 33132}{'effort_instance_id': 111319}{'effort_instance_id': 33146}{'effort_instance_id': 111318}{'effort_instance_id': 33122}{'effort_instance_id': 33129}{'effort_instance_id': 33104}{'effort_instance_id': 111559}{'effort_instance_id': 33105}{'effort_instance_id': 33149}{'effort_instance_id': 111339}{'effort_instance_id': 33121}{'effort_instance_id': 33082}{'effort_instance_id': 11792}{'effort_instance_id': 11847}{'effort_instance_id': 33148}{'effort_instance_id': 33038}{'effort_instance_id': 111382}{'effort_instance_id': 11936}{'effort_instance_id': 111485}{'effort_instance_id': 11820}{'effort_instance_id': 33133}{'effort_instance_id': 33076}{'effort_instance_id': 33021}{'effort_instance_id': 33117}{'effort_instance_id': 33063}{'effort_instance_id': 33042}{'effort_instance_id': 111030}{'effort_instance_id': 111189}{'effort_instance_id': 33036}{'effort_instance_id': 111077}{'effort_instance_id': 11906}{'effort_instance_id': 111431}{'effort_instance_id': 11812}{'effort_instance_id': 33094}{'effort_instance_id': 33039}{'effort_instance_id': 33120}{'effort_instance_id': 33050}{'effort_instance_id': 111278}{'effort_instance_id': 111396}{'effort_instance_id': 33001}{'effort_instance_id': 111239}{'effort_instance_id': 111107}{'effort_instance_id': 111082}{'effort_instance_id': 11903}{'effort_instance_id': 33028}{'effort_instance_id': 111364}{'effort_instance_id': 33100}{'effort_instance_id': 11930}{'effort_instance_id': 11995}{'effort_instance_id': 33139}{'effort_instance_id': 111235}{'effort_instance_id': 33037}{'effort_instance_id': 33084}{'effort_instance_id': 111172}{'effort_instance_id': 33031}{'effort_instance_id': 33143}{'effort_instance_id': 111093}{'effort_instance_id': 33040}{'effort_instance_id': 33136}{'effort_instance_id': 111131}{'effort_instance_id': 33002}{'effort_instance_id': 33109}{'effort_instance_id': 33128}{'effort_instance_id': 11795}{'effort_instance_id': 111250}{'effort_instance_id': 33060}{'effort_instance_id': 33112}{'effort_instance_id': 33051}{'effort_instance_id': 111144}{'effort_instance_id': 111563}{'effort_instance_id': 111450}{'effort_instance_id': 33007}{'effort_instance_id': 33145}{'effort_instance_id': 11885}{'effort_instance_id': 33086}
 
 ###POST /entries/post_request/
 
@@ -170,7 +170,7 @@ Example of response:
             }
         ]
     }
-}flagged
+}
 
 
 
@@ -192,7 +192,7 @@ makes it easy to switch from a local database to a shared database
 that contains the CSVs that will be imported, all of the relevant python scripts to load data into PostGIS, 
 and the templates folder that contains the templates for the views
 
-###Python scripts(in entries folder):
+###Python scripts (in entries folder):
 
 - load_Service_Type_table.py must be run before the load data scripts. It populates the ServiceType table with all of the possible services, and this table needs to be populated so 
 the necessary relations are created when the load data scripts are run.

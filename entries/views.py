@@ -184,9 +184,13 @@ def add_to_Location_w_efforts_tempObj(item,nearby):
 
 #disables csrf token validation on this view
 @csrf_exempt
-def validate(item):
+def validate(item,request_type = 'batch'):
 
 	print('validation step')
+	
+	
+	print('printing request_type')
+	print(request_type)
 	
 	organization = item['name']
 	if type(organization) is list:
@@ -254,7 +258,7 @@ def validate(item):
 		service_list = item['services']
 
 	#health_facilities_within_100_meters = Location_w_efforts.objects.filter(geom__distance_lt=(input_point, D(m=1000)))
-	locations_only_within_100_meters = Location.objects.filter(geom__distance_lt=(input_point, D(m=1000)))
+	locations_only_within_100_meters = Location.objects.filter(geom__distance_lt=(input_point, D(m=2000)))
 	effort_instances_only_within_100_meters = EffortInstance.objects.filter(location=locations_only_within_100_meters)
 
 	Location_w_efforts_temp.objects.all().delete()
@@ -386,9 +390,13 @@ def validate(item):
 	#helpful link: http://kiaran.net/post/54943617485/serialize-multiple-lists-of-django-models-to-json
 	if selected_choice or nearby_facilities_list:
 		print('not added to database, check if already exists')
-		#return HttpResponse(json_data,content_type='application/json')
-		status = 'flagged'
-		return (json_data, status)
+		if request_type == 'single':
+			print('yay')
+			#return HttpResponse(json_data,content_type='application/json')
+			return (json_data)
+		else:
+			status = 'flagged'
+			return (json_data, status)
 	# if no nearby entry or entry with matching or similar name, then create a new entry
 	else:
 		print('on to data import!')
@@ -463,10 +471,10 @@ def post_request(request):
 	
 	print(myDict)
 
-	validate(myDict)
+	request_type = 'single'
 	
 	#Since this function is called, you need the HttpResponse inside this function, or else you might get a 500 server error
-	return HttpResponse(validate(myDict),content_type='application/json')
+	return HttpResponse(validate(myDict,request_type),content_type='application/json')
 		     
 def find_facilities(request):
 

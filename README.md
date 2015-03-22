@@ -68,7 +68,7 @@ http://example.org/find/all/
 
 ###GET /entries/'pk'/results/
 
-Returns other what services the requested health facility provides. Insert the EffortInstance ID for 'pk'
+Returns what services the requested health facility provides. Insert the EffortInstance ID for 'pk'
 
 Example:
 

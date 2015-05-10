@@ -61,9 +61,9 @@ WSGI_APPLICATION = 'hos2.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'USER': 'postgres',
+        'USER': 'vagrant',
 		'NAME': 'hos1',
-		'PASSWORD': '',
+		'PASSWORD': 'vagrant',
 		'HOST': 'localhost',
 		'PORT': '5432',
     }
@@ -72,6 +72,18 @@ DATABASES = {
 #GeoDjango version above
 
 '''
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'USER': 'postgres',
+        'NAME': 'hos1',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
+
 {
     'default': {
 		'ENGINE': 'django.contrib.gis.db.backends.postgis',

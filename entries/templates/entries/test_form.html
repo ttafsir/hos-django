@@ -18,6 +18,7 @@
 		$('.ajaxProgress').hide();
 		$('.success').hide();
 		$('.matching_name').hide()
+		$('.nearby_location').hide()
 	});
 	</script>
 	
@@ -87,9 +88,9 @@
             dataType: "JSON",
             async: true,
             data: {
-            	organization : $('#organization').val(),
-            	lat : $('#lat').val(),
-            	lon : $('#lon').val(),
+            	name : $('#organization').val(),
+            	latitude : $('#lat').val(),
+            	longitude : $('#lon').val(),
             	services : services_array,
             	//Cardiovascular : $('#Cardiovascular').val(),
             	//Dental : $('#Dental').val(),
@@ -102,29 +103,21 @@
                 //alert(result);
                 $('.matching_name').hide()
                 
-                console.log('no alerts?');
-
                 
                 nearby_facilities_json = json['nearby_facilities']
                 
                 matching_facilities = json['matching_facilities'];
                 
+                console.log('testing...')
                 console.log(typeof matching_facilities)
                 
+                //if there are matching facilities with similiar names
                 if (typeof matching_facilities != 'undefined') {
     				// variable is defined
     				console.log("should be defined")
     				$('.matching_name').show();
     				var matching_facility_string = JSON.stringify(matching_facilities);
                 	//alert(matching_facility_string);
-				
-					/*
-					//this worked to some degree
-					var items = [];
-					  $.each(json.matching_facilities.features[0].properties, function (key, val) {
-							items.push('<li id="' + key + '">' + key + ': ' + val + '</li>');
-					});
-					*/
 				
 					var items = [];
 				
@@ -134,6 +127,7 @@
 						count++;
 					  }
 					}
+					
 					console.log('count is: ');
 					console.log(count);
 
@@ -143,8 +137,9 @@
 						$.each(json.matching_facilities.features[i].properties, function (key, val) {
 								items.push('<li id="' + key + '">' + key + ': ' + val + '</li>');
 						});
-					
-						create_point(matching_facilities.features[i].properties.latitude, matching_facilities.features[i].properties.longitude);
+						
+						//calls create_point function, which creates the point
+						create_point(matching_facilities.features[i].properties.latitude, matching_facilities.features[i].properties.longitude, matching_facilities.features[i]);
 					};
 					//this call is good, looked at: http://stackoverflow.com/questions/13462580/iterating-geojson-object-with-javascript
 					//console.log(json.matching_facilities.features[0])
@@ -155,23 +150,21 @@
 					  }).appendTo( "body" );
 				
 					$('.ajaxProgress').hide();
-					$('.success').show();
+					$('.matching_name').show();
 				
 					$("#output").html(json.type);
 					console.log('success' + json);
 				
 				}
-
-                
-                /*
-                var json2_string = '{"type": "Point","coordinates": [-105.01621,39.57422]}';
-				var json2 = JSON.parse(json2_string);
-				var result2 = JSON.stringify(json2);
-                alert(result2);
-				*/
 				
 				//adds the nearby facilities to the map
 				map.data.addGeoJson(nearby_facilities_json);
+				
+				//if there are nearby facilities
+				if (typeof nearby_facilities_json != 'undefined') {
+					$('.ajaxProgress').hide();
+					$('.nearby_location').show();
+				}
                 
                 //not working for some reason
                 //map.data.overrideStyle(map.data.getFeatureById('match'), {icon: "{% static "entries/img/purple_MarkerA.png" %}"});
@@ -180,7 +173,7 @@
                 //console.log(matching_facilities.features[0].properties.latitude)
                 //console.log(matching_facilities.features[0].properties.longitude)
                 
-                function create_point(lat,lon) {
+                function create_point(lat,lon,featureInfo) {
                 	var matching_facility_marker = new google.maps.LatLng(lat,lon);
                 	// To add the marker to the map, use the 'map' property
                 	var matching_marker = new google.maps.Marker({
@@ -188,6 +181,16 @@
 						title:"Hello World!",
 						icon: "{% static "entries/img/purple_MarkerA.png" %}"
 					});
+					var contentString = 'pop up box'
+					//https://developers.google.com/maps/documentation/javascript/examples/infowindow-simple
+					var infowindow = new google.maps.InfoWindow({
+      					//content: JSON.stringify(featureInfo)
+      					content: JSON.stringify(featureInfo.properties.provider_name)
+  					});
+  					google.maps.event.addListener(matching_marker, 'click', function() {
+    					infowindow.open(map,matching_marker);
+  					});
+
 					// To add the marker to the map, call setMap();
 					matching_marker.setMap(map);
                 }
@@ -241,8 +244,12 @@ lat: <input id="lat" type="text" name="lat" style="width: 150px;"> lon: <input i
 		<h3>Success!</h3>
 	</div>
 	<div class = "matching_name">
-		<h3>One of the results has the same name</h3>
+		<h3>At least one entry exists in the database with a similar name. Please verify new entry.</h3>
 	</div>
+	<div class = "nearby_location">
+		<h3>At least existing health facility is within 100 meters from your location. Please verify new entry.</h3>
+	</div>
+	
 </div>
 
 <br>

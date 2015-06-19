@@ -133,7 +133,9 @@ class EffortInstance(Common_EffortInstance_Info):
 	effort_instance_id =  models.IntegerField(primary_key=True)
 	updated_on = models.DateTimeField(auto_now=False, null=True)
 	updated_by = models.CharField(max_length=100, blank=True)
-	location = models.ForeignKey(Location,blank=True, null=True)
+	#location = models.ForeignKey(Location,blank=True, null=True)
+	#change Location to One-to-one relationship: https://docs.djangoproject.com/en/1.7/topics/db/examples/one_to_one/
+	location = models.OneToOneField(Location,blank=True, null=True)
 	adm_1 = models.ForeignKey(haiti_adm1_minustah, blank=True, null=True)
 	adm_2 = models.ForeignKey(haiti_adm2_minustah, blank=True, null=True)
 	adm_3 = models.ForeignKey(haiti_adm3_minustah, blank=True, null=True)
@@ -165,6 +167,7 @@ class Location_w_efforts(Common_EffortInstance_Info):
 
 	#overriding the default manager with a GeoManager instance. 
 	geom = models.PointField(dim=3, geography=True, blank=True, null=True)
+	
 	objects = models.GeoManager()
 	
 	def save(self):
@@ -172,6 +175,32 @@ class Location_w_efforts(Common_EffortInstance_Info):
 			lString = 'POINT(%s %s)' % (self.longitude.strip(), self.latitude.strip())
 			self.geom = fromstr(lString)
 		super(Location_w_efforts, self).save()
+		
+#temporary model to display points along with their associated effort instance and service provider
+#inherits from the Common_EffortInstance_Info base class
+class Location_w_efforts_temp(Common_EffortInstance_Info):
+	
+	#used when finding duplicates
+	similarity = models.CharField(max_length = 100,null=True)
+	
+	provider_name = models.CharField(max_length = 500)
+	
+	#you don't need location_id below because you have location field above
+	#location_id = models.IntegerField(primary_key=False)
+	#latitude and longitude need to be changed to string types for GeoDjango
+	latitude = models.CharField(max_length=15, blank=True, null=True)
+	longitude = models.CharField(max_length=15, blank=True, null=True) 
+
+	#overriding the default manager with a GeoManager instance. 
+	geom = models.PointField(dim=3, geography=True, blank=True, null=True)
+	
+	objects = models.GeoManager()
+	
+	def save(self):
+		if self.latitude != None and len(self.latitude) > 0:
+			lString = 'POINT(%s %s)' % (self.longitude.strip(), self.latitude.strip())
+			self.geom = fromstr(lString)
+		super(Location_w_efforts_temp, self).save()
 		
 #table to store the spatial clusters results
 class Spatial_cluster_results(Common_EffortInstance_Info):

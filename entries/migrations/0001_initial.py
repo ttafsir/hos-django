@@ -20,6 +20,7 @@ class Migration(migrations.Migration):
                 ('date_end', models.DateTimeField(null=True)),
                 ('default', models.NullBooleanField()),
                 ('description', models.CharField(max_length=600, blank=True)),
+                ('drupal_id', models.IntegerField(default=0)),
                 ('provider_name', models.CharField(max_length=500)),
                 ('nearby_points', models.IntegerField(null=True, blank=True)),
                 ('point_checked', models.NullBooleanField()),
@@ -40,6 +41,7 @@ class Migration(migrations.Migration):
                 ('date_end', models.DateTimeField(null=True)),
                 ('default', models.NullBooleanField()),
                 ('description', models.CharField(max_length=600, blank=True)),
+                ('drupal_id', models.IntegerField(default=0)),
                 ('effort_instance_id', models.IntegerField(serialize=False, primary_key=True)),
                 ('updated_on', models.DateTimeField(null=True)),
                 ('updated_by', models.CharField(max_length=100, blank=True)),
@@ -157,6 +159,27 @@ class Migration(migrations.Migration):
                 ('date_end', models.DateTimeField(null=True)),
                 ('default', models.NullBooleanField()),
                 ('description', models.CharField(max_length=600, blank=True)),
+                ('drupal_id', models.IntegerField(default=0)),
+                ('provider_name', models.CharField(max_length=500)),
+                ('latitude', models.CharField(max_length=15, null=True, blank=True)),
+                ('longitude', models.CharField(max_length=15, null=True, blank=True)),
+                ('geom', django.contrib.gis.db.models.fields.PointField(srid=4326, dim=3, null=True, geography=True, blank=True)),
+            ],
+            options={
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Location_w_efforts_temp',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('type', models.CharField(default=b'CL', max_length=2, choices=[(b'TT', b'Traveling Team'), (b'CL', b'Clinic'), (b'HL', b'Hospital')])),
+                ('date_start', models.DateTimeField(null=True)),
+                ('date_end', models.DateTimeField(null=True)),
+                ('default', models.NullBooleanField()),
+                ('description', models.CharField(max_length=600, blank=True)),
+                ('drupal_id', models.IntegerField(default=0)),
                 ('provider_name', models.CharField(max_length=500)),
                 ('latitude', models.CharField(max_length=15, null=True, blank=True)),
                 ('longitude', models.CharField(max_length=15, null=True, blank=True)),
@@ -172,9 +195,6 @@ class Migration(migrations.Migration):
             fields=[
                 ('service_provider_id', models.AutoField(serialize=False, primary_key=True)),
                 ('provider_name', models.CharField(max_length=500)),
-                ('provider_name_en', models.CharField(max_length=500)),
-                ('provider_name_fr', models.CharField(max_length=500)),
-                ('provider_name_cr', models.CharField(max_length=500)),
             ],
             options={
             },
@@ -215,6 +235,7 @@ class Migration(migrations.Migration):
                 ('date_end', models.DateTimeField(null=True)),
                 ('default', models.NullBooleanField()),
                 ('description', models.CharField(max_length=600, blank=True)),
+                ('drupal_id', models.IntegerField(default=0)),
                 ('effort_instance_id', models.IntegerField()),
                 ('provider_name', models.CharField(max_length=500)),
                 ('nearby_points', models.IntegerField(null=True, blank=True)),
@@ -228,6 +249,12 @@ class Migration(migrations.Migration):
                 'abstract': False,
             },
             bases=(models.Model,),
+        ),
+        migrations.AddField(
+            model_name='location_w_efforts_temp',
+            name='service_provider',
+            field=models.ForeignKey(blank=True, to='entries.ServiceProvider', null=True),
+            preserve_default=True,
         ),
         migrations.AddField(
             model_name='location_w_efforts',
@@ -262,7 +289,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='effortinstance',
             name='location',
-            field=models.ForeignKey(blank=True, to='entries.Location', null=True),
+            field=models.OneToOneField(null=True, blank=True, to='entries.Location'),
             preserve_default=True,
         ),
         migrations.AddField(

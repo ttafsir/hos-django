@@ -1,0 +1,334 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1348\cocoasubrtf170
+{\fonttbl\f0\froman\fcharset0 TimesNewRomanPSMT;\f1\fnil\fcharset0 Menlo-Regular;\f2\fnil\fcharset0 Monaco;
+\f3\fnil\fcharset0 Consolas;\f4\fnil\fcharset0 Menlo-Bold;\f5\froman\fcharset0 Times-Roman;
+\f6\fmodern\fcharset0 Courier;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue255;\red163\green209\blue38;\red26\green26\blue26;
+\red234\green234\blue234;\red47\green180\blue29;\red64\green11\blue217;\red19\green8\blue105;\red14\green60\blue38;
+\red14\green14\blue14;\red0\green0\blue120;\red43\green39\blue19;}
+{\info
+{\author Thomas Gertin}}\vieww20920\viewh16580\viewkind1\viewscale140
+\deftab720
+\pard\pardeftab720\ri0
+
+\f0\fs24 \cf0 \
+
+\fs48 \ul Setting up Dev Environment
+\fs24 \ulnone \
+\
+\pard\pardeftab720\ri0
+
+\f1\fs22 \cf0 Packer automatically creates an Amazon Machine Image (AMI) that has all the dependencies needed by hos-django.\
+\
+\pard\pardeftab720\ri0
+{\field{\*\fldinst{HYPERLINK "http://pretengineer.com/post/packer-vagrant-infra/"}}{\fldrslt 
+\f0\fs24 \cf2 \ul \ulc2 http://pretengineer.com/post/packer-vagrant-infra/}}
+\f0\fs24 \
+\pard\pardeftab720\ri0
+{\field{\*\fldinst{HYPERLINK "http://www.packer.io/intro/"}}{\fldrslt \cf2 \ul \ulc2 http://www.packer.io/intro/}}\
+\
+Example of packer command:\
+\
+\pard\pardeftab720\sl400
+
+\f2\fs28 \cf3 \cb0 \kerning1\expnd4\expndtw20
+$ packer build \\\
+    -var 'aws_access_key=YOUR ACCESS KEY' \\\
+    -var 'aws_secret_key=YOUR SECRET KEY' \\\
+    example.json\cf1 \kerning1\expnd4\expndtw20
+\
+\pard\pardeftab720\ri0
+
+\f0\fs24 \cf0 \cb1 \kerning1\expnd0\expndtw0 \
+***for some reason it want\'92s it in a really picky format. I can\'92t tell what the difference is; but I need to copy the above text and modify it for it to work***\
+\pard\pardeftab720\ri0
+
+\f1\fs22 \cf0 \
+Lessons learned while installing dependencies on server and building packer template:\
+\
+-I originally use the Amazon Linux image (CentOS based). It started giving me more trouble. I changed it to Ubuntu instead.\
+\pard\pardeftab720\ri0
+
+\f0\fs24 \cf0 \
+*********************************\
+\
+
+\fs48 \ul HOS Amazon AWS set up notes
+\fs24 \ulnone \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri0
+
+\f1 \cf0 How to log into your instance. First you need to change the permissions on your private key:\
+\
+Tom-Gertins-MacBook-Pro:Hope_One_Source thomasgertin1$ chmod 400 hos.pem\
+\
+Then you can log into your instance:\
+\
+\pard\pardeftab720\ri0
+\cf0 Tom-Gertins-MacBook-Pro:Hope_One_Source thomasgertin1$ ssh -i hos.pem {\field{\*\fldinst{HYPERLINK "mailto:ec2-user@ec2-54-204-61-176.compute-1.amazonaws.com"}}{\fldrslt \cf2 \ul \ulc2 ubuntu@ec2-54-204-61-176.compute-1.amazonaws.com}}\
+\
+useful sites:\
+\
+\pard\pardeftab720\ri0
+{\field{\*\fldinst{HYPERLINK "http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/managing-users.html"}}{\fldrslt 
+\f0 \cf2 \ul \ulc2 http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/managing-users.html}}
+\f0 \
+\
+\pard\pardeftab720\ri0
+{\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/quest"}}{\fldrslt \cf2 \ul \ulc2 http://stackoverflow.com/questions/8339912/allowing-users-to-ssh-to-an-ec2-ubuntu-instance}}\
+\
+*********************************\
+\
+\pard\pardeftab720\ri0
+
+\fs48 \cf0 \ul \ulc0 How to set-up database on EC2
+\fs24 \ulnone \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural
+
+\f1\fs22 \cf0 \CocoaLigature0 ubuntu@ip-172-31-59-160:~$ sudo su postgres\
+\
+postgres@ip-172-31-59-160:/home/ubuntu$ createdb template_postgis
+\f3\fs24 \cf4 \cb5 \expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\pard\pardeftab720
+
+\f0 \cf0 \cb1 \kerning1\expnd0\expndtw0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural
+
+\f1\fs22 \cf0 \CocoaLigature0 postgres@ip-172-31-59-160:/home/ubuntu$ psql
+\f0\fs24 \CocoaLigature1 \
+\pard\pardeftab720\ri0
+\cf0 (password is \'91postgres\'92)\
+\
+***(tip, if not already logged in as user \'91postgres\'92) tom-gertins-mbp:~ thomasgertin1$ sudo -u postgres psql\
+\
+***fyi, how to delete a database: 
+\f1\fs22 \CocoaLigature0 postgres=# DROP DATABASE "hos1";
+\f0\fs24 \CocoaLigature1 \
+\
+postgres=# CREATE ROLE gisadmin PASSWORD 'mypassword' LOGIN SUPERUSER INHERIT CREATEDB;\
+  \
+postgres=# 
+\f1\fs22 \CocoaLigature0 CREATE DATABASE hos1 WITH OWNER = gisadmin TEMPLATE = template_postgis;
+\f0\fs24 \CocoaLigature1 \
+\
+or instead of referring to the template_postgis\'85\
+\
+you can connect to database:  
+\f1\fs22 \CocoaLigature0 postgres=# \\connect 'hos1'\
+\
+then\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural
+\cf0 hos1-# CREATE EXTENSION postgis;\
+\
+hos1-# CREATE EXTENSION postgis_topology;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural
+
+\f0\fs24 \cf0 \CocoaLigature1 \
+\pard\pardeftab720\ri0
+\cf0 -tip: typing \'91exit\'92 will exit you out of the postgres user and into the ubuntu user, typing \'91exit\'92 again will exit you out of the server\
+\
+*********************************\
+\
+\pard\pardeftab720\ri0
+
+\fs36 \cf0 \ul Example of database settings (in settings.py file)
+\fs24 \ulnone \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural
+
+\f1\fs22 \cf0 \CocoaLigature0 DATABASES = \{\
+    
+\f4\b \cf6 'default'
+\f1\b0 \cf0 : \{\
+        
+\f4\b \cf6 'ENGINE'
+\f1\b0 \cf0 : 
+\f4\b \cf6 'django.contrib.gis.db.backends.postgis'
+\f1\b0 \cf0 ,\
+        
+\f4\b \cf6 'USER'
+\f1\b0 \cf0 : 
+\f4\b \cf6 \'91vagrant\'92
+\f1\b0 \cf0 ,\
+        
+\f4\b \cf6 'NAME'
+\f1\b0 \cf0 : 
+\f4\b \cf6 'hos1'
+\f1\b0 \cf0 ,\
+        
+\f4\b \cf6 'PASSWORD'
+\f1\b0 \cf0 : 
+\f4\b \cf6 \'91vagrant\'92
+\f1\b0 \cf0 ,\
+        
+\f4\b \cf6 'HOST'
+\f1\b0 \cf0 : 
+\f4\b \cf6 'localhost'
+\f1\b0 \cf0 ,\
+        
+\f4\b \cf6 'PORT'
+\f1\b0 \cf0 : 
+\f4\b \cf6 '5432'
+\f1\b0 \cf0 ,\
+    \}\
+\}\
+\
+\pard\pardeftab720\ri0
+
+\f0\fs24 \cf0 \CocoaLigature1 *********************************\
+\
+
+\fs48 \ul Server set-up:
+\fs24 \ulnone \
+\
+\pard\pardeftab720\ri0
+
+\fs28 \cf0 \ul Manually starting development server
+\fs24 \ulnone \
+\
+(to activate virtualenv) -need to cd into 
+\f4\b\fs22 \cf7 \CocoaLigature0 py27env 
+\f0\b0\fs24 \cf0 \CocoaLigature1 and type: 
+\f3\fs26 \cf4 \expnd0\expndtw0\kerning0
+source bin/activate\
+\
+\pard\pardeftab720\ri0
+
+\f0\fs24 \cf0 \kerning1\expnd0\expndtw0 then you need to cd inside 
+\f4\b\fs22 \cf7 \CocoaLigature0 hos-django 
+\f0\b0\fs24 \cf0 \CocoaLigature1 and type: 
+\f1\fs22 \CocoaLigature0 python manage.py makemigrations\
+\
+then 
+\f0\fs24 \CocoaLigature1 type: 
+\f1\fs22 \CocoaLigature0 python manage.py migrate
+\f0\fs24 \CocoaLigature1 \
+\
+\pard\pardeftab720
+
+\f5\fs28 \cf8 \expnd0\expndtw0\kerning0
+$ \cf9 \expnd0\expndtw0\kerning0
+python manage.py runserver
+\f0\fs24 \cf0 \kerning1\expnd0\expndtw0 \
+\pard\pardeftab720\ri0
+\cf0 \
+*********************************\
+\
+\pard\pardeftab720\ri0
+
+\fs28 \cf0 \ul Setting up Gunicorn and Nginx servers
+\fs24 \ulnone \
+\
+\pard\pardeftab720\ri0
+{\field{\*\fldinst{HYPERLINK "http://michal.karzynski.pl/blog/2013/06/09/django-nginx-gunicorn-virtualenv-supervisor/"}}{\fldrslt \cf0 http://michal.karzynski.pl/blog/2013/06/09/django-nginx-gunicorn-virtualenv-supervisor/}}\
+\
+pip install gunicorn\
+\
+(py27env)ubuntu@ip-172-31-59-160:~/hos-django/hos2$ gunicorn wsgi:application --bind 172.31.59.160:8001\
+\
+sudo apt-get install nginx\
+\
+used partly these directions to set up Gunicorn and Nginx:\
+\pard\pardeftab720\ri0
+{\field{\*\fldinst{HYPERLINK "https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-django-with-postgres-nginx-and-gunicorn"}}{\fldrslt \cf0 https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-django-with-postgres-nginx-and-gunicorn}}\
+\
+Gunicorn serves the python stuff and Nginx serves the static files, and decides what it needs to get from Gunicorn.\
+\
+At first Nginx wasn't serving up the test_form map marker. This used a static url. I had to change the static link used in the tutorial to the static folder in my entries application so it could find the png marker. So in the my django app\'92s settings.py file, I changed STATIC_ROOT = "/opt/myenv/static/"  to  STATIC_ROOT = "/home/ubuntu/hos-django/entries/static/"\
+\
+and in this File: /etc/nginx/sites-available/myproject \
+changed alias /opt/myenv/static/   to   /home/ubuntu/hos-django/entries/static/;\
+\
+so this File: /etc/nginx/sites-available/myproject   looks like this:   \
+\
+server \{\
+        server_name haitihealthfacilities.org;\
+\
+        access_log off;\
+\
+        location /static/ \{\
+            alias /home/ubuntu/hos-django/entries/static/;\
+        \}\
+\
+        location / \{\
+                proxy_pass http://127.0.0.1:8001;\
+                proxy_set_header X-Forwarded-Host $server_name;\
+                proxy_set_header X-Real-IP $remote_addr;\
+                add_header P3P 'CP="ALL DSP COR PSAa PSDa OUR NOR ONL UNI COM NAV"';\
+        \}\
+    \}\
+    \
+so take note that when Nginx needs hos-django for a request it goes to Gunicorn, which will be deployed here: http://127.0.0.1:8001\
+\
+*******************************\
+\
+\pard\pardeftab720\ri0
+
+\fs28 \cf0 \ul Restarting Gunicorn and Nginx servers\
+\
+\pard\pardeftab720\ri0
+
+\fs24 \cf0 \ulnone Right now I\'92m not sure if the gunicorn server runs in the background so if you are working inside the repo and want to restart the servers then you probably only need to run the 
+\f1\fs22 \CocoaLigature0 gunicorn_runserver.sh 
+\f0\fs24 \CocoaLigature1  script in your home directory. ex:\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural
+
+\f1\fs22 \cf0 \CocoaLigature0 (py27env)ubuntu@ip-172-31-59-160:~$ ./gunicorn_runserver.sh\
+\
+\pard\pardeftab720\ri0
+
+\f0\fs24 \cf0 \CocoaLigature1 In case NGINX isn\'92t already running you can type: 
+\f6\fs22 \cf10 \expnd0\expndtw0\kerning0
+sudo service nginx restart\
+\
+
+\f0\fs24 \cf0 \kerning1\expnd0\expndtw0 *******************************
+\f6\fs22 \cf10 \expnd0\expndtw0\kerning0
+\
+\
+
+\f0\fs48 \cf0 \kerning1\expnd0\expndtw0 \ul Indexing Database:\
+\
+
+\fs24 \ulnone work on this\'85\
+\
+Also, how do I check how much memory my database have?\
+\
+{\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/questions/29164393/django-queries-are-40-times-slower-than-identical-postgres-queries"}}{\fldrslt http://stackoverflow.com/questions/29164393/django-queries-are-40-times-slower-than-identical-postgres-queries}}\
+\
+*******************************
+\f6\fs22 \cf10 \expnd0\expndtw0\kerning0
+\
+\
+
+\f0\fs48 \cf0 \kerning1\expnd0\expndtw0 \ul Possible Database Issues:\
+\
+
+\fs24 \ulnone if psql is not found.
+\f3\fs26 \expnd0\expndtw0\kerning0
+\
+\pard\pardeftab720
+\cf0 -bash: psql: command \cf11 \expnd0\expndtw0\kerning0
+not\cf0 \expnd0\expndtw0\kerning0
+ found\cf12 \expnd0\expndtw0\kerning0
+\
+\
+\pard\pardeftab720\ri0
+{\field{\*\fldinst{HYPERLINK "http://dba.stackexchange.com/questions/3005/how-to-run-psql-on-mac-os-x"}}{\fldrslt 
+\f0\fs24 \cf0 \kerning1\expnd0\expndtw0 http://dba.stackexchange.com/questions/3005/how-to-run-psql-on-mac-os-x}}
+\f0\fs24 \cf0 \kerning1\expnd0\expndtw0 \
+\
+If your postgres database doesn\'92t already have \'91vagrant\'92 as the owner and the password isn\'92t set to \'91vagrant\'92 you might have problems with migrations because the repo is set to use \'91vagrant\'92 as the owner and password.\
+\
+\pard\pardeftab720\ri0
+{\field{\*\fldinst{HYPERLINK "http://dba.stackexchange.com/questions/36870/permission-denied-in-postgres"}}{\fldrslt \cf0 http://dba.stackexchange.com/questions/36870/permission-denied-in-postgres}}\
+\
+
+\f3\fs26 \cf12 \expnd0\expndtw0\kerning0
+\
+\pard\pardeftab720
+\cf12 \expnd0\expndtw0\kerning0
+\
+}

@@ -672,7 +672,6 @@ def service_results(self,pk):
 	print(json_data)
 	
 	return HttpResponse(json_data)
-		
     
 
 def all_facilities(request):
@@ -687,12 +686,13 @@ def all_facilities(request):
 	It is not handling backwards relations
 	http://stackoverflow.com/questions/22898547/error-with-geodjango-serializer-and-foreignkey-field
 	"""
-	
-	#facilities = Location_w_efforts.objects.all()
-	
-	#print ('hello')
-	
+
 	"""
+	#facilities = Location_w_efforts.objects.all()
+	#print ('hello')
+
+	#for some reason I was using the Location_w_efforts_temp table before, can't remember why...
+
 	Location_w_efforts_temp.objects.all().delete()
 	
 	all_health_facilities = EffortInstance.objects.all()
@@ -704,9 +704,11 @@ def all_facilities(request):
 		#print('printing i')
 		#print(i.effort_instance_id)
 		add_to_Location_w_efforts_tempObj(i,nearby)
-	"""	
-	
-	geojson_data = GeoJSONSerializer().serialize(Location_w_efforts_temp.objects.all(), use_natural_keys=True) 
+
+	geojson_data = GeoJSONSerializer().serialize(Location_w_efforts_temp.objects.all(), use_natural_keys=True)
+	"""
+
+	geojson_data = GeoJSONSerializer().serialize(Location_w_efforts.objects.all(), use_natural_keys=True)
 	
 	return HttpResponse(geojson_data,content_type='application/json')
 	

@@ -2,27 +2,21 @@ GamePlan
 ===========
 
 Next Goals:
-	
+
 - Integration with main Drupal site
 	-we need to work on the import from the HOS side:
 		1)Location in Lat and Lon
 		2)Name of Org
 		3)Services provided(if available)
 
-when the user makes a decision and resubmits the form, their can be a flag variable that specifies whether 
+- Write Ansible scripts for server deployment
+
+- when the user makes a decision and re-submits the form, there can be a flag variable that specifies whether 
 the new POST request is creating a new org or associating with an existing one.(This part isn't implemented yet)
 
 Sidegoal:
 
 - make web-map
-- getting people to connect to AWS instances
-
-
-Other, to-do list:
-
--update Database diagram: 
-
-
 
 Changes to HOS DB on 5 Oct 2014:
 

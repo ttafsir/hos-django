@@ -692,7 +692,7 @@ def all_facilities(request):
 	
 	#print ('hello')
 	
-	
+	"""
 	Location_w_efforts_temp.objects.all().delete()
 	
 	all_health_facilities = EffortInstance.objects.all()
@@ -701,10 +701,10 @@ def all_facilities(request):
 	
 	for i in all_health_facilities:
 	
-		print('printing i')
-		print(i.effort_instance_id)
+		#print('printing i')
+		#print(i.effort_instance_id)
 		add_to_Location_w_efforts_tempObj(i,nearby)
-		
+	"""	
 	
 	geojson_data = GeoJSONSerializer().serialize(Location_w_efforts_temp.objects.all(), use_natural_keys=True) 
 	

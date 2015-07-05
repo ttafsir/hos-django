@@ -44,13 +44,13 @@ function initmap() {
                     function(data) {
                         facilities.empty();
                         
-                        console.log('hi');
+                        //console.log('hi');
                         
-                        console.log(data.features);
+                        //console.log(data.features);
                         
                         var justData = data.features;
                         
-                        console.log(justData.length);
+                        //console.log(justData.length);
                         
                         var markerArray = new Array(justData.length);
                         

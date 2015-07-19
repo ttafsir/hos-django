@@ -10,7 +10,7 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # Quick-start development settings - unsuitable for production
@@ -24,7 +24,7 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -52,6 +52,22 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'hos2.urls'
 
+TEMPLATES = [
+    {
+        'BACKEND':'django.template.backends.django.DjangoTemplates',
+        'DIRS': ['templates/'],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+         },
+    }
+]
+
 WSGI_APPLICATION = 'hos2.wsgi.application'
 
 
@@ -72,6 +88,18 @@ DATABASES = {
 #GeoDjango version above
 
 '''
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'USER': 'postgres',
+        'NAME': 'hos1',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
+
 {
     'default': {
 		'ENGINE': 'django.contrib.gis.db.backends.postgis',
@@ -140,5 +168,3 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
-
-STATIC_ROOT = '/home/ubuntu/hos-django/entries/static/'
